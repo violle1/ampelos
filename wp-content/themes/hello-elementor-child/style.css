@@ -814,45 +814,122 @@ img {
   display: block;
 }
 
-/* NATIVE DIALOG / MODAL (Modern Web Guidance Compliant) */
+/* RUBRICHE (4 SGUARDI SUL PIANETA VINO) RESPONSIVE GRID */
+.ampelos-rubriche-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+@media (max-width: 991px) {
+  .ampelos-rubriche-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+}
+@media (max-width: 576px) {
+  .ampelos-rubriche-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* NATIVE DIALOG / MODAL (Modern Web Guidance & Mobile UX Compliant) */
 dialog.ampelos-modal {
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: 16px;
   padding: 0;
-  max-width: 520px;
-  width: 90%;
+  max-width: 460px;
+  width: calc(100% - 32px);
   background: #ffffff;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 16px 40px rgba(16, 33, 24, 0.22);
   overscroll-behavior: contain;
+  margin: auto;
+  box-sizing: border-box;
 }
 dialog.ampelos-modal::backdrop {
   background: rgba(16, 33, 24, 0.65);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   overflow: hidden;
   overscroll-behavior: contain;
 }
 .ampelos-modal-header {
-  padding: 20px 24px;
+  padding: 18px 22px;
   border-bottom: 1px solid var(--ampelos-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: var(--ampelos-bg);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
 }
 .ampelos-modal-header h3 {
   margin: 0;
-  font-size: 22px;
+  font-family: var(--font-serif);
+  font-size: 23px;
+  font-weight: 700;
+  color: var(--ampelos-primary);
 }
 .ampelos-modal-close {
-  background: transparent;
+  background: rgba(0, 0, 0, 0.05);
   border: none;
-  font-size: 20px;
+  font-size: 22px;
+  line-height: 1;
   cursor: pointer;
-  color: var(--ampelos-text-muted);
+  color: var(--ampelos-primary);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+.ampelos-modal-close:hover {
+  background: var(--ampelos-terracotta);
+  color: #fff;
 }
 .ampelos-modal-body {
-  padding: 28px 24px;
+  padding: 24px 22px;
+  box-sizing: border-box;
 }
+
+/* PULSANTE TORNA SU (BACK TO TOP) */
+.ampelos-back-to-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--ampelos-primary);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(16, 33, 24, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px);
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.ampelos-back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.ampelos-back-to-top:hover {
+  background: var(--ampelos-terracotta);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(196, 98, 71, 0.35);
+}
+.ampelos-back-to-top:active {
+  transform: translateY(0);
+}
+
 
 /* Forms */
 .ampelos-form-group {
@@ -1089,12 +1166,80 @@ dialog.ampelos-modal::backdrop {
 
 /* Smartphone Breakpoint (max-width: 768px) */
 @media (max-width: 768px) {
+  /* Eliminate utility topbar clutter on mobile */
+  .ampelos-topbar {
+    display: none !important;
+  }
+
+  /* Optimized Mobile Header (Clean 2-element layout: Logo left, Actions right) */
+  .ampelos-header {
+    padding: 2px 0;
+  }
+  .ampelos-header-inner {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 8px 0 !important;
+  }
+  .ampelos-header-left {
+    display: none !important; /* Hide left text tagline so brand logo and buttons have ample space */
+  }
+  .ampelos-brand-logo {
+    margin: 0 !important;
+    text-align: left !important;
+    flex-shrink: 0;
+  }
+  .ampelos-brand-logo img,
+  .ampelos-brand-logo svg {
+    height: 52px !important;
+    max-width: 140px !important;
+    width: auto !important;
+  }
+  .ampelos-header-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-shrink: 0;
+  }
+  .ampelos-header-right .ampelos-btn {
+    padding: 7px 12px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    border-radius: var(--radius-sm) !important;
+    white-space: nowrap !important;
+  }
+  .ampelos-mobile-toggle {
+    display: inline-flex !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    padding: 6px 10px !important;
+    font-size: 19px !important;
+    border-radius: var(--radius-sm) !important;
+  }
+
+  /* Mobile Dialog / Login Window */
+  dialog.ampelos-modal {
+    width: calc(100% - 24px) !important;
+    max-width: 420px !important;
+    margin: auto !important;
+    border-radius: 14px !important;
+  }
+  .ampelos-modal-header {
+    padding: 16px 18px !important;
+  }
+  .ampelos-modal-header h3 {
+    font-size: 21px !important;
+  }
+  .ampelos-modal-body {
+    padding: 20px 18px !important;
+  }
+
   .ampelos-container {
     padding-left: 16px;
     padding-right: 16px;
   }
   .ampelos-hero-landing {
-    padding: 40px 0 54px;
+    padding: 36px 0 46px;
   }
   .ampelos-hero-landing h1,
   .ampelos-hero-title {
@@ -1102,7 +1247,7 @@ dialog.ampelos-modal::backdrop {
     line-height: 1.18 !important;
   }
   .ampelos-hero-landing p {
-    font-size: 16px !important;
+    font-size: 15.5px !important;
     line-height: 1.6 !important;
   }
   .ampelos-hero-actions {
@@ -1117,35 +1262,23 @@ dialog.ampelos-modal::backdrop {
     padding: 14px 20px;
   }
   .ampelos-section-title {
-    font-size: 28px !important;
+    font-size: 26px !important;
   }
   .ampelos-article-title {
-    font-size: 32px !important;
+    font-size: 30px !important;
     line-height: 1.25 !important;
   }
-  .ampelos-brand-logo img,
-  .ampelos-brand-logo svg {
-    height: 68px !important;
-    max-width: 135px !important;
-  }
-  .ampelos-topbar-edition span:last-child {
-    display: none; /* Hide lengthy descriptive text on mobile screens */
-  }
-  .ampelos-topbar-actions {
-    gap: 8px;
-    font-size: 11.5px;
-  }
   .ampelos-step-card {
-    padding: 24px 20px;
+    padding: 22px 18px;
   }
   .ampelos-paywall-card {
-    padding: 28px 20px;
+    padding: 26px 18px;
   }
   .ampelos-paywall-card h3 {
-    font-size: 23px;
+    font-size: 22px;
   }
   .ampelos-plan-card {
-    padding: 30px 22px;
+    padding: 28px 20px;
   }
 
   /* Horizontal swipeable tabs in personal area */

@@ -149,18 +149,26 @@ if (!defined('ABSPATH')) {
         <button type="button" class="ampelos-modal-close" aria-label="Chiudi finestra">&times;</button>
     </div>
     <div class="ampelos-modal-body">
-        <p style="font-size: 14px; color: var(--ampelos-text-muted); margin-bottom: 20px;">
-            Inserisci le tue credenziali di abbonato per accedere agli articoli e all'area personale.
+        <p style="font-size: 14px; color: var(--ampelos-text-muted); margin-bottom: 16px; line-height: 1.5;">
+            Inserisci le tue credenziali di abbonato per accedere ai saggi completi e all'area personale.
         </p>
+
+        <!-- Box Credenziali di Collaudo -->
+        <div style="background: var(--ampelos-bg); border: 1px solid var(--ampelos-border-light); border-left: 3px solid var(--ampelos-terracotta); padding: 10px 14px; border-radius: 6px; margin-bottom: 18px; font-size: 12.5px; line-height: 1.5; color: var(--ampelos-text);">
+            <div style="font-weight: 700; color: var(--ampelos-primary); margin-bottom: 2px;">🔑 Credenziali demo preimpostate:</div>
+            <div>Email: <strong style="color: var(--ampelos-terracotta);">andrea.utenteprova@email.it</strong></div>
+            <div>Password: <strong style="color: var(--ampelos-terracotta);">ampelos2026</strong></div>
+        </div>
+
         <form id="ampelos-form-login">
             <div class="ampelos-form-message"></div>
             <div class="ampelos-form-group">
                 <label for="login-username">Username o Email</label>
-                <input type="text" id="login-username" name="username" class="ampelos-form-input" required autocomplete="username">
+                <input type="text" id="login-username" name="username" class="ampelos-form-input" value="andrea.utenteprova@email.it" required autocomplete="username">
             </div>
             <div class="ampelos-form-group">
                 <label for="login-password">Password</label>
-                <input type="password" id="login-password" name="password" class="ampelos-form-input" required autocomplete="current-password">
+                <input type="password" id="login-password" name="password" class="ampelos-form-input" value="ampelos2026" required autocomplete="current-password">
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; font-size: 13px;">
                 <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--ampelos-text);">
@@ -174,7 +182,7 @@ if (!defined('ABSPATH')) {
             <div style="text-align: center; margin-top: 20px; font-size: 13.5px; color: var(--ampelos-text-muted);">
                 Non sei ancora abbonato? 
                 <a href="javascript:void(0)" onclick="AmpelosUI.closeModal('modal-login'); AmpelosUI.openModal('modal-register');" style="color: var(--ampelos-terracotta); font-weight: 600;">
-                    Sottoscrivi un piano
+                    Sottoscrivi un piano →
                 </a>
             </div>
         </form>
@@ -242,6 +250,14 @@ if (!defined('ABSPATH')) {
         </form>
     </div>
 </dialog>
+
+<!-- PULSANTE TORNA SU (BACK TO TOP) -->
+<button type="button" id="ampelos-back-to-top" class="ampelos-back-to-top" aria-label="Torna all'inizio della pagina" title="Torna su">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="19" x2="12" y2="5"></line>
+        <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+</button>
 
 <?php wp_footer(); ?>
 </body>

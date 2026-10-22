@@ -284,7 +284,7 @@
             <p>Saggi e inchieste redatti da agronomi, storici, filosofi e geografi sul campo.</p>
           </div>
 
-          <div class="ampelos-grid-3" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="ampelos-rubriche-grid">
             <div class="ampelos-step-card" style="border-top: 3px solid var(--ampelos-primary); cursor: pointer;" onclick="AmpelosApp.filterArticles('questioni')">
               <span style="font-size: 11px; font-weight: 700; color: var(--ampelos-primary); text-transform: uppercase;">Rubrica</span>
               <h3 style="margin-top: 8px;">Questioni</h3>
@@ -1091,38 +1091,46 @@
   <!-- ==================== MODALS (NATIVE <dialog> with modern light-dismiss & containment) ==================== -->
 
   
-  <!-- Modal Login -->
+  <!-- Modal Login (Ottimizzato per Mobile e Desktop) -->
   <dialog id="modal-login" class="ampelos-modal" aria-labelledby="modal-login-title">
     <div class="ampelos-modal-header">
       <h3 id="modal-login-title">Accedi ad Ampelos</h3>
-      <button type="button" class="ampelos-modal-close" onclick="AmpelosApp.closeModal('modal-login')">&times;</button>
+      <button type="button" class="ampelos-modal-close" onclick="AmpelosApp.closeModal('modal-login')" aria-label="Chiudi finestra">&times;</button>
     </div>
     <div class="ampelos-modal-body">
-      <p style="font-size: 14px; color: var(--ampelos-text-muted); margin-bottom: 20px;">
-        Inserisci le tue credenziali di abbonato per accedere agli articoli e all'area personale.
+      <p style="font-size: 14px; color: var(--ampelos-text-muted); margin-bottom: 16px; line-height: 1.5;">
+        Inserisci le tue credenziali di abbonato per accedere ai saggi completi e alla tua area personale.
       </p>
+
+      <!-- Box Credenziali di Collaudo per il Cliente -->
+      <div style="background: var(--ampelos-bg); border: 1px solid var(--ampelos-border-light); border-left: 3px solid var(--ampelos-terracotta); padding: 10px 14px; border-radius: 6px; margin-bottom: 18px; font-size: 12.5px; line-height: 1.5; color: var(--ampelos-text);">
+        <div style="font-weight: 700; color: var(--ampelos-primary); margin-bottom: 2px;">🔑 Credenziali demo preimpostate:</div>
+        <div>Email: <strong style="color: var(--ampelos-terracotta);">andrea.utenteprova@email.it</strong></div>
+        <div>Password: <strong style="color: var(--ampelos-terracotta);">ampelos2026</strong></div>
+      </div>
+
       <form onsubmit="event.preventDefault(); AmpelosApp.handleLogin();">
         <div class="ampelos-form-group">
-          <label>Username o Email</label>
-          <input type="text" id="input-login-username" class="ampelos-form-input" value="andrea.utenteprova@email.it" required>
+          <label for="input-login-username">Username o Email</label>
+          <input type="email" id="input-login-username" class="ampelos-form-input" value="andrea.utenteprova@email.it" required autocomplete="username" inputmode="email">
         </div>
         <div class="ampelos-form-group">
-          <label>Password</label>
-          <input type="password" id="input-login-password" class="ampelos-form-input" value="ampelos2026" required>
+          <label for="input-login-password">Password</label>
+          <input type="password" id="input-login-password" class="ampelos-form-input" value="ampelos2026" required autocomplete="current-password">
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; font-size: 13px;">
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-            <input type="checkbox" checked> Ricordami
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; font-size: 13.5px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+            <input type="checkbox" checked style="width: 16px; height: 16px;"> Ricordami
           </label>
-          <a href="javascript:void(0)" onclick="alert('Link di recupero password inviato alla tua email.')" style="text-decoration: underline;">Password dimenticata?</a>
+          <a href="javascript:void(0)" onclick="alert('Link di recupero password inviato alla tua email.')" style="color: var(--ampelos-primary); text-decoration: underline;">Password dimenticata?</a>
         </div>
-        <button type="submit" class="ampelos-btn ampelos-btn-primary ampelos-btn-lg" style="width: 100%;">
+        <button type="submit" class="ampelos-btn ampelos-btn-primary ampelos-btn-lg" style="width: 100%; justify-content: center; padding: 14px; font-size: 15.5px;">
           Accedi alla Rivista
         </button>
         <div style="text-align: center; margin-top: 18px; font-size: 13.5px; color: var(--ampelos-text-muted);">
           Non hai ancora sottoscritto l'abbonamento?
           <br>
-          <a href="javascript:void(0)" onclick="AmpelosApp.closeModal('modal-login'); AmpelosApp.showView('abbonati');" style="color: var(--ampelos-terracotta); font-weight: 600;">
+          <a href="javascript:void(0)" onclick="AmpelosApp.closeModal('modal-login'); AmpelosApp.showView('abbonati');" style="color: var(--ampelos-terracotta); font-weight: 700; display: inline-block; margin-top: 4px;">
             Sottoscrivi un piano →
           </a>
         </div>
@@ -1289,6 +1297,26 @@
         renderArticles();
         updateUI();
         initModalEvents();
+        initBackToTop();
+      }
+
+      function initBackToTop() {
+        const btn = document.getElementById('ampelos-back-to-top');
+        if (!btn) return;
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 300) {
+            btn.classList.add('visible');
+          } else {
+            btn.classList.remove('visible');
+          }
+        }, { passive: true });
+
+        btn.addEventListener('click', () => {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        });
       }
 
       function initModalEvents() {
@@ -1868,5 +1896,13 @@
 
     document.addEventListener('DOMContentLoaded', AmpelosApp.init);
   </script>
+
+  <!-- PULSANTE TORNA SU (BACK TO TOP) -->
+  <button type="button" id="ampelos-back-to-top" class="ampelos-back-to-top" aria-label="Torna all'inizio della pagina" title="Torna su">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="19" x2="12" y2="5"></line>
+      <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+  </button>
 </body>
 </html>

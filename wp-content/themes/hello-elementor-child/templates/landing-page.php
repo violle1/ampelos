@@ -92,7 +92,7 @@ get_header();
                 <p>La nostra linea editoriale si articola in quattro direttrici fondamentali, curate da docenti, geografi, agronomi e saggisti.</p>
             </div>
 
-            <div class="ampelos-grid-3" style="grid-template-columns: repeat(4, 1fr);">
+            <div class="ampelos-rubriche-grid">
                 <!-- Questioni -->
                 <div class="ampelos-step-card" style="border-top: 3px solid var(--ampelos-primary);">
                     <span style="font-size: 11px; font-weight: 700; color: var(--ampelos-primary); text-transform: uppercase;">Rubrica</span>

@@ -1068,7 +1068,28 @@
     </div>
   </footer>
 
+  <!-- ==================== MOBILE NAVIGATION DRAWER (ACCESSIBILE E REATTIVO) ==================== -->
+  <div id="ampelos-drawer-overlay" class="ampelos-drawer-overlay" onclick="AmpelosApp.toggleMobileDrawer(false)"></div>
+  <aside id="ampelos-mobile-drawer" class="ampelos-mobile-drawer" aria-label="Menu di Navigazione Mobile">
+    <div class="ampelos-drawer-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <img src="wp-content/themes/hello-elementor-child/assets/images/ampelos.png" alt="Ampelos" style="height: 38px; width: auto;">
+        <span style="font-family: var(--font-serif); font-size: 19px; font-weight: 700; color: var(--ampelos-primary); letter-spacing: 0.04em;">ἄμπελος</span>
+      </div>
+      <button type="button" class="ampelos-drawer-close" onclick="AmpelosApp.toggleMobileDrawer(false)" aria-label="Chiudi menu">&times;</button>
+    </div>
+    <div class="ampelos-drawer-nav">
+      <ul id="mobile-drawer-links">
+        <!-- Rendered dynamically depending on subscription -->
+      </ul>
+    </div>
+    <div class="ampelos-drawer-footer" id="mobile-drawer-footer">
+      <!-- Action buttons -->
+    </div>
+  </aside>
+
   <!-- ==================== MODALS (NATIVE <dialog> with modern light-dismiss & containment) ==================== -->
+
   
   <!-- Modal Login -->
   <dialog id="modal-login" class="ampelos-modal" aria-labelledby="modal-login-title">
@@ -1377,6 +1398,44 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 <span>Area Personale</span>
               </button>
+              <button type="button" class="ampelos-mobile-toggle" aria-label="Menu di navigazione" onclick="AmpelosApp.toggleMobileDrawer(true)">
+                ☰
+              </button>
+            `;
+          }
+
+          // Aggiorna drawer mobile per abbonato
+          const drawerLinks = document.getElementById('mobile-drawer-links');
+          const drawerFooter = document.getElementById('mobile-drawer-footer');
+          if (drawerLinks) {
+            drawerLinks.innerHTML = `
+              <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('home'); AmpelosApp.toggleMobileDrawer(false);">Home</a></li>
+              <li>
+                <a href="javascript:void(0)" onclick="AmpelosApp.showView('articoli'); AmpelosApp.toggleMobileDrawer(false);">
+                  <strong>Leggi (Tutti gli articoli)</strong> <span>→</span>
+                </a>
+                <div class="ampelos-drawer-subnav">
+                  <a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('questioni'); AmpelosApp.toggleMobileDrawer(false);">• Questioni</a>
+                  <a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('luoghi'); AmpelosApp.toggleMobileDrawer(false);">• Luoghi</a>
+                  <a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('idee'); AmpelosApp.toggleMobileDrawer(false);">• Idee</a>
+                  <a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('voci'); AmpelosApp.toggleMobileDrawer(false);">• Voci</a>
+                </div>
+              </li>
+              <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('percorsi'); AmpelosApp.toggleMobileDrawer(false);">Percorsi <span class="ampelos-tag-future">In arrivo</span></a></li>
+              <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('atlante'); AmpelosApp.toggleMobileDrawer(false);">Atlante <span class="ampelos-tag-future">In arrivo</span></a></li>
+              <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('autori'); AmpelosApp.toggleMobileDrawer(false);">Autori</a></li>
+              <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('volume'); AmpelosApp.toggleMobileDrawer(false);">Volume Monografico</a></li>
+              <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('chi-siamo'); AmpelosApp.toggleMobileDrawer(false);">Chi siamo</a></li>
+            `;
+          }
+          if (drawerFooter) {
+            drawerFooter.innerHTML = `
+              <button type="button" class="ampelos-btn ampelos-btn-primary" style="width: 100%; justify-content: center;" onclick="AmpelosApp.showView('area-personale'); AmpelosApp.toggleMobileDrawer(false);">
+                Area Personale (Andrea)
+              </button>
+              <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" style="width: 100%; justify-content: center;" onclick="AmpelosApp.toggleSubscription(false); AmpelosApp.toggleMobileDrawer(false);">
+                Disconnetti (Logout)
+              </button>
             `;
           }
         } else {
@@ -1411,6 +1470,25 @@
               </button>
               <button type="button" class="ampelos-btn ampelos-btn-terracotta ampelos-btn-sm" onclick="AmpelosApp.showView('abbonati')">
                 Abbonati
+              </button>
+            `;
+          }
+
+          // Drawer chiuso e vuoto per ospite (menu inaccessibile per specifica)
+          const drawerLinks = document.getElementById('mobile-drawer-links');
+          const drawerFooter = document.getElementById('mobile-drawer-footer');
+          if (drawerLinks) {
+            drawerLinks.innerHTML = `
+              <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('home'); AmpelosApp.toggleMobileDrawer(false);">Home</a></li>
+            `;
+          }
+          if (drawerFooter) {
+            drawerFooter.innerHTML = `
+              <button type="button" class="ampelos-btn ampelos-btn-terracotta" style="width: 100%; justify-content: center;" onclick="AmpelosApp.showView('abbonati'); AmpelosApp.toggleMobileDrawer(false);">
+                Sottoscrivi Abbonamento
+              </button>
+              <button type="button" class="ampelos-btn ampelos-btn-outline" style="width: 100%; justify-content: center;" onclick="AmpelosApp.openModal('modal-login'); AmpelosApp.toggleMobileDrawer(false);">
+                Accedi (Membri)
               </button>
             `;
           }
@@ -1745,10 +1823,33 @@
         }, 3200);
       }
 
+      // Mobile Drawer Toggle
+      function toggleMobileDrawer(open) {
+        const overlay = document.getElementById('ampelos-drawer-overlay');
+        const drawer = document.getElementById('ampelos-mobile-drawer');
+        if (!overlay || !drawer) return;
+        if (open) {
+          overlay.classList.add('active');
+          drawer.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        } else {
+          overlay.classList.remove('active');
+          drawer.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          toggleMobileDrawer(false);
+        }
+      });
+
       return {
         init,
         showView,
         toggleSubscription,
+        toggleMobileDrawer,
         openModal,
         closeModal,
         filterArticles,

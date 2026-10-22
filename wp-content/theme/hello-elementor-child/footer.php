@@ -87,6 +87,61 @@ if (!defined('ABSPATH')) {
     </div>
 </footer>
 
+<?php $is_subscribed_drawer = ampelos_is_user_subscribed(); ?>
+<!-- DRAWER DI NAVIGAZIONE MOBILE (OFF-CANVAS) -->
+<div id="ampelos-drawer-overlay" class="ampelos-drawer-overlay" onclick="AmpelosUI.toggleMobileDrawer(false)"></div>
+<aside id="ampelos-mobile-drawer" class="ampelos-mobile-drawer" aria-label="Menu Mobile">
+    <div class="ampelos-drawer-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="<?php echo esc_url(AMPELOS_THEME_URI . '/assets/images/ampelos.png'); ?>" alt="Ampelos" style="height: 38px; width: auto;">
+            <span style="font-family: var(--font-serif); font-size: 19px; font-weight: 700; color: var(--ampelos-primary); letter-spacing: 0.04em;">ἄμπελος</span>
+        </div>
+        <button type="button" class="ampelos-drawer-close" onclick="AmpelosUI.toggleMobileDrawer(false)" aria-label="Chiudi menu">&times;</button>
+    </div>
+    <div class="ampelos-drawer-nav">
+        <ul>
+            <?php if ($is_subscribed_drawer) : ?>
+                <li><a href="<?php echo esc_url(home_url('/')); ?>">Home</a></li>
+                <li>
+                    <a href="<?php echo esc_url(home_url('/tutti-gli-articoli/')); ?>">
+                        <strong>Leggi (Tutti gli articoli)</strong> <span>→</span>
+                    </a>
+                    <div class="ampelos-drawer-subnav">
+                        <a href="<?php echo esc_url(home_url('/rubrica/questioni/')); ?>">• Questioni</a>
+                        <a href="<?php echo esc_url(home_url('/rubrica/luoghi/')); ?>">• Luoghi</a>
+                        <a href="<?php echo esc_url(home_url('/rubrica/idee/')); ?>">• Idee</a>
+                        <a href="<?php echo esc_url(home_url('/rubrica/voci/')); ?>">• Voci</a>
+                    </div>
+                </li>
+                <li><a href="<?php echo esc_url(home_url('/percorsi/')); ?>">Percorsi <span class="ampelos-tag-future">In arrivo</span></a></li>
+                <li><a href="<?php echo esc_url(home_url('/atlante/')); ?>">Atlante <span class="ampelos-tag-future">In arrivo</span></a></li>
+                <li><a href="<?php echo esc_url(home_url('/autori/')); ?>">Autori</a></li>
+                <li><a href="<?php echo esc_url(home_url('/volume/')); ?>">Volume Monografico</a></li>
+                <li><a href="<?php echo esc_url(home_url('/chi-siamo/')); ?>">Chi siamo</a></li>
+            <?php else : ?>
+                <li><a href="<?php echo esc_url(home_url('/')); ?>">Home</a></li>
+            <?php endif; ?>
+        </ul>
+    </div>
+    <div class="ampelos-drawer-footer">
+        <?php if ($is_subscribed_drawer) : ?>
+            <a href="<?php echo esc_url(home_url('/area-personale/')); ?>" class="ampelos-btn ampelos-btn-primary" style="justify-content: center;">
+                Area Personale
+            </a>
+            <a href="<?php echo esc_url(wp_logout_url(home_url('/'))); ?>" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" style="justify-content: center;">
+                Disconnetti account
+            </a>
+        <?php else : ?>
+            <a href="<?php echo esc_url(home_url('/abbonati/')); ?>" class="ampelos-btn ampelos-btn-terracotta" style="justify-content: center;">
+                Sottoscrivi Abbonamento
+            </a>
+            <button type="button" class="ampelos-btn ampelos-btn-outline" style="justify-content: center;" onclick="AmpelosUI.toggleMobileDrawer(false); AmpelosUI.openModal('modal-login');">
+                Accedi (Membri)
+            </button>
+        <?php endif; ?>
+    </div>
+</aside>
+
 <!-- MODAL DI LOGIN (Dialog con Light-Dismiss nativo & containment) -->
 <dialog id="modal-login" class="ampelos-modal" aria-labelledby="modal-login-title">
     <div class="ampelos-modal-header">

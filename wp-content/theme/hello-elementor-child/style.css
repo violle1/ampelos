@@ -928,8 +928,142 @@ dialog.ampelos-modal::backdrop {
   color: #8c9e94;
 }
 
-/* Responsive adjustments */
+/* ==================== ADVANCED MOBILE & RESPONSIVE OPTIMIZATIONS ==================== */
+
+/* Mobile Navigation Drawer & Hamburger Toggle */
+.ampelos-mobile-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--ampelos-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  cursor: pointer;
+  color: var(--ampelos-primary);
+  font-size: 20px;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  transition: var(--transition);
+}
+.ampelos-mobile-toggle:hover {
+  background: var(--ampelos-border-light);
+  color: var(--ampelos-terracotta);
+}
+
+.ampelos-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 33, 24, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9998;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.ampelos-drawer-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ampelos-mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 86%;
+  max-width: 360px;
+  background: #ffffff;
+  z-index: 9999;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.16);
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.ampelos-mobile-drawer.active {
+  transform: translateX(0);
+}
+
+.ampelos-drawer-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--ampelos-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--ampelos-bg);
+}
+.ampelos-drawer-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ampelos-primary);
+  padding: 6px;
+  min-width: 40px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ampelos-drawer-nav {
+  padding: 16px 20px;
+  flex: 1;
+}
+.ampelos-drawer-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.ampelos-drawer-nav li {
+  margin-bottom: 6px;
+}
+.ampelos-drawer-nav a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  font-size: 15.5px;
+  font-weight: 500;
+  color: var(--ampelos-primary);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.ampelos-drawer-nav a:hover,
+.ampelos-drawer-nav a.active {
+  background: var(--ampelos-bg);
+  color: var(--ampelos-terracotta);
+}
+.ampelos-drawer-subnav {
+  padding-left: 14px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  border-left: 2px solid var(--ampelos-border-light);
+}
+.ampelos-drawer-subnav a {
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--ampelos-text-muted);
+}
+.ampelos-drawer-footer {
+  padding: 20px;
+  border-top: 1px solid var(--ampelos-border);
+  background: var(--ampelos-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Tablet & Mobile Breakpoints (max-width: 991px) */
 @media (max-width: 991px) {
+  .ampelos-mobile-toggle {
+    display: inline-flex;
+  }
   .ampelos-grid-3,
   .ampelos-plans-grid,
   .ampelos-footer-grid {
@@ -945,33 +1079,143 @@ dialog.ampelos-modal::backdrop {
   }
   .ampelos-brand-logo img,
   .ampelos-brand-logo svg {
-    height: 85px;
-    max-width: 170px;
+    height: 80px;
+    max-width: 160px;
   }
   .ampelos-nav-bar {
-    display: none; /* Mobile menu toggled */
-  }
-  .ampelos-mobile-menu-open .ampelos-nav-bar {
-    display: block;
-    background: #ffffff;
-    padding: 16px 0;
-  }
-  .ampelos-menu-primary {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  .ampelos-dropdown {
-    position: static;
-    transform: none;
-    box-shadow: none;
-    border: none;
-    padding-left: 16px;
-    visibility: visible;
-    opacity: 1;
-    display: none;
-  }
-  .ampelos-dropdown.open {
-    display: block;
+    display: none !important; /* Managed via mobile drawer */
   }
 }
+
+/* Smartphone Breakpoint (max-width: 768px) */
+@media (max-width: 768px) {
+  .ampelos-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .ampelos-hero-landing {
+    padding: 40px 0 54px;
+  }
+  .ampelos-hero-landing h1,
+  .ampelos-hero-title {
+    font-size: clamp(28px, 7.5vw, 42px) !important;
+    line-height: 1.18 !important;
+  }
+  .ampelos-hero-landing p {
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+  }
+  .ampelos-hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .ampelos-hero-actions .ampelos-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 20px;
+  }
+  .ampelos-section-title {
+    font-size: 28px !important;
+  }
+  .ampelos-article-title {
+    font-size: 32px !important;
+    line-height: 1.25 !important;
+  }
+  .ampelos-brand-logo img,
+  .ampelos-brand-logo svg {
+    height: 68px !important;
+    max-width: 135px !important;
+  }
+  .ampelos-topbar-edition span:last-child {
+    display: none; /* Hide lengthy descriptive text on mobile screens */
+  }
+  .ampelos-topbar-actions {
+    gap: 8px;
+    font-size: 11.5px;
+  }
+  .ampelos-step-card {
+    padding: 24px 20px;
+  }
+  .ampelos-paywall-card {
+    padding: 28px 20px;
+  }
+  .ampelos-paywall-card h3 {
+    font-size: 23px;
+  }
+  .ampelos-plan-card {
+    padding: 30px 22px;
+  }
+
+  /* Horizontal swipeable tabs in personal area */
+  .ampelos-dashboard-nav {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    white-space: nowrap;
+    gap: 10px;
+    border-bottom: 2px solid var(--ampelos-border-light);
+    padding-bottom: 4px;
+    margin-bottom: 24px;
+  }
+  .ampelos-dashboard-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .ampelos-dash-tab {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+
+  /* iOS Auto-Zoom Prevention (Ensure >= 16px font-size) */
+  .ampelos-form-input,
+  .ampelos-form-select {
+    font-size: 16px !important;
+  }
+
+  /* Simulator control bar responsive wrap */
+  .ampelos-sim-bar {
+    font-size: 11px;
+    padding: 6px 0;
+  }
+  .ampelos-sim-bar .ampelos-container {
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+  .ampelos-sim-bar > div:last-child {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: 100%;
+  }
+  .ampelos-sim-btn {
+    margin-left: 0;
+    margin-right: 4px;
+    padding: 4px 8px;
+  }
+
+  .ampelos-footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+}
+
+/* Small Smartphone Breakpoint (max-width: 480px) */
+@media (max-width: 480px) {
+  .ampelos-header-right .ampelos-btn-sm {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  dialog.ampelos-modal {
+    width: 94%;
+    margin: auto;
+  }
+  .ampelos-modal-body {
+    padding: 22px 18px;
+  }
+}
+

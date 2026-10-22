@@ -310,14 +310,37 @@ const AmpelosUI = (() => {
     });
   }
 
+  function toggleMobileDrawer(open) {
+    const overlay = document.getElementById('ampelos-drawer-overlay');
+    const drawer = document.getElementById('ampelos-mobile-drawer');
+    if (!overlay || !drawer) return;
+    if (open) {
+      overlay.classList.add('active');
+      drawer.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    } else {
+      overlay.classList.remove('active');
+      drawer.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      toggleMobileDrawer(false);
+    }
+  });
+
   // Public API
   return {
     init,
     openModal,
     closeModal,
     openRegisterPlan,
-    toggleSaveArticle
+    toggleSaveArticle,
+    toggleMobileDrawer
   };
 })();
 
 document.addEventListener('DOMContentLoaded', AmpelosUI.init);
+

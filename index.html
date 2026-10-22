@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ampelos • Rivista di Cultura del Vino e Territori</title>
+  <meta name="description" content="Rivista trimestrale indipendente di cultura del vino, geografie e pensiero critico. Accesso riservato agli abbonati.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Ampelos Design System Stylesheet -->
+  <link rel="stylesheet" href="wp-content/themes/hello-elementor-child/style.css">
+
+  <style>
+    /* Interactive Simulator Bar for Testing */
+    .ampelos-sim-bar {
+      background: #0d1a12;
+      color: #9eb5a7;
+      font-size: 11.5px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .ampelos-sim-bar .ampelos-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .ampelos-sim-btn {
+      background: rgba(255,255,255,0.12);
+      color: #ffffff;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 3px;
+      padding: 3px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      margin-left: 6px;
+      transition: background 0.2s;
+    }
+    .ampelos-sim-btn:hover {
+      background: var(--ampelos-terracotta);
+      border-color: var(--ampelos-terracotta);
+    }
+    .ampelos-view {
+      display: none;
+    }
+    .ampelos-view.active-view {
+      display: block;
+      animation: fadeIn 0.25s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .ampelos-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1a3325;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      font-size: 13.5px;
+      z-index: 9999;
+      display: none;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIMULATOR CONTROL BAR (Permette di testare istantaneamente lo stato Visitatore / Abbonato) -->
+  <div class="ampelos-sim-bar">
+    <div class="ampelos-container">
+      <div>
+        <span>⚙️ <strong>Modalità Test Progetto Ampelos:</strong></span>
+        <span id="sim-status-label" style="margin-left: 6px; font-weight: 600; color: #ffbc85;">Visitatore Anonimo (Non Abbonato)</span>
+      </div>
+      <div>
+        <span>Simula stato:</span>
+        <button type="button" class="ampelos-sim-btn" onclick="AmpelosApp.toggleSubscription(true)">✓ Login come Abbonato</button>
+        <button type="button" class="ampelos-sim-btn" onclick="AmpelosApp.toggleSubscription(false)">✕ Logout (Visitatore)</button>
+        <button type="button" class="ampelos-sim-btn" onclick="AmpelosApp.showView('sitemap')">🗺️ Visualizza Mappa del Sito</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- READING PROGRESS BAR (Per gli articoli) -->
+  <div id="ampelos-reading-progress" style="position: fixed; top: 0; left: 0; height: 3.5px; background: var(--ampelos-terracotta); z-index: 9999; width: 0; transition: width 0.1s linear;"></div>
+
+  <!-- TOPBAR -->
+  <aside class="ampelos-topbar" aria-label="Informazioni edizione">
+    <div class="ampelos-container">
+      <div class="ampelos-topbar-edition">
+        <span class="ampelos-badge-edition">Edizione 2027</span>
+        <span>Rivista trimestrale di cultura del vino, geografie e pensiero critico</span>
+      </div>
+      <div class="ampelos-topbar-actions">
+        <a href="javascript:void(0)" onclick="AmpelosApp.showView('chi-siamo')" class="ampelos-topbar-link">Manifesto</a>
+        <span>•</span>
+        <a href="javascript:void(0)" onclick="AmpelosApp.showView('volume')" class="ampelos-topbar-link">Volume Monografico</a>
+        <span>•</span>
+        <span id="topbar-user-area">
+          <a href="javascript:void(0)" onclick="AmpelosApp.openModal('modal-login')" class="ampelos-topbar-link">Accedi</a>
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN BRAND HEADER -->
+  <header class="ampelos-header" role="banner">
+    <div class="ampelos-container">
+      <div class="ampelos-header-inner">
+        <!-- Left: Cerca solo per abbonati, badge per ospiti -->
+        <div class="ampelos-header-left" id="header-left-actions">
+          <span style="font-size: 11.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ampelos-sage);">
+            Rivista a Sottoscrizione
+          </span>
+        </div>
+
+        <!-- Center: Logo Ampelos -->
+        <div class="ampelos-brand-logo">
+          <a href="javascript:void(0)" onclick="AmpelosApp.showView('home')">
+            <img src="wp-content/themes/hello-elementor-child/assets/images/ampelos.png" alt="ἄμπελος AMPELOS" width="220" height="161">
+          </a>
+        </div>
+
+        <!-- Right: CTA Abbonati / Area Personale -->
+        <div class="ampelos-header-right" id="header-right-actions">
+          <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosApp.openModal('modal-login')">
+            Accedi
+          </button>
+          <button type="button" class="ampelos-btn ampelos-btn-terracotta ampelos-btn-sm" onclick="AmpelosApp.showView('abbonati')">
+            Abbonati
+          </button>
+        </div>
+      </div>
+
+      <!-- PRIMARY NAVIGATION BAR (Visibile SOLO ad abbonati e iscritti) -->
+      <nav class="ampelos-nav-bar" id="main-nav-bar" style="display: none;" role="navigation" aria-label="Menu Principale">
+        <ul class="ampelos-menu-primary">
+          <li class="nav-item-home active">
+            <a href="javascript:void(0)" onclick="AmpelosApp.showView('home')">Home</a>
+          </li>
+          <li class="has-dropdown nav-item-leggi">
+            <a href="javascript:void(0)" onclick="AmpelosApp.showView('articoli')">
+              Leggi
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </a>
+            <div class="ampelos-dropdown">
+              <a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('tutti')" class="ampelos-dropdown-item">
+                <div class="ampelos-dropdown-title">Tutti gli articoli</div>
+                <div class="ampelos-dropdown-desc">Tutta la produzione editoriale e archivio</div>
+              </a>
+              <a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('questioni')" class="ampelos-dropdown-item">
+                <div class="ampelos-dropdown-title">Questioni</div>
+                <div class="ampelos-dropdown-desc">Fatti e cambiamenti nel settore vitivinicolo</div>
+              </a>
+              <a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('luoghi')" class="ampelos-dropdown-item">
+                <div class="ampelos-dropdown-title">Luoghi</div>
+                <div class="ampelos-dropdown-desc">Territori, comunità e geografie</div>
+              </a>
+              <a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('idee')" class="ampelos-dropdown-item">
+                <div class="ampelos-dropdown-title">Idee</div>
+                <div class="ampelos-dropdown-desc">Saggi, interpretazioni e pensiero critico</div>
+              </a>
+              <a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('voci')" class="ampelos-dropdown-item">
+                <div class="ampelos-dropdown-title">Voci</div>
+                <div class="ampelos-dropdown-desc">Interviste e ritratti ai protagonisti</div>
+              </a>
+            </div>
+          </li>
+          <li>
+            <a href="javascript:void(0)" onclick="AmpelosApp.showView('percorsi')">
+              Percorsi
+              <span class="ampelos-tag-future">In arrivo</span>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" onclick="AmpelosApp.showView('atlante')">
+              Atlante
+              <span class="ampelos-tag-future">In arrivo</span>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" onclick="AmpelosApp.showView('autori')">Autori</a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" onclick="AmpelosApp.showView('volume')">Volume</a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" onclick="AmpelosApp.showView('chi-siamo')">Chi siamo</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==================== VISTA 1: HOME (DUAL-STATE: GUEST LANDING vs SUBSCRIBER FEED) ==================== -->
+  <div id="view-home" class="ampelos-view active-view">
+    
+    <!-- STATO A: LANDING PAGE PUBBLICA (PER NON ABBONATI) -->
+    <div id="home-guest-state">
+      <section class="ampelos-hero-landing">
+        <div class="ampelos-container">
+          <span class="ampelos-hero-kicker">RIVISTA TRIMESTRALE INDIPENDENTE • ACCESSO ESCLUSIVO PER ABBONATI</span>
+          <h1 class="ampelos-hero-title">
+            Il pensiero del vino, <em>i suoi territori</em>, la sua cultura profonda.
+          </h1>
+          <p class="ampelos-hero-lead">
+            Ampelos è uno spazio editoriale libero da sponsor e da valutazioni commerciali in centesimi. Un progetto sostenuto unicamente dalla comunità dei lettori, dedicato al giornalismo approfondito, alla saggistica e alla geografia viticola.
+          </p>
+          <div class="ampelos-hero-ctas">
+            <button type="button" class="ampelos-btn ampelos-btn-terracotta ampelos-btn-lg" onclick="AmpelosApp.showView('abbonati')">
+              Scopri i Piani di Abbonamento
+            </button>
+            <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-lg" onclick="AmpelosApp.openModal('modal-login')">
+              Sei già abbonato? Accedi
+            </button>
+          </div>
+          <div style="margin-top: 24px; font-size: 13px; color: var(--ampelos-text-muted);">
+            A partire da <strong>9€ al mese</strong> • Disdici in qualsiasi momento con un clic
+          </div>
+        </div>
+      </section>
+
+      <!-- GUIDA: COME FUNZIONA IL MODELLO DI ISCRIZIONE (RICHIESTA SPECIFICA UTENTE) -->
+      <section class="ampelos-model-section">
+        <div class="ampelos-container">
+          <div class="ampelos-section-heading">
+            <span class="ampelos-section-tag">Il Modello di Iscrizione</span>
+            <h2>Come funziona l'accesso ad Ampelos</h2>
+            <p>Per garantire la totale indipendenza della redazione e l'assenza di inserzioni pubblicitarie, il sito è riservato a chi sottoscrive un abbonamento.</p>
+          </div>
+
+          <div class="ampelos-grid-3">
+            <div class="ampelos-step-card">
+              <div class="ampelos-step-num">01</div>
+              <h3>Scegli il tuo piano</h3>
+              <p>Opta per la flessibilità del piano <strong>Mensile</strong>, la convenienza dell'<strong>Annuale</strong> con 2 mesi omaggio, oppure il piano <strong>Sostenitore</strong> comprensivo del Volume Monografico cartaceo spedito a domicilio.</p>
+            </div>
+
+            <div class="ampelos-step-card">
+              <div class="ampelos-step-num">02</div>
+              <h3>Iscriviti e attiva l'abbonamento</h3>
+              <p>Completa la sottoscrizione in meno di un minuto. Riceverai istantaneamente il tuo profilo personale protetto, valido su tutti i tuoi dispositivi senza limiti di sessione.</p>
+            </div>
+
+            <div class="ampelos-step-card">
+              <div class="ampelos-step-num">03</div>
+              <h3>Accedi e naviga l'intera rivista</h3>
+              <p>Fai il tuo login per sbloccare tutti gli articoli integrali, le quattro rubriche editoriali, le sezioni Percorsi ed Atlante, la tua libreria e i saggi salvati.</p>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 48px;">
+            <button type="button" class="ampelos-btn ampelos-btn-primary ampelos-btn-lg" onclick="AmpelosApp.showView('abbonati')">
+              Vai all'iscrizione e sottoscrizione →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANTEPRIMA DELLE 4 RUBRICHE -->
+      <section class="ampelos-editorial-preview">
+        <div class="ampelos-container">
+          <div class="ampelos-section-heading">
+            <span class="ampelos-section-tag">Linee Editoriali</span>
+            <h2>Quattro sguardi sul pianeta vino</h2>
+            <p>Saggi e inchieste redatti da agronomi, storici, filosofi e geografi sul campo.</p>
+          </div>
+
+          <div class="ampelos-grid-3" style="grid-template-columns: repeat(4, 1fr);">
+            <div class="ampelos-step-card" style="border-top: 3px solid var(--ampelos-primary); cursor: pointer;" onclick="AmpelosApp.filterArticles('questioni')">
+              <span style="font-size: 11px; font-weight: 700; color: var(--ampelos-primary); text-transform: uppercase;">Rubrica</span>
+              <h3 style="margin-top: 8px;">Questioni</h3>
+              <p style="font-size: 13.5px; font-weight: 600; color: var(--ampelos-terracotta); margin-bottom: 8px;">Fatti e cambiamenti</p>
+              <p>Inchieste economiche, geopolitica del vino, clima e innovazioni agronomiche.</p>
+            </div>
+
+            <div class="ampelos-step-card" style="border-top: 3px solid var(--ampelos-primary); cursor: pointer;" onclick="AmpelosApp.filterArticles('luoghi')">
+              <span style="font-size: 11px; font-weight: 700; color: var(--ampelos-primary); text-transform: uppercase;">Rubrica</span>
+              <h3 style="margin-top: 8px;">Luoghi</h3>
+              <p style="font-size: 13.5px; font-weight: 600; color: var(--ampelos-terracotta); margin-bottom: 8px;">Territori e comunità</p>
+              <p>Reportage sul campo, suoli geologici, villaggi e paesaggi viticoli del mondo.</p>
+            </div>
+
+            <div class="ampelos-step-card" style="border-top: 3px solid var(--ampelos-primary); cursor: pointer;" onclick="AmpelosApp.filterArticles('idee')">
+              <span style="font-size: 11px; font-weight: 700; color: var(--ampelos-primary); text-transform: uppercase;">Rubrica</span>
+              <h3 style="margin-top: 8px;">Idee</h3>
+              <p style="font-size: 13.5px; font-weight: 600; color: var(--ampelos-terracotta); margin-bottom: 8px;">Saggi e interpretazioni</p>
+              <p>Filosofia dell'assaggio, etica della terra e antropologia culturale del vino.</p>
+            </div>
+
+            <div class="ampelos-step-card" style="border-top: 3px solid var(--ampelos-primary); cursor: pointer;" onclick="AmpelosApp.filterArticles('voci')">
+              <span style="font-size: 11px; font-weight: 700; color: var(--ampelos-primary); text-transform: uppercase;">Rubrica</span>
+              <h3 style="margin-top: 8px;">Voci</h3>
+              <p style="font-size: 13.5px; font-weight: 600; color: var(--ampelos-terracotta); margin-bottom: 8px;">Interviste e ritratti</p>
+              <p>I lunghi dialoghi con i maestri vignaioli e le figure ribelli della viticoltura.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ARTICOLI IN EVIDENZA (CON BADGE RISERVATO) -->
+      <section style="padding: 70px 0; background: #fff; border-top: 1px solid var(--ampelos-border); border-bottom: 1px solid var(--ampelos-border);">
+        <div class="ampelos-container">
+          <div class="ampelos-section-heading">
+            <span class="ampelos-section-tag">Dall'Edizione Corrente</span>
+            <h2>Saggi e inchieste recenti</h2>
+            <p>I contenuti integrali sono riservati agli iscritti. Clicca per visualizzare l'anteprima e la pagina con paywall.</p>
+          </div>
+
+          <div class="ampelos-grid-3" id="guest-articles-grid">
+            <!-- Popolato dinamicamente da JS -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- STATO B: SUBSCRIBER FEED (PER UTENTI ABBONATI) -->
+    <div id="home-subscriber-state" style="display: none;">
+      <!-- Welcome Bar -->
+      <div style="background: #eaf1ec; border-bottom: 1px solid var(--ampelos-sage-border); padding: 14px 0;">
+        <div class="ampelos-container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+          <div>
+            <strong>Bentornato, Matteo Rives</strong> • <span style="color: var(--ampelos-primary); font-weight: 600;">Abbonamento Annuale Attivo</span>
+          </div>
+          <div>
+            <a href="javascript:void(0)" onclick="AmpelosApp.showView('area-personale', 'salvati')" style="color: var(--ampelos-primary); font-weight: 600; font-size: 13.5px;">
+              I tuoi articoli salvati (<span id="saved-counter-badge">2</span>) →
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Primo Piano Settimanale -->
+      <section style="padding: 50px 0 60px; border-bottom: 1px solid var(--ampelos-border);">
+        <div class="ampelos-container">
+          <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center;">
+            <div>
+              <span class="ampelos-rubrica-badge" style="position: static; margin-bottom: 16px; display: inline-block;">
+                In Primo Piano • Rubrica Luoghi
+              </span>
+              <h1 style="font-size: clamp(2.2rem, 3.8vw, 3.4rem); line-height: 1.18; margin-bottom: 18px;">
+                <a href="javascript:void(0)" onclick="AmpelosApp.openArticle(1)">
+                  Le vigne di pietra calcarea nel Vallese: una memoria geologica millenaria
+                </a>
+              </h1>
+              <p style="font-size: 19px; font-family: var(--font-serif); font-style: italic; color: var(--ampelos-text-muted); line-height: 1.5; margin-bottom: 24px;">
+                Reportage lungo le pareti della valle del Rodano, dove i terrazzamenti sfidano la gravità e i vitigni autoctoni conservano una purezza minerale inviolata.
+              </p>
+              <div style="display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--ampelos-text-muted);">
+                <span>Di <strong>Matteo Rives</strong></span>
+                <span>•</span>
+                <span>16 Minuti di lettura</span>
+                <span>•</span>
+                <span>22 Ottobre 2026</span>
+              </div>
+              <div style="margin-top: 24px; display: flex; gap: 14px;">
+                <button type="button" class="ampelos-btn ampelos-btn-primary" onclick="AmpelosApp.openArticle(1)">
+                  Leggi il saggio integrale
+                </button>
+                <button type="button" class="ampelos-btn ampelos-btn-outline" onclick="AmpelosApp.toggleSaveArticle(1, this)">
+                  <span class="ampelos-save-label">Salva per dopo</span>
+                </button>
+              </div>
+            </div>
+            <div>
+              <div style="border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-lg); aspect-ratio: 4/3; background: linear-gradient(135deg, #1b3527, #2f523d); display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 28px; font-style: italic; text-align: center; padding: 24px;">
+                I muri a secco del Vallese
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Griglia Articoli Membri -->
+      <section style="padding: 70px 0;">
+        <div class="ampelos-container">
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 2px solid var(--ampelos-primary); padding-bottom: 12px;">
+            <div>
+              <span class="ampelos-section-tag">Archivio Membri</span>
+              <h2 style="margin: 0; font-size: 28px;">I Saggi Sbloccati</h2>
+            </div>
+            <div>
+              <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosApp.showView('articoli')">
+                Visualizza tutto l'archivio →
+              </button>
+            </div>
+          </div>
+
+          <div class="ampelos-grid-3" id="subscriber-articles-grid">
+            <!-- Popolato dinamicamente da JS -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </div>
+
+  <!-- ==================== VISTA 2: TUTTI GLI ARTICOLI (ARCHIVIO & RUBRICHE) ==================== -->
+  <div id="view-articoli" class="ampelos-view">
+    <main style="padding: 50px 0 80px;">
+      <div class="ampelos-container">
+        <header style="border-bottom: 2px solid var(--ampelos-primary); padding-bottom: 24px; margin-bottom: 36px;">
+          <span class="ampelos-section-tag">Leggi Ampelos</span>
+          <h1 id="archive-title" style="font-size: clamp(2.4rem, 4vw, 3.4rem); margin-bottom: 12px;">Tutti gli articoli</h1>
+          <p id="archive-desc" style="font-size: 17px; color: var(--ampelos-text-muted); font-family: var(--font-serif); font-style: italic; margin-bottom: 24px;">
+            L'intero archivio di saggi, inchieste, territori e conversazioni.
+          </p>
+          
+          <!-- Filtri Rubriche -->
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" class="ampelos-btn ampelos-btn-primary ampelos-btn-sm btn-filter" data-rubrica="tutti" onclick="AmpelosApp.filterArticles('tutti')">Tutti gli articoli</button>
+            <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm btn-filter" data-rubrica="questioni" onclick="AmpelosApp.filterArticles('questioni')">Questioni (Fatti e cambiamenti)</button>
+            <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm btn-filter" data-rubrica="luoghi" onclick="AmpelosApp.filterArticles('luoghi')">Luoghi (Territori e comunità)</button>
+            <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm btn-filter" data-rubrica="idee" onclick="AmpelosApp.filterArticles('idee')">Idee (Saggi e interpretazioni)</button>
+            <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm btn-filter" data-rubrica="voci" onclick="AmpelosApp.filterArticles('voci')">Voci (Interviste e ritratti)</button>
+          </div>
+        </header>
+
+        <div class="ampelos-grid-3" id="archive-grid">
+          <!-- Popolato dinamicamente da JS -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== VISTA 3: SINGOLO ARTICOLO (CON PAYWALL SE NON LOGGATO) ==================== -->
+  <div id="view-articolo-singolo" class="ampelos-view">
+    <main class="ampelos-single-article">
+      <div class="ampelos-container">
+        <header class="ampelos-article-header">
+          <span class="ampelos-article-rubrica-lead" id="single-rubrica">Rubrica Luoghi</span>
+          <h1 class="ampelos-article-headline" id="single-title">Titolo Articolo</h1>
+          <div class="ampelos-article-standfirst" id="single-excerpt">Sottotitolo e standfirst editoriale dell'articolo.</div>
+          
+          <div class="ampelos-article-byline">
+            <span>Di <strong id="single-author">Autore</strong></span>
+            <span>•</span>
+            <span id="single-date">22 Ottobre 2026</span>
+            <span>•</span>
+            <span id="single-readtime">14 Min lettura</span>
+            <span>•</span>
+            <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" id="single-save-btn" onclick="AmpelosApp.toggleSaveArticle(AmpelosApp.currentArticleId, this)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              <span class="ampelos-save-label">Salva articolo</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="ampelos-article-hero-media" id="single-hero-media" style="background: #1e3527; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 32px; font-style: italic;">
+          Immagine Editoriale
+        </div>
+
+        <div class="ampelos-article-body" id="single-body-content">
+          <!-- Testo articolo e Paywall Gate se visitatore anonimo -->
+        </div>
+
+        <!-- Box Autore -->
+        <footer style="max-width: 720px; margin: 60px auto 0; padding-top: 30px; border-top: 1px solid var(--ampelos-border);">
+          <div style="display: flex; gap: 20px; align-items: flex-start;">
+            <div style="width: 64px; height: 64px; border-radius: var(--radius-pill); background: var(--ampelos-sage); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 26px; flex-shrink: 0;" id="single-author-avatar">
+              A
+            </div>
+            <div>
+              <h4 style="margin-bottom: 4px; font-size: 19px;" id="single-author-name">Autore</h4>
+              <p style="font-size: 13.5px; color: var(--ampelos-text-muted); line-height: 1.5; margin-bottom: 12px;">
+                Collaboratore di Ampelos. Scrive regolarmente di geomorfologia viticola, climi e memorie del vino europeo.
+              </p>
+              <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosApp.showView('autori')">
+                Tutti i saggi dell'autore →
+              </button>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== VISTA 4: ABBONATI (PIANI & SOTTOSCRIZIONE) ==================== -->
+  <div id="view-abbonati" class="ampelos-view">
+    <main style="padding: 60px 0 90px;">
+      <div class="ampelos-container">
+        <div class="ampelos-section-heading">
+          <span class="ampelos-section-tag">Sottoscrizione Esclusiva</span>
+          <h1 style="font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 16px;">Scegli la tua formula di lettura</h1>
+          <p style="font-size: 18px; color: var(--ampelos-text-muted); max-width: 680px; margin: 0 auto;">
+            Unisciti alla comunità che sceglie il tempo lento, l'indipendenza di pensiero e la profondità dei contenuti.
+          </p>
+        </div>
+
+        <!-- Piani Grid -->
+        <div class="ampelos-plans-grid" style="margin-top: 50px;">
+          <!-- Mensile -->
+          <div class="ampelos-plan-card">
+            <h3 class="ampelos-plan-name">Digitale Mensile</h3>
+            <p class="ampelos-plan-desc">Accesso flessibile per scoprire la rivista mese per mese.</p>
+            <div class="ampelos-plan-price">€ 9</div>
+            <div class="ampelos-plan-cycle">al mese, disdici quando vuoi con un clic</div>
+            <ul class="ampelos-plan-features">
+              <li>✓ Tutti gli articoli delle 4 Rubriche (Questioni, Luoghi, Idee, Voci)</li>
+              <li>✓ Accesso all'archivio storico completo</li>
+              <li>✓ Newsletter settimanale della Redazione</li>
+              <li>✓ Area personale con articoli salvati e libreria</li>
+            </ul>
+            <button type="button" class="ampelos-btn ampelos-btn-outline" onclick="AmpelosApp.openRegisterWithPlan('mensile')">
+              Attiva Mensile
+            </button>
+          </div>
+
+          <!-- Annuale (Consigliato) -->
+          <div class="ampelos-plan-card featured">
+            <span class="ampelos-plan-badge-featured">Il più scelto • 2 mesi in omaggio</span>
+            <h3 class="ampelos-plan-name">Digitale Annuale</h3>
+            <p class="ampelos-plan-desc">La formula ideale per seguire l'intero anno editoriale.</p>
+            <div class="ampelos-plan-price">€ 89</div>
+            <div class="ampelos-plan-cycle">all'anno (pari a soli 7,40€/mese)</div>
+            <ul class="ampelos-plan-features">
+              <li>✓ Tutti i vantaggi del piano Mensile</li>
+              <li>✓ Accesso riservato alle sezioni <strong>Percorsi</strong> e <strong>Atlante</strong></li>
+              <li>✓ Sconto del 20% sull'acquisto del Volume Monografico stampato</li>
+              <li>✓ Inviti prioritari agli incontri e convegni della Redazione</li>
+            </ul>
+            <button type="button" class="ampelos-btn ampelos-btn-primary" onclick="AmpelosApp.openRegisterWithPlan('annuale')">
+              Sottoscrivi Annuale
+            </button>
+          </div>
+
+          <!-- Sostenitore -->
+          <div class="ampelos-plan-card">
+            <h3 class="ampelos-plan-name">Sostenitore + Volume 2027</h3>
+            <p class="ampelos-plan-desc">Per chi desidera sostenere il progetto e ricevere l'opera cartacea.</p>
+            <div class="ampelos-plan-price">€ 160</div>
+            <div class="ampelos-plan-cycle">all'anno con libro cartaceo spedito incluso</div>
+            <ul class="ampelos-plan-features">
+              <li>✓ Tutto l'accesso digitale illimitato</li>
+              <li>✓ <strong>Copia numerata del Volume Edizione 2027</strong> in tela Fedrigoni a domicilio</li>
+              <li>✓ Menzione del tuo nome nel colophon dei sostenitori</li>
+              <li>✓ Canale di corrispondenza diretta con il Direttore</li>
+            </ul>
+            <button type="button" class="ampelos-btn ampelos-btn-terracotta" onclick="AmpelosApp.openRegisterWithPlan('sostenitore')">
+              Diventa Sostenitore
+            </button>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div style="max-width: 820px; margin: 70px auto 0;">
+          <h2 style="text-align: center; margin-bottom: 30px;">Domande Frequenti</h2>
+          <div style="display: grid; gap: 18px;">
+            <div style="background: #fff; padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+              <h4 style="margin-bottom: 6px;">Come accedo una volta sottoscritto l'abbonamento?</h4>
+              <p style="color: var(--ampelos-text-muted); font-size: 14.5px; margin: 0;">Ricevi subito le credenziali per effettuare il login da qualsiasi browser, smartphone o tablet.</p>
+            </div>
+            <div style="background: #fff; padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+              <h4 style="margin-bottom: 6px;">Posso disdire quando desidero?</h4>
+              <p style="color: var(--ampelos-text-muted); font-size: 14.5px; margin: 0;">Sì, puoi disattivare il rinnovo in ogni istante direttamente dalla tua Area Personale.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== VISTA 5: AREA PERSONALE (LIBRERIA, SALVATI, NEWSLETTER, ABBONAMENTO, PROFILO) ==================== -->
+  <div id="view-area-personale" class="ampelos-view">
+    <main class="ampelos-dashboard">
+      <div class="ampelos-container">
+        <div class="ampelos-dashboard-header">
+          <div>
+            <span class="ampelos-section-tag">Area Personale Ampelos</span>
+            <h1 style="font-size: 32px; margin: 0;">Matteo Rives</h1>
+            <p style="color: var(--ampelos-text-muted); margin: 4px 0 0; font-size: 14px;">
+              Abbonato con piano <strong id="user-sub-plan-text">Annuale</strong> • Stato: 
+              <span style="color: #27794d; font-weight: 600;">Attivo</span>
+            </p>
+          </div>
+          <div>
+            <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosApp.toggleSubscription(false)">
+              Esci (Logout)
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabs Nav -->
+        <nav class="ampelos-dashboard-nav" role="tablist">
+          <button type="button" class="ampelos-dash-tab active" data-tab="libreria" onclick="AmpelosApp.switchTab('libreria')">Libreria</button>
+          <button type="button" class="ampelos-dash-tab" data-tab="salvati" onclick="AmpelosApp.switchTab('salvati')">Salvati (<span id="tab-saved-count">2</span>)</button>
+          <button type="button" class="ampelos-dash-tab" data-tab="newsletter" onclick="AmpelosApp.switchTab('newsletter')">Gestione newsletter</button>
+          <button type="button" class="ampelos-dash-tab" data-tab="abbonamento" onclick="AmpelosApp.switchTab('abbonamento')">Abbonamento</button>
+          <button type="button" class="ampelos-dash-tab" data-tab="profilo" onclick="AmpelosApp.switchTab('profilo')">Profilo</button>
+        </nav>
+
+        <!-- Tab 1: Libreria -->
+        <div id="tab-panel-libreria" class="ampelos-dash-panel active">
+          <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+            <h3>La tua Libreria Digitale</h3>
+            <p style="color: var(--ampelos-text-muted); font-size: 14px; margin-bottom: 24px;">I quaderni monografici e le raccolte tematiche disponibili nel tuo abbonamento.</p>
+            <div class="ampelos-grid-3">
+              <div style="border: 1px solid var(--ampelos-border-light); padding: 20px; border-radius: var(--radius-sm); background: var(--ampelos-bg);">
+                <span class="ampelos-tag-future" style="margin-left: 0;">Quaderno I</span>
+                <h4 style="margin: 8px 0 4px;">Terroir d'Alta Quota</h4>
+                <p style="font-size: 13px; color: var(--ampelos-text-muted);">Raccolta di 8 saggi sulle viticolture alpine.</p>
+                <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" style="margin-top: 10px;" onclick="AmpelosApp.openArticle(1)">Apri Quaderno</button>
+              </div>
+              <div style="border: 1px solid var(--ampelos-border-light); padding: 20px; border-radius: var(--radius-sm); background: var(--ampelos-bg);">
+                <span class="ampelos-tag-future" style="margin-left: 0;">Quaderno II</span>
+                <h4 style="margin: 8px 0 4px;">L'Uva nel Tempo</h4>
+                <p style="font-size: 13px; color: var(--ampelos-text-muted);">Antologia sulle fermentazioni ancestrali e vasi vinari.</p>
+                <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" style="margin-top: 10px;" onclick="AmpelosApp.openArticle(2)">Apri Quaderno</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Salvati -->
+        <div id="tab-panel-salvati" class="ampelos-dash-panel" style="display: none;">
+          <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+            <h3>I tuoi Articoli Salvati</h3>
+            <p style="color: var(--ampelos-text-muted); font-size: 14px; margin-bottom: 24px;">Gli articoli contrassegnati per una lettura approfondita.</p>
+            <div id="saved-articles-container" class="ampelos-grid-3">
+              <!-- Popolato dinamicamente -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Gestione Newsletter -->
+        <div id="tab-panel-newsletter" class="ampelos-dash-panel" style="display: none;">
+          <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border); max-width: 640px;">
+            <h3>Gestione Newsletter</h3>
+            <p style="color: var(--ampelos-text-muted); font-size: 14px; margin-bottom: 24px;">Personalizza la frequenza e i contenuti delle comunicazioni email.</p>
+            <div style="display: grid; gap: 16px; margin-bottom: 24px;">
+              <label style="display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
+                <input type="checkbox" checked style="margin-top: 4px;">
+                <div>
+                  <strong>La Lettera del Giovedì</strong>
+                  <div style="font-size: 13px; color: var(--ampelos-text-muted);">L'editoriale del Direttore e l'anticipazione dei saggi.</div>
+                </div>
+              </label>
+              <label style="display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
+                <input type="checkbox" checked style="margin-top: 4px;">
+                <div>
+                  <strong>Note dal Vigneto &amp; Geografie</strong>
+                  <div style="font-size: 13px; color: var(--ampelos-text-muted);">Segnalazioni su nuove mappe dell'Atlante e reportage territoriali.</div>
+                </div>
+              </label>
+              <label style="display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
+                <input type="checkbox" checked style="margin-top: 4px;">
+                <div>
+                  <strong>Diario di Stampa Volume 2027</strong>
+                  <div style="font-size: 13px; color: var(--ampelos-text-muted);">Stato di avanzamento della pubblicazione cartacea.</div>
+                </div>
+              </label>
+            </div>
+            <button type="button" class="ampelos-btn ampelos-btn-primary" onclick="AmpelosApp.toast('Preferenze newsletter salvate!')">Salva impostazioni</button>
+          </div>
+        </div>
+
+        <!-- Tab 4: Abbonamento -->
+        <div id="tab-panel-abbonamento" class="ampelos-dash-panel" style="display: none;">
+          <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border); max-width: 720px;">
+            <h3>Stato dell'Abbonamento</h3>
+            <div style="background: var(--ampelos-bg); padding: 24px; border-radius: var(--radius-sm); margin: 20px 0; border: 1px solid var(--ampelos-border-light);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h4 style="margin: 0; font-size: 20px;">Piano Digitale Annuale</h4>
+                <span style="background: #e2f0e6; color: #1e6939; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: var(--radius-pill);">Attivo</span>
+              </div>
+              <p style="font-size: 13.5px; color: var(--ampelos-text-muted); margin: 0;">
+                Rinnovo programmato per il: <strong>22 Ottobre 2027</strong> (€ 89,00/anno) • Carta di credito •••• 4022
+              </p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+              <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosApp.toast('Ricevuta fiscale scaricata in PDF')">Scarica ultima ricevuta</button>
+              <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" style="color: #9d3a3a; border-color: #d8aaaa;" onclick="AmpelosApp.toast('Rinnovo automatico interrotto.')">Disattiva rinnovo</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 5: Profilo -->
+        <div id="tab-panel-profilo" class="ampelos-dash-panel" style="display: none;">
+          <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border); max-width: 600px;">
+            <h3>Dati del Profilo</h3>
+            <div class="ampelos-form-group">
+              <label>Nome e Cognome</label>
+              <input type="text" class="ampelos-form-input" value="Matteo Rives">
+            </div>
+            <div class="ampelos-form-group">
+              <label>Email</label>
+              <input type="email" class="ampelos-form-input" value="matteo.rives@ampelos.it">
+            </div>
+            <div class="ampelos-form-group">
+              <label>Nuova Password</label>
+              <input type="password" class="ampelos-form-input" placeholder="••••••••••••">
+            </div>
+            <button type="button" class="ampelos-btn ampelos-btn-primary" onclick="AmpelosApp.toast('Profilo aggiornato!')">Salva modifiche</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== VISTA 6: PERCORSI (ATTIVAZIONE SUCCESSIVA) ==================== -->
+  <div id="view-percorsi" class="ampelos-view">
+    <main style="padding: 60px 0 90px;">
+      <div class="ampelos-container">
+        <div style="max-width: 820px; margin: 0 auto; text-align: center; background: #fff; border: 1px solid var(--ampelos-border); padding: 60px 40px; border-radius: var(--radius-md);">
+          <span class="ampelos-tag-future" style="font-size: 11px; padding: 4px 10px; margin-bottom: 16px; display: inline-block;">
+            Attivazione Successiva • In Corso di Realizzazione
+          </span>
+          <h1 style="font-size: 38px; margin-bottom: 16px;">I Percorsi Ampelos</h1>
+          <p style="font-size: 17px; color: var(--ampelos-text-muted); line-height: 1.7; margin-bottom: 28px;">
+            I <strong>Percorsi Tematici</strong> sono fili conduttori di lettura monografica curati dalla redazione, ideati per approfondire questioni verticali attraverso una sequenza ragionata di saggi, carte e interviste.
+          </p>
+
+          <div style="display: grid; gap: 16px; text-align: left; margin: 30px 0;">
+            <div style="background: var(--ampelos-paper); padding: 20px; border-radius: var(--radius-sm);">
+              <h4 style="margin: 0 0 6px;">01 • Clima e quote: la risalita altimetrica dei vitigni</h4>
+              <p style="font-size: 13.5px; color: var(--ampelos-text-muted); margin: 0;">Un percorso in 6 tappe tra Valtellina, Valle d'Aosta e Alto Adige.</p>
+            </div>
+            <div style="background: var(--ampelos-paper); padding: 20px; border-radius: var(--radius-sm);">
+              <h4 style="margin: 0 0 6px;">02 • Il ritorno della terracotta: dall'anfora caucasica al grès contemporaneo</h4>
+              <p style="font-size: 13.5px; color: var(--ampelos-text-muted); margin: 0;">Storia dei vasi vinari e trasformazioni della microssigenazione.</p>
+            </div>
+          </div>
+
+          <button type="button" class="ampelos-btn ampelos-btn-primary" onclick="AmpelosApp.showView('articoli')">
+            Leggi gli articoli correnti
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== VISTA 7: ATLANTE (ATTIVAZIONE SUCCESSIVA) ==================== -->
+  <div id="view-atlante" class="ampelos-view">
+    <main style="padding: 60px 0 90px;">
+      <div class="ampelos-container">
+        <div style="max-width: 820px; margin: 0 auto; text-align: center; background: #fff; border: 1px solid var(--ampelos-border); padding: 60px 40px; border-radius: var(--radius-md);">
+          <span class="ampelos-tag-future" style="font-size: 11px; padding: 4px 10px; margin-bottom: 16px; display: inline-block;">
+            Attivazione Successiva • In Corso di Realizzazione
+          </span>
+          <h1 style="font-size: 38px; margin-bottom: 16px;">L'Atlante Geografico di Ampelos</h1>
+          <p style="font-size: 17px; color: var(--ampelos-text-muted); line-height: 1.7; margin-bottom: 28px;">
+            La prima cartografia digitale interdisciplinare dedicata ai terroir, alle faglie geologiche e ai microclimi, collegata ai saggi di territorio pubblicati nella rubrica Luoghi.
+          </p>
+
+          <div style="background: #182e22; border-radius: var(--radius-md); padding: 48px; color: #fff; margin: 30px 0;">
+            <div style="font-family: var(--font-serif); font-size: 26px; font-style: italic; margin-bottom: 12px;">
+              Mappa Vettoriale Geologica in Preparazione
+            </div>
+            <p style="color: #a8c4b3; font-size: 14px; max-width: 480px; margin: 0 auto;">
+              Rilievi topografici ad alta risoluzione, curve di livello e profili pedologici dell'Etna, delle Langhe e delle Alpi centro-occidentali.
+            </p>
+          </div>
+
+          <button type="button" class="ampelos-btn ampelos-btn-primary" onclick="AmpelosApp.showView('articoli')">
+            Esplora la Rubrica Luoghi
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== VISTA 8: AUTORI ==================== -->
+  <div id="view-autori" class="ampelos-view">
+    <main style="padding: 60px 0 90px;">
+      <div class="ampelos-container">
+        <div class="ampelos-section-heading">
+          <span class="ampelos-section-tag">I Collaboratori</span>
+          <h1 style="font-size: 38px; margin-bottom: 16px;">Gli Autori di Ampelos</h1>
+          <p style="font-size: 18px; color: var(--ampelos-text-muted); font-family: var(--font-serif); font-style: italic; max-width: 700px; margin: 0 auto;">
+            Saggisti, geografi, agronomi e studiosi che curano i testi della rivista.
+          </p>
+        </div>
+
+        <div class="ampelos-grid-3">
+          <div style="background: #fff; border: 1px solid var(--ampelos-border); border-radius: var(--radius-md); padding: 32px; text-align: center;">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: #243e30; color: #fff; font-family: var(--font-serif); font-size: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">MR</div>
+            <h3 style="font-size: 21px; margin-bottom: 4px;">Matteo Rives</h3>
+            <div style="font-size: 12.5px; font-weight: 700; color: var(--ampelos-terracotta); text-transform: uppercase; margin-bottom: 12px;">Direttore • Viticoltura Alpina</div>
+            <p style="font-size: 14px; color: var(--ampelos-text-muted); line-height: 1.6; margin-bottom: 18px;">Docente e ricercatore agrario. Indaga le risposte delle vigne d'alta quota all'instabilità climatica.</p>
+            <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosApp.showView('articoli')">14 Saggi pubblicati →</button>
+          </div>
+
+          <div style="background: #fff; border: 1px solid var(--ampelos-border); border-radius: var(--radius-md); padding: 32px; text-align: center;">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: #3b2a22; color: #fff; font-family: var(--font-serif); font-size: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">EM</div>
+            <h3 style="font-size: 21px; margin-bottom: 4px;">Elena Moretti</h3>
+            <div style="font-size: 12.5px; font-weight: 700; color: var(--ampelos-terracotta); text-transform: uppercase; margin-bottom: 12px;">Geografia dei Suoli &amp; Atlante</div>
+            <p style="font-size: 14px; color: var(--ampelos-text-muted); line-height: 1.6; margin-bottom: 18px;">Geografa e cartografa. Ha svolto ampi rilievi sui terreni vulcanici etnei e sui basalti europei.</p>
+            <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosApp.showView('articoli')">11 Saggi pubblicati →</button>
+          </div>
+
+          <div style="background: #fff; border: 1px solid var(--ampelos-border); border-radius: var(--radius-md); padding: 32px; text-align: center;">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: #1c2b38; color: #fff; font-family: var(--font-serif); font-size: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">CF</div>
+            <h3 style="font-size: 21px; margin-bottom: 4px;">Carlo Ferrini</h3>
+            <div style="font-size: 12.5px; font-weight: 700; color: var(--ampelos-terracotta); text-transform: uppercase; margin-bottom: 12px;">Filosofia dell'Assaggio &amp; Idee</div>
+            <p style="font-size: 14px; color: var(--ampelos-text-muted); line-height: 1.6; margin-bottom: 18px;">Filosofo e saggista. Esplora l'etica del gusto, il tempo lento e l'antropologia del vino.</p>
+            <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosApp.showView('articoli')">9 Saggi pubblicati →</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== VISTA 9: VOLUME & EDIZIONE 2027 ==================== -->
+  <div id="view-volume" class="ampelos-view">
+    <main style="padding: 60px 0 90px;">
+      <div class="ampelos-container">
+        <div class="ampelos-section-heading">
+          <span class="ampelos-section-tag">Pubblicazione Stampata Annuale</span>
+          <h1 style="font-size: clamp(2.4rem, 4.5vw, 4rem); margin-bottom: 16px;">Il Volume Ampelos</h1>
+          <p style="font-size: 19px; color: var(--ampelos-text-muted); font-family: var(--font-serif); font-style: italic; max-width: 740px; margin: 0 auto;">
+            L'approdo fisico e tattile del lavoro della rivista: un'opera cartacea di pregio da collezionare e consultare negli anni.
+          </p>
+        </div>
+
+        <div style="background: #15271d; color: #fff; border-radius: var(--radius-lg); padding: 56px 48px; margin-bottom: 60px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center; box-shadow: var(--shadow-lg);">
+          <div>
+            <span class="ampelos-badge-edition" style="background: var(--ampelos-terracotta); margin-bottom: 16px; display: inline-block;">Volume I • Edizione 2027</span>
+            <h2 style="color: #fff; font-size: 36px; line-height: 1.2; margin-bottom: 18px;">
+              Le Radici dell'Incertezza: Geografie, Uomini e Climi
+            </h2>
+            <p style="color: #c0d3c7; font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
+              312 pagine impresse su carta naturale Fedrigoni Arena Ivory 140g, cucitura a filo refe, copertina telata rigida verde bosco con impressioni in lamina di rame.
+            </p>
+            <button type="button" class="ampelos-btn ampelos-btn-terracotta ampelos-btn-lg" onclick="AmpelosApp.showView('abbonati')">
+              Incluso nel Piano Sostenitore
+            </button>
+          </div>
+          <div style="background: #0f1c14; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); padding: 40px; text-align: center;">
+            <div style="font-family: var(--font-serif); font-size: 14px; letter-spacing: 0.2em; color: #9bb2a4; margin-bottom: 8px;">AMPELOS MONOGRAFIE</div>
+            <div style="font-family: var(--font-serif); font-size: 42px; font-weight: 700; color: #faf7f2; margin-bottom: 6px;">2027</div>
+            <div style="width: 40px; height: 1px; background: var(--ampelos-terracotta); margin: 16px auto;"></div>
+            <p style="font-size: 13.5px; color: #b0c4b7; line-height: 1.6; margin: 0 0 16px;">Tavole pieghevoli dell'Atlante dei Suoli e sedici saggi inediti.</p>
+            <div style="font-size: 12px; color: #7f998a;">ISBN: 978-88-94721-01-4</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== VISTA 10: CHI SIAMO (MANIFESTO, REDAZIONE, COLLABORA, CONTATTI) ==================== -->
+  <div id="view-chi-siamo" class="ampelos-view">
+    <main style="padding: 60px 0 90px;">
+      <div class="ampelos-container">
+        <div class="ampelos-section-heading">
+          <span class="ampelos-section-tag">La Nostra Identità</span>
+          <h1 style="font-size: 38px; margin-bottom: 16px;">Chi siamo</h1>
+          <p style="font-size: 19px; color: var(--ampelos-text-muted); font-family: var(--font-serif); font-style: italic; max-width: 720px; margin: 0 auto;">
+            "ἄμπελος", la vite: radici nel sottosuolo, fusto che sfida le intemperie, frutti che si fanno memoria.
+          </p>
+        </div>
+
+        <section style="max-width: 820px; margin: 0 auto 60px; background: #fff; padding: 44px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+          <span class="ampelos-section-tag" style="color: var(--ampelos-primary);">La Nostra Carta Etica</span>
+          <h2 style="font-size: 30px; margin-bottom: 18px;">Manifesto e Metodo Editoriale</h2>
+          <div style="font-size: 16.5px; line-height: 1.8; color: #28302b;">
+            <p>Ampelos nasce per liberare la cultura del vino dalle logiche del marketing e delle schede in centesimi. Crediamo che ogni calice sia la sintesi complessa di geologia, civiltà materiale ed etica contadina.</p>
+            <div class="ampelos-quote-callout">
+              "Nessuna pubblicità, nessuna sponsorizzazione commerciale, nessun vino giudicato in fretta. Solo la ricerca della verità del luogo."
+            </div>
+          </div>
+        </section>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 820px; margin: 0 auto;">
+          <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+            <h3>Collabora con noi</h3>
+            <p style="color: var(--ampelos-text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 12px;">Accogliamo proposte di inchieste inedite e saggi di geologia, storia e antropologia.</p>
+            <p style="font-size: 13.5px;">Email: <strong>proposte@ampelos.it</strong></p>
+          </div>
+          <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+            <h3>Contatti</h3>
+            <p style="color: var(--ampelos-text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 12px;">Per informazioni sulla rivista e supporto per gli abbonamenti.</p>
+            <p style="font-size: 13.5px;">Email: <strong>abbonamenti@ampelos.it</strong></p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== VISTA 11: PAGINE DI SERVIZIO (PRIVACY, COOKIE, ECC.) ==================== -->
+  <div id="view-servizio" class="ampelos-view">
+    <main style="padding: 60px 0 90px;">
+      <div class="ampelos-container">
+        <div style="max-width: 820px; margin: 0 auto; background: #fff; padding: 48px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+          <span class="ampelos-section-tag">Pagine di Servizio</span>
+          <h1 id="servizio-title" style="font-size: 32px; margin-bottom: 16px;">Informazioni Legali</h1>
+          <div id="servizio-content" style="font-size: 15.5px; line-height: 1.8; color: #2e3630;">
+            <!-- Contenuto dinamico -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== VISTA 12: MAPPA ARCHITETTURA (RADICE SITO AMPELOS) ==================== -->
+  <div id="view-sitemap" class="ampelos-view">
+    <main style="padding: 60px 0 90px;">
+      <div class="ampelos-container">
+        <div class="ampelos-section-heading">
+          <span class="ampelos-section-tag">Architettura del Sito</span>
+          <h1 style="font-size: 36px; margin-bottom: 16px;">Mappa delle Pagine (Radice Sito Ampelos)</h1>
+          <p style="font-size: 18px; color: var(--ampelos-text-muted);">
+            Rappresentazione interattiva della struttura definita nel documento di progetto:
+          </p>
+        </div>
+
+        <div style="background: #fff; padding: 40px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border); max-width: 1000px; margin: 0 auto;">
+          <div class="ampelos-grid-3">
+            <!-- Ramo 1 -->
+            <div style="background: var(--ampelos-sage-subtle); padding: 24px; border-radius: var(--radius-sm); border: 1px solid var(--ampelos-sage-border);">
+              <h3 style="color: var(--ampelos-primary); font-size: 20px; border-bottom: 2px solid var(--ampelos-primary); padding-bottom: 8px;">1. MENU PRINCIPALE</h3>
+              <ul style="font-size: 14px; line-height: 1.8; padding-left: 20px; margin-top: 14px;">
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('home')"><strong>Home</strong></a></li>
+                <li>
+                  <a href="javascript:void(0)" onclick="AmpelosApp.showView('articoli')"><strong>Leggi</strong></a>:
+                  <ul style="font-size: 13px; color: var(--ampelos-text-muted);">
+                    <li><a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('tutti')">Tutti gli articoli</a></li>
+                    <li><a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('questioni')">Questioni (Fatti e cambiamenti)</a></li>
+                    <li><a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('luoghi')">Luoghi (Territori e comunità)</a></li>
+                    <li><a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('idee')">Idee (Saggi e interpretazioni)</a></li>
+                    <li><a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('voci')">Voci (Interviste e ritratti)</a></li>
+                    <li><a href="javascript:void(0)" onclick="AmpelosApp.openArticle(1)">Pagina articolo</a></li>
+                  </ul>
+                </li>
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('percorsi')"><strong>Percorsi</strong> (Attivazione successiva)</a></li>
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('atlante')"><strong>Atlante</strong> (Attivazione successiva)</a></li>
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('autori')"><strong>Autori</strong> (Elenco e Profilo autore)</a></li>
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('volume')"><strong>Volume</strong> (Presentazione, Edizione 2027)</a></li>
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('chi-siamo')"><strong>Chi siamo</strong> (Manifesto, Redazione, Collabora, Contatti)</a></li>
+              </ul>
+            </div>
+
+            <!-- Ramo 2 -->
+            <div style="background: var(--ampelos-terracotta-subtle); padding: 24px; border-radius: var(--radius-sm); border: 1px solid #f0cfc6;">
+              <h3 style="color: var(--ampelos-terracotta); font-size: 20px; border-bottom: 2px solid var(--ampelos-terracotta); padding-bottom: 8px;">2. FUNZIONI</h3>
+              <ul style="font-size: 14px; line-height: 1.8; padding-left: 20px; margin-top: 14px;">
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.openModal('modal-search')"><strong>Cerca</strong></a> (Modal di ricerca globale)</li>
+                <li>
+                  <a href="javascript:void(0)" onclick="AmpelosApp.showView('abbonati')"><strong>Abbonati</strong></a>:
+                  <ul style="font-size: 13px; color: var(--ampelos-text-muted);">
+                    <li>Piani (Mensile, Annuale, Sostenitore)</li>
+                    <li>Registrati</li>
+                    <li>Accedi</li>
+                  </ul>
+                </li>
+                <li>
+                  <a href="javascript:void(0)" onclick="AmpelosApp.showView('area-personale')"><strong>Area personale</strong></a>:
+                  <ul style="font-size: 13px; color: var(--ampelos-text-muted);">
+                    <li>Libreria</li>
+                    <li>Salvati</li>
+                    <li>Gestione newsletter</li>
+                    <li>Abbonamento</li>
+                    <li>Profilo</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Ramo 3 -->
+            <div style="background: var(--ampelos-slate-subtle); padding: 24px; border-radius: var(--radius-sm); border: 1px solid #d3e0e7;">
+              <h3 style="color: var(--ampelos-slate); font-size: 20px; border-bottom: 2px solid var(--ampelos-slate); padding-bottom: 8px;">3. FOOTER / SERVIZIO</h3>
+              <ul style="font-size: 14px; line-height: 1.8; padding-left: 20px; margin-top: 14px;">
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.openServicePage('newsletter')">Newsletter</a></li>
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.openServicePage('informazioni-testata')">Informazioni sulla testata</a></li>
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.openServicePage('privacy')">Privacy</a></li>
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.openServicePage('cookie')">Cookie</a></li>
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.openServicePage('accessibilita')">Accessibilità</a></li>
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.openServicePage('condizioni-di-utilizzo')">Condizioni di utilizzo</a></li>
+                <li><a href="javascript:void(0)" onclick="AmpelosApp.openServicePage('condizioni-abbonamento')">Condizioni di abbonamento</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="ampelos-footer" role="contentinfo">
+    <div class="ampelos-container">
+      <div class="ampelos-footer-grid">
+        <div class="ampelos-footer-col">
+          <div style="margin-bottom: 18px;">
+            <img src="wp-content/themes/hello-elementor-child/assets/images/ampelos.png" alt="Ampelos" style="filter: brightness(0) invert(1); height: 75px; width: auto;">
+          </div>
+          <p style="color: #a2b5aa; font-size: 13.5px; line-height: 1.6; max-width: 320px;">
+            <strong>Ampelos</strong> è una rivista trimestrale indipendente di cultura del vino, geografie e scienze umane. Pubblicata senza inserzioni pubblicitarie, vive unicamente del sostegno dei suoi lettori abbonati.
+          </p>
+          <div style="margin-top: 16px; font-size: 12px; color: #7f9488;">
+            ISSN: 2984-9128 • Reg. Tribunale di Roma n. 42/2026
+          </div>
+        </div>
+
+        <div class="ampelos-footer-col">
+          <h4>Leggi</h4>
+          <ul class="ampelos-footer-links">
+            <li><a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('tutti')">Tutti gli articoli</a></li>
+            <li><a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('questioni')">Questioni (Fatti e cambiamenti)</a></li>
+            <li><a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('luoghi')">Luoghi (Territori e comunità)</a></li>
+            <li><a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('idee')">Idee (Saggi e interpretazioni)</a></li>
+            <li><a href="javascript:void(0)" onclick="AmpelosApp.filterArticles('voci')">Voci (Interviste e ritratti)</a></li>
+            <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('percorsi')">Percorsi <span class="ampelos-tag-future">Prossimamente</span></a></li>
+            <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('atlante')">Atlante <span class="ampelos-tag-future">Prossimamente</span></a></li>
+          </ul>
+        </div>
+
+        <div class="ampelos-footer-col">
+          <h4>La Rivista</h4>
+          <ul class="ampelos-footer-links">
+            <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('chi-siamo')">Manifesto e metodo editoriale</a></li>
+            <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('chi-siamo')">Redazione</a></li>
+            <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('autori')">Elenco autori</a></li>
+            <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('volume')">Volume Edizione 2027</a></li>
+            <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('chi-siamo')">Collabora</a></li>
+            <li><a href="javascript:void(0)" onclick="AmpelosApp.showView('chi-siamo')">Contatti</a></li>
+          </ul>
+        </div>
+
+        <div class="ampelos-footer-col">
+          <h4>La Newsletter</h4>
+          <p style="color: #a2b5aa; font-size: 13px; margin-bottom: 14px;">
+            Ricevi ogni giovedì la lettera del Direttore con anticipazioni sui saggi e riflessioni settimanali.
+          </p>
+          <form onsubmit="event.preventDefault(); AmpelosApp.toast('Iscrizione alla newsletter confermata!');">
+            <div style="display: flex; gap: 8px;">
+              <input type="email" placeholder="Indirizzo email" required class="ampelos-form-input" style="background:#0e1d15; border-color: rgba(255,255,255,0.15); color: #fff;">
+              <button type="submit" class="ampelos-btn ampelos-btn-terracotta" style="flex-shrink: 0;">Iscriviti</button>
+            </div>
+          </form>
+          <div style="margin-top: 18px;">
+            <button type="button" class="ampelos-btn ampelos-btn-outline" style="border-color: #557563; color: #d0ded6; width: 100%; text-align: center;" onclick="AmpelosApp.showView('abbonati')">
+              Sottoscrivi l'Abbonamento
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ampelos-footer-bottom">
+        <div class="ampelos-legal-links">
+          <a href="javascript:void(0)" onclick="AmpelosApp.openServicePage('informazioni-testata')">Informazioni sulla testata</a> • 
+          <a href="javascript:void(0)" onclick="AmpelosApp.openServicePage('privacy')">Privacy</a> • 
+          <a href="javascript:void(0)" onclick="AmpelosApp.openServicePage('cookie')">Cookie</a> • 
+          <a href="javascript:void(0)" onclick="AmpelosApp.openServicePage('accessibilita')">Accessibilità</a> • 
+          <a href="javascript:void(0)" onclick="AmpelosApp.openServicePage('condizioni-di-utilizzo')">Condizioni di utilizzo</a> • 
+          <a href="javascript:void(0)" onclick="AmpelosApp.openServicePage('condizioni-abbonamento')">Condizioni di abbonamento</a>
+        </div>
+        <div>
+          © 2026 Ampelos Edizioni S.r.l. Tutti i diritti riservati.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== MODALS (NATIVE <dialog> with modern light-dismiss & containment) ==================== -->
+  
+  <!-- Modal Login -->
+  <dialog id="modal-login" class="ampelos-modal" aria-labelledby="modal-login-title">
+    <div class="ampelos-modal-header">
+      <h3 id="modal-login-title">Accedi ad Ampelos</h3>
+      <button type="button" class="ampelos-modal-close" onclick="AmpelosApp.closeModal('modal-login')">&times;</button>
+    </div>
+    <div class="ampelos-modal-body">
+      <p style="font-size: 14px; color: var(--ampelos-text-muted); margin-bottom: 20px;">
+        Inserisci le tue credenziali di abbonato per accedere agli articoli e all'area personale.
+      </p>
+      <form onsubmit="event.preventDefault(); AmpelosApp.handleLogin();">
+        <div class="ampelos-form-group">
+          <label>Username o Email</label>
+          <input type="text" id="input-login-username" class="ampelos-form-input" value="matteo.rives@ampelos.it" required>
+        </div>
+        <div class="ampelos-form-group">
+          <label>Password</label>
+          <input type="password" id="input-login-password" class="ampelos-form-input" value="ampelos2026" required>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; font-size: 13px;">
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="checkbox" checked> Ricordami
+          </label>
+          <a href="javascript:void(0)" onclick="alert('Link di recupero password inviato alla tua email.')" style="text-decoration: underline;">Password dimenticata?</a>
+        </div>
+        <button type="submit" class="ampelos-btn ampelos-btn-primary ampelos-btn-lg" style="width: 100%;">
+          Accedi alla Rivista
+        </button>
+        <div style="text-align: center; margin-top: 18px; font-size: 13.5px; color: var(--ampelos-text-muted);">
+          Non hai ancora sottoscritto l'abbonamento?
+          <br>
+          <a href="javascript:void(0)" onclick="AmpelosApp.closeModal('modal-login'); AmpelosApp.showView('abbonati');" style="color: var(--ampelos-terracotta); font-weight: 600;">
+            Sottoscrivi un piano →
+          </a>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Modal Registrazione & Sottoscrizione Abbonamento -->
+  <dialog id="modal-register" class="ampelos-modal" aria-labelledby="modal-register-title">
+    <div class="ampelos-modal-header">
+      <h3 id="modal-register-title">Sottoscrivi l'Abbonamento</h3>
+      <button type="button" class="ampelos-modal-close" onclick="AmpelosApp.closeModal('modal-register')">&times;</button>
+    </div>
+    <div class="ampelos-modal-body">
+      <p style="font-size: 14px; color: var(--ampelos-text-muted); margin-bottom: 20px;">
+        Crea il tuo profilo di lettore e sblocca subito tutti i contenuti della rivista.
+      </p>
+      <form onsubmit="event.preventDefault(); AmpelosApp.handleRegistration();">
+        <div class="ampelos-form-group">
+          <label>Piano Scelto</label>
+          <select id="reg-plan-select" class="ampelos-form-select">
+            <option value="annuale">Digitale Annuale (€ 89/anno - Consigliato)</option>
+            <option value="mensile">Digitale Mensile (€ 9/mese)</option>
+            <option value="sostenitore">Sostenitore + Volume 2027 cartaceo (€ 160/anno)</option>
+          </select>
+        </div>
+        <div class="ampelos-form-group">
+          <label>Nome e Cognome</label>
+          <input type="text" id="reg-name" class="ampelos-form-input" placeholder="Es. Mario Rossi" required>
+        </div>
+        <div class="ampelos-form-group">
+          <label>Indirizzo Email</label>
+          <input type="email" id="reg-email" class="ampelos-form-input" placeholder="mario.rossi@email.it" required>
+        </div>
+        <div class="ampelos-form-group">
+          <label>Scegli una Password</label>
+          <input type="password" id="reg-password" class="ampelos-form-input" placeholder="Minimo 8 caratteri" required minlength="6">
+        </div>
+        <p style="font-size: 12px; color: var(--ampelos-text-muted); line-height: 1.4; margin-bottom: 20px;">
+          Completando la registrazione accetti le Condizioni di abbonamento e la Privacy policy di Ampelos.
+        </p>
+        <button type="submit" class="ampelos-btn ampelos-btn-terracotta ampelos-btn-lg" style="width: 100%;">
+          Conferma Iscrizione &amp; Sottoscrizione
+        </button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Modal Ricerca Globale -->
+  <dialog id="modal-search" class="ampelos-modal" aria-labelledby="modal-search-title">
+    <div class="ampelos-modal-header">
+      <h3 id="modal-search-title">Cerca nell'archivio Ampelos</h3>
+      <button type="button" class="ampelos-modal-close" onclick="AmpelosApp.closeModal('modal-search')">&times;</button>
+    </div>
+    <div class="ampelos-modal-body">
+      <div class="ampelos-form-group">
+        <input type="search" id="sim-search-input" class="ampelos-form-input" placeholder="Cerca per parola chiave, territorio o autore..." oninput="AmpelosApp.handleLiveSearch(this.value)">
+      </div>
+      <div id="sim-search-results" style="max-height: 320px; overflow-y: auto; margin-top: 16px;">
+        <p style="font-size: 13px; color: var(--ampelos-text-muted);">
+          Suggerimenti: <em>Vallese, Etna, Collio, riscaldamento globale, dazi, fermentazione spontanea...</em>
+        </p>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Floating Toast Notification -->
+  <div id="ampelos-toast" class="ampelos-toast"></div>
+
+  <!-- ==================== LOGICA APPLICATIVA JAVASCRIPT ==================== -->
+  <script>
+    const AmpelosApp = (() => {
+      'use strict';
+
+      // State
+      let isSubscribed = false;
+      let currentArticleId = 1;
+      let currentRubricaFilter = 'tutti';
+      let savedArticleIds = [1, 2];
+
+      // Articoli del database dimostrativo
+      const articles = [
+        {
+          id: 1,
+          title: "Le vigne di pietra calcarea nel Vallese: una memoria geologica millenaria",
+          excerpt: "Reportage lungo le pareti della valle del Rodano, dove i terrazzamenti sfidano la gravità e i vitigni autoctoni conservano una purezza minerale inviolata.",
+          rubrica: "luoghi",
+          rubricaName: "Luoghi (Territori e comunità)",
+          author: "Matteo Rives",
+          date: "22 Ottobre 2026",
+          readTime: "16 Min",
+          heroBg: "linear-gradient(135deg, #1b3527, #2f523d)",
+          content: `
+            <p>Salendo lungo i pendii scoscesi che costeggiano il corso alto del Rodano, il paesaggio si trasforma in una vertigine minerale. Qui la viticoltura non è semplicemente una pratica agricola, ma un patto di resistenza stretto tra l'uomo e la roccia friabile dei contrafforti alpini.</p>
+            <p>I muri a secco, eretti con blocchi di calcare compatto e scisto metamorfico, sostengono terrazze microscopiche dove il Petite Arvine e l'Humagne Rouge affondano radici che non hanno mai conosciuto terreni soffici. In queste condizioni estreme, ogni millimetro di linfa è un prodigio di tensione osmotica.</p>
+            <div class="ampelos-quote-callout">
+              "Coltivare la vite su pendenze superiori al 50% significa rifiutare qualsiasi scorciatoia meccanica. Ogni gesto è calcolato sulla scala del passo umano."
+            </div>
+            <p>Durante il nostro soggiorno a Fully e Sion, abbiamo seguito i rilievi pedologici condotti dall'Università di Losanna: i campionamenti confermano come la straordinaria acidità salina di questi vini non derivi unicamente dal clima continentale freddo, ma da una complessa interazione radicale con le vene gessose del sottosuolo.</p>
+            <p>In un'epoca segnata dall'omologazione del gusto, i vini del Vallese ci ricordano che il terroir non è un'invenzione commerciale, ma l'impronta indelebile che la geologia imprime nella coscienza sensoriale di una comunità.</p>
+          `
+        },
+        {
+          id: 2,
+          title: "La nuova mappa dei dazi: come la geopolitica ridefinisce le rotte del vino europeo",
+          excerpt: "Analisi degli equilibri commerciali fra Nord America e mercati asiatici emergenti, tra flessione dei volumi e riscoperta delle produzioni di nicchia.",
+          rubrica: "questioni",
+          rubricaName: "Questioni (Fatti e cambiamenti)",
+          author: "Elena Moretti",
+          date: "18 Ottobre 2026",
+          readTime: "14 Min",
+          heroBg: "linear-gradient(135deg, #1e3527, #375341)",
+          content: `
+            <p>L'introduzione delle nuove tariffe doganali e le tensioni protezionistiche internazionali stanno ridisegnando in profondità le economie dei grandi distretti vinicoli europei. Dalle storiche maison di Bordeaux ai colli toscani, la dipendenza dai mercati d'oltreoceano si è trasformata in una vulnerabilità strutturale.</p>
+            <p>La nostra inchiesta analizza i dati doganali degli ultimi ventiquattro mesi: mentre i prodotti di largo consumo soffrono una contrazione sensibile nei volumi, i vini ad alta identità territoriale e tiratura limitata mantengono quotazioni stabili.</p>
+            <div class="ampelos-quote-callout">
+              "Il mercato globale sta penalizzando la standardizzazione industriale, premiando l'unicità e la veridicità delle piccole denominazioni."
+            </div>
+            <p>Resta aperto l'interrogativo cruciale su come i consorzi di tutela e le piccole cantine familiari sapranno orientarsi nei mercati asiatici emergenti, dove la cultura dell'assaggio richiede un lavoro di alfabetizzazione culturale prima ancora che distributivo.</p>
+          `
+        },
+        {
+          id: 3,
+          title: "L'estetica del silenzio: perché abbiamo smesso di ascoltare il vino prima di giudicarlo?",
+          excerpt: "Un saggio contro la fretta delle schede di punteggio e il vocabolario standardizzato dei descrittori sintetici. Verso un'antropologia del tempo lungo.",
+          rubrica: "idee",
+          rubricaName: "Idee (Saggi e interpretazioni)",
+          author: "Carlo Ferrini",
+          date: "14 Ottobre 2026",
+          readTime: "12 Min",
+          heroBg: "linear-gradient(135deg, #2a2c35, #3f4350)",
+          content: `
+            <p>Nella società contemporanea dell'iper-comunicazione visiva, anche l'atto dell'assaggio ha subito una progressiva accelerazione consumistica. I campioni vengono degustati in serie asfissianti, catalogati con tabelle a punti e liquidati in giudizi sintetici destinati ai social media.</p>
+            <p>Abbiamo dimenticato che il vino necessita di respiro, di attesa e di silenzio. Un grande saggio enologico non si concede al primo sorso: muta nel bicchiere, svela reticenze, racconta la pioggia dell'annata e le esitazioni di chi l'ha accompagnato in cantina.</p>
+            <div class="ampelos-quote-callout">
+              "Misurare un vino con una scala da 1 a 100 è come valutare una poesia calcolando il numero di sillabe per pagina."
+            </div>
+            <p>Recuperare una dimensione meditativa dell'assaggio significa riappropriarsi del proprio tempo interiore e restituire dignità all'intelligenza sensoriale dell'uomo.</p>
+          `
+        },
+        {
+          id: 4,
+          title: "\"La terra non ha fretta\": quarant'anni di riflessioni tra macerazioni, argille e libertà",
+          excerpt: "Lungo dialogo a ruota libera sulle colline di confine del Collio: la ricerca della verità del grappolo oltre qualsiasi etichetta e ideologia commerciale.",
+          rubrica: "voci",
+          rubricaName: "Voci (Interviste e ritratti)",
+          author: "Matteo Rives",
+          date: "09 Ottobre 2026",
+          readTime: "20 Min",
+          heroBg: "linear-gradient(135deg, #3c2a23, #573e33)",
+          content: `
+            <p>Seduti attorno al grande tavolo di legno grezzo nella cantina scavata nella ponca, il rumore del vento sulle vigne di Oslavia accompagna un dialogo intimo e radicale. Qui non si parla di mercati o tendenze enologiche effimere, ma di fedeltà biologica alla buccia dell'uva.</p>
+            <p>La tecnica del contatto prolungato con le bucce in anfore interrate non è stata una moda passeggera, ma un ritorno filologico alle origini caucasiche della civiltà del vino. Un cammino di quarant'anni costellato di incomprensioni iniziali, rifiuti e infine universale riconoscimento critico.</p>
+            <div class="ampelos-quote-callout">
+              "L'uva sana ha già in sé tutto quello che serve per farsi vino. Il nostro unico compito è non rovinarla con la paura."
+            </div>
+            <p>In questo ritratto a tutto tondo, emerge la figura di un uomo che ha saputo ascoltare la terra quando tutti guardavano alle chimiche di sintesi, tracciando una via che ha ispirato generazioni di giovani vignaioli in tutta Europa.</p>
+          `
+        }
+      ];
+
+      // Inizializzazione
+      function init() {
+        renderArticles();
+        updateUI();
+        initModalEvents();
+      }
+
+      function initModalEvents() {
+        document.querySelectorAll('dialog.ampelos-modal').forEach(dialog => {
+          dialog.addEventListener('click', (e) => {
+            const rect = dialog.getBoundingClientRect();
+            if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+              dialog.close();
+            }
+          });
+        });
+      }
+
+      function openModal(id) {
+        const dialog = document.getElementById(id);
+        if (dialog && typeof dialog.showModal === 'function') {
+          dialog.showModal();
+        }
+      }
+
+      function closeModal(id) {
+        const dialog = document.getElementById(id);
+        if (dialog && typeof dialog.close === 'function') {
+          dialog.close();
+        }
+      }
+
+      // Mostra schermate (views) - Bloccate per i non abbonati tranne Home e Piani
+      function showView(viewName, tabToActivate = null) {
+        // Se non abbonato, può visualizzare SOLO la home (o i piani/termini legali per iscriversi)
+        if (!isSubscribed && viewName !== 'home' && viewName !== 'abbonati' && viewName !== 'servizio' && viewName !== 'sitemap') {
+          toast("Le sezioni del menu e l'archivio sono accessibili solo dopo aver sottoscritto l'abbonamento.");
+          viewName = 'home';
+          const plansElem = document.getElementById('piani');
+          if (plansElem) plansElem.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.querySelectorAll('.ampelos-view').forEach(v => v.classList.remove('active-view'));
+        const target = document.getElementById('view-' + viewName);
+        if (target) {
+          target.classList.add('active-view');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Active state in menu
+        document.querySelectorAll('.ampelos-menu-primary li').forEach(li => li.classList.remove('current-menu-item'));
+        if (viewName === 'home') document.querySelector('.nav-item-home')?.classList.add('current-menu-item');
+        if (viewName === 'articoli' || viewName === 'articolo-singolo') document.querySelector('.nav-item-leggi')?.classList.add('current-menu-item');
+
+        if (viewName === 'area-personale' && tabToActivate) {
+          switchTab(tabToActivate);
+        }
+      }
+
+      // Switch tra stato Abbonato e Visitatore Anonimo
+      function toggleSubscription(active) {
+        isSubscribed = active;
+        updateUI();
+        toast(isSubscribed ? "Accesso effettuato! Menu completo e rivista sbloccati." : "Disconnesso. Sei in modalità visitatore (solo Home visibile).");
+        
+        // Se si torna a visitatore, rimanda direttamente alla home page
+        if (!isSubscribed) {
+          showView('home');
+        } else {
+          showView('home');
+        }
+      }
+
+      function updateUI() {
+        const statusLabel = document.getElementById('sim-status-label');
+        const homeGuestState = document.getElementById('home-guest-state');
+        const homeSubState = document.getElementById('home-subscriber-state');
+        const topbarUserArea = document.getElementById('topbar-user-area');
+        const headerRight = document.getElementById('header-right-actions');
+        const headerLeft = document.getElementById('header-left-actions');
+        const mainNavBar = document.getElementById('main-nav-bar');
+
+        if (isSubscribed) {
+          // ABBONATO ATTIVO: Mostra menu completo e sblocca sezioni
+          if (statusLabel) {
+            statusLabel.textContent = "Abbonato Attivo (Menu & Accesso Completo Sbloccati)";
+            statusLabel.style.color = "#79e29a";
+          }
+          if (mainNavBar) mainNavBar.style.display = 'block';
+          if (homeGuestState) homeGuestState.style.display = 'none';
+          if (homeSubState) homeSubState.style.display = 'block';
+
+          if (headerLeft) {
+            headerLeft.innerHTML = `
+              <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosApp.openModal('modal-search')" aria-label="Cerca">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>Cerca</span>
+              </button>
+            `;
+          }
+
+          if (topbarUserArea) {
+            topbarUserArea.innerHTML = `
+              <a href="javascript:void(0)" onclick="AmpelosApp.showView('area-personale')" class="ampelos-topbar-link">Area Personale (Matteo Rives)</a>
+              <span>•</span>
+              <a href="javascript:void(0)" onclick="AmpelosApp.toggleSubscription(false)" class="ampelos-topbar-link">Esci</a>
+            `;
+          }
+          if (headerRight) {
+            headerRight.innerHTML = `
+              <button type="button" class="ampelos-btn ampelos-btn-primary ampelos-btn-sm" onclick="AmpelosApp.showView('area-personale')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>Area Personale</span>
+              </button>
+            `;
+          }
+        } else {
+          // VISITATORE NON ABBONATO: Nascondi il menu, mostra SOLO Home page
+          if (statusLabel) {
+            statusLabel.textContent = "Visitatore (Solo Home Page visibile • Menu Nascosto)";
+            statusLabel.style.color = "#ffbc85";
+          }
+          if (mainNavBar) mainNavBar.style.display = 'none';
+          if (homeGuestState) homeGuestState.style.display = 'block';
+          if (homeSubState) homeSubState.style.display = 'none';
+
+          if (headerLeft) {
+            headerLeft.innerHTML = `
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ampelos-sage);">
+                Accesso Riservato agli Abbonati
+              </span>
+            `;
+          }
+
+          if (topbarUserArea) {
+            topbarUserArea.innerHTML = `
+              <span style="color: #9bb5a5;">Abbonati per accedere alla rivista</span>
+              <span>•</span>
+              <a href="javascript:void(0)" onclick="AmpelosApp.openModal('modal-login')" class="ampelos-topbar-link">Accedi</a>
+            `;
+          }
+          if (headerRight) {
+            headerRight.innerHTML = `
+              <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosApp.openModal('modal-login')">
+                Accedi
+              </button>
+              <button type="button" class="ampelos-btn ampelos-btn-terracotta ampelos-btn-sm" onclick="AmpelosApp.showView('abbonati')">
+                Abbonati
+              </button>
+            `;
+          }
+        }
+
+        renderArticles();
+        renderSavedArticles();
+      }
+
+      // Render cards articoli
+      function renderArticles() {
+        const guestGrid = document.getElementById('guest-articles-grid');
+        const subGrid = document.getElementById('subscriber-articles-grid');
+        const archiveGrid = document.getElementById('archive-grid');
+
+        const filtered = (currentRubricaFilter === 'tutti') 
+          ? articles 
+          : articles.filter(a => a.rubrica === currentRubricaFilter);
+
+        let cardsHtml = '';
+        filtered.forEach(a => {
+          const isSaved = savedArticleIds.includes(a.id);
+          cardsHtml += `
+            <article class="ampelos-article-card">
+              <div class="ampelos-article-thumb">
+                <div class="ampelos-rubrica-badge">${a.rubrica.toUpperCase()}</div>
+                <div style="background: ${a.heroBg}; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 20px; font-style: italic; padding: 20px; text-align: center;">
+                  ${a.title}
+                </div>
+              </div>
+              <div class="ampelos-article-content">
+                <div class="ampelos-article-meta">
+                  <span>${a.readTime} lettura</span> • <span>${a.rubricaName}</span>
+                </div>
+                <h3 class="ampelos-article-title">
+                  <a href="javascript:void(0)" onclick="AmpelosApp.openArticle(${a.id})">${a.title}</a>
+                </h3>
+                <p class="ampelos-article-excerpt">${a.excerpt}</p>
+                <div class="ampelos-article-footer">
+                  <span class="ampelos-author-name">Di ${a.author}</span>
+                  ${!isSubscribed ? `
+                    <span style="color: var(--ampelos-terracotta); font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 4px; cursor: pointer;" onclick="AmpelosApp.openArticle(${a.id})">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                      Riservato agli abbonati
+                    </span>
+                  ` : `
+                    <a href="javascript:void(0)" onclick="AmpelosApp.openArticle(${a.id})" style="font-weight: 600; color: var(--ampelos-primary);">Leggi →</a>
+                  `}
+                </div>
+              </div>
+            </article>
+          `;
+        });
+
+        if (guestGrid) guestGrid.innerHTML = cardsHtml;
+        if (subGrid) subGrid.innerHTML = cardsHtml;
+        if (archiveGrid) archiveGrid.innerHTML = cardsHtml;
+      }
+
+      // Filtro rubriche
+      function filterArticles(rubricaSlug) {
+        if (!isSubscribed) {
+          toast("Le rubriche e l'archivio completo sono riservati agli abbonati. Iscriviti per accedere.");
+          showView('home');
+          const plans = document.getElementById('piani');
+          if (plans) plans.scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+
+        currentRubricaFilter = rubricaSlug;
+        const titleElem = document.getElementById('archive-title');
+        const descElem = document.getElementById('archive-desc');
+
+        document.querySelectorAll('.btn-filter').forEach(btn => {
+          if (btn.getAttribute('data-rubrica') === rubricaSlug) {
+            btn.className = 'ampelos-btn ampelos-btn-primary ampelos-btn-sm btn-filter';
+          } else {
+            btn.className = 'ampelos-btn ampelos-btn-outline ampelos-btn-sm btn-filter';
+          }
+        });
+
+        if (rubricaSlug === 'tutti') {
+          if (titleElem) titleElem.textContent = 'Tutti gli articoli';
+          if (descElem) descElem.textContent = 'L\'intero archivio di saggi, inchieste, territori e conversazioni.';
+        } else if (rubricaSlug === 'questioni') {
+          if (titleElem) titleElem.textContent = 'Questioni';
+          if (descElem) descElem.textContent = 'Fatti e cambiamenti nel settore vitivinicolo, clima e geopolitica.';
+        } else if (rubricaSlug === 'luoghi') {
+          if (titleElem) titleElem.textContent = 'Luoghi';
+          if (descElem) descElem.textContent = 'Territori, comunità, geologie e paesaggi rurali del vino.';
+        } else if (rubricaSlug === 'idee') {
+          if (titleElem) titleElem.textContent = 'Idee';
+          if (descElem) descElem.textContent = 'Saggi, interpretazioni, filosofia e antropologia del gusto.';
+        } else if (rubricaSlug === 'voci') {
+          if (titleElem) titleElem.textContent = 'Voci';
+          if (descElem) descElem.textContent = 'Interviste approfondite e dialoghi con i protagonisti della vite.';
+        }
+
+        renderArticles();
+        showView('articoli');
+      }
+
+      // Apertura articolo singolo (accessibile solo per abbonati)
+      function openArticle(id) {
+        if (!isSubscribed) {
+          toast("Gli articoli completi sono riservati agli abbonati. Scegli il tuo piano qui sotto.");
+          showView('home');
+          const plans = document.getElementById('piani');
+          if (plans) plans.scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+
+        currentArticleId = id;
+        const article = articles.find(a => a.id === id) || articles[0];
+
+        document.getElementById('single-rubrica').textContent = article.rubricaName;
+        document.getElementById('single-title').textContent = article.title;
+        document.getElementById('single-excerpt').textContent = article.excerpt;
+        document.getElementById('single-author').textContent = article.author;
+        document.getElementById('single-author-name').textContent = article.author;
+        document.getElementById('single-date').textContent = article.date;
+        document.getElementById('single-readtime').textContent = article.readTime + " lettura";
+        document.getElementById('single-author-avatar').textContent = article.author.charAt(0);
+        document.getElementById('single-hero-media').style.background = article.heroBg;
+        document.getElementById('single-hero-media').textContent = article.title;
+
+        // Save button state
+        const saveBtn = document.getElementById('single-save-btn');
+        if (saveBtn) {
+          const isSaved = savedArticleIds.includes(article.id);
+          saveBtn.classList.toggle('is-saved', isSaved);
+          saveBtn.querySelector('.ampelos-save-label').textContent = isSaved ? 'Salvato' : 'Salva articolo';
+        }
+
+        const bodyContainer = document.getElementById('single-body-content');
+        bodyContainer.innerHTML = article.content;
+        showView('articolo-singolo');
+      }
+
+      // Gestione Salva Articolo
+      function toggleSaveArticle(id, btnElem) {
+        if (!isSubscribed) {
+          alert("È necessario essere abbonati per salvare gli articoli nella propria libreria.");
+          openModal('modal-login');
+          return;
+        }
+
+        const index = savedArticleIds.indexOf(id);
+        if (index > -1) {
+          savedArticleIds.splice(index, 1);
+          toast("Articolo rimosso dai tuoi salvati.");
+          if (btnElem) {
+            btnElem.classList.remove('is-saved');
+            const label = btnElem.querySelector('.ampelos-save-label');
+            if (label) label.textContent = 'Salva per dopo';
+          }
+        } else {
+          savedArticleIds.push(id);
+          toast("Articolo salvato nella tua Area Personale!");
+          if (btnElem) {
+            btnElem.classList.add('is-saved');
+            const label = btnElem.querySelector('.ampelos-save-label');
+            if (label) label.textContent = 'Salvato';
+          }
+        }
+
+        renderSavedArticles();
+      }
+
+      function renderSavedArticles() {
+        const counter1 = document.getElementById('saved-counter-badge');
+        const counter2 = document.getElementById('tab-saved-count');
+        if (counter1) counter1.textContent = savedArticleIds.length;
+        if (counter2) counter2.textContent = savedArticleIds.length;
+
+        const container = document.getElementById('saved-articles-container');
+        if (!container) return;
+
+        if (savedArticleIds.length === 0) {
+          container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--ampelos-bg); border-radius: var(--radius-sm);">
+              <p style="color: var(--ampelos-text-muted); margin-bottom: 16px;">Non hai ancora salvato nessun articolo.</p>
+              <button type="button" class="ampelos-btn ampelos-btn-primary ampelos-btn-sm" onclick="AmpelosApp.showView('articoli')">Esplora gli articoli</button>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        savedArticleIds.forEach(id => {
+          const a = articles.find(x => x.id === id);
+          if (!a) return;
+          html += `
+            <div class="ampelos-article-card" style="box-shadow: none;">
+              <div class="ampelos-article-content">
+                <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--ampelos-terracotta);">${a.rubrica}</span>
+                <h4 style="margin: 6px 0 10px; font-size: 18px;">
+                  <a href="javascript:void(0)" onclick="AmpelosApp.openArticle(${a.id})">${a.title}</a>
+                </h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--ampelos-border-light); padding-top: 10px; font-size: 12.5px;">
+                  <a href="javascript:void(0)" onclick="AmpelosApp.openArticle(${a.id})" style="font-weight: 600;">Leggi →</a>
+                  <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosApp.toggleSaveArticle(${a.id})">Rimuovi</button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      }
+
+      // Switch Tab Area Personale
+      function switchTab(tabName) {
+        document.querySelectorAll('.ampelos-dash-tab').forEach(t => {
+          t.classList.toggle('active', t.getAttribute('data-tab') === tabName);
+        });
+        document.querySelectorAll('.ampelos-dash-panel').forEach(p => {
+          p.style.display = (p.id === 'tab-panel-' + tabName) ? 'block' : 'none';
+        });
+      }
+
+      // Pagine di servizio footer
+      function openServicePage(slug) {
+        const titleElem = document.getElementById('servizio-title');
+        const contentElem = document.getElementById('servizio-content');
+
+        const pages = {
+          'newsletter': {
+            title: 'La Newsletter di Ampelos',
+            content: '<p>La newsletter di Ampelos è uno strumento editoriale autonomo curato ogni settimana dal Direttore e dai collaboratori della rivista. Offre approfondimenti inediti, segnalazioni bibliografiche ed estratti delle inchieste in corso. Puoi gestire o cancellare la tua iscrizione in qualsiasi momento.</p>'
+          },
+          'informazioni-testata': {
+            title: 'Informazioni sulla testata',
+            content: '<p><strong>Ampelos</strong> – Rivista di Cultura del Vino e Territori.<br>Pubblicazione trimestrale registrata al Tribunale di Roma al n. 42/2026. Iscrizione ROC n. 39182.<br>Editore: Ampelos Edizioni S.r.l., Via della Vigna Antica 14, 00186 Roma.<br>Direttore Responsabile: Matteo Rives.</p>'
+          },
+          'privacy': {
+            title: 'Informativa sulla Privacy (GDPR)',
+            content: '<p>Trattiamo i tuoi dati nel pieno rispetto del Regolamento UE 2016/679. I dati raccolti servono unicamente alla gestione del tuo abbonamento e all\'invio delle newsletter richieste. Ampelos non cede, non vende e non profila i dati dei propri abbonati a società terze.</p>'
+          },
+          'cookie': {
+            title: 'Cookie Policy',
+            content: '<p>Il nostro sito adotta esclusivamente cookie tecnici strettamente necessari al funzionamento della navigazione, all\'autenticazione delle sessioni e alla sicurezza del portale. Nessun cookie pubblicitario o tracciante commerciale è presente nelle nostre pagine.</p>'
+          },
+          'accessibilita': {
+            title: 'Dichiarazione di Accessibilità',
+            content: '<p>Ampelos garantisce la conformità alle linee guida WCAG 2.1 livello AA per consentire una fruizione fluida e confortevole a tutti i lettori, supportando la navigazione completa da tastiera, contrasti cromatici ottimali e compatibilità con lettori di schermo.</p>'
+          },
+          'condizioni-di-utilizzo': {
+            title: 'Condizioni di utilizzo',
+            content: '<p>I contenuti pubblicati su ampelos.it sono protetti dal diritto d\'autore. È vietata qualsiasi riproduzione sistematica, scraping o redistribuzione non autorizzata di saggi, cartografie e fotografie.</p>'
+          },
+          'condizioni-abbonamento': {
+            title: 'Condizioni di abbonamento',
+            content: '<p>L\'abbonamento decorre dal momento del pagamento e si rinnova tacitamente alla scadenza prescelta (mensile o annuale). È possibile disattivare il rinnovo in ogni momento dall\'Area Personale con un semplice clic. Il diritto di recesso è garantito entro 14 giorni dall\'acquisto.</p>'
+          }
+        };
+
+        const page = pages[slug] || pages['informazioni-testata'];
+        titleElem.textContent = page.title;
+        contentElem.innerHTML = page.content;
+        showView('servizio');
+      }
+
+      // Login handler
+      function handleLogin() {
+        closeModal('modal-login');
+        toggleSubscription(true);
+        showView('home');
+      }
+
+      // Registrazione con piano preselezionato
+      function openRegisterWithPlan(plan) {
+        const select = document.getElementById('reg-plan-select');
+        if (select) select.value = plan;
+        openModal('modal-register');
+      }
+
+      function handleRegistration() {
+        const plan = document.getElementById('reg-plan-select').value;
+        const name = document.getElementById('reg-name').value || 'Lettore';
+        closeModal('modal-register');
+        isSubscribed = true;
+        document.getElementById('user-sub-plan-text').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+        updateUI();
+        toast(`Benvenuto in Ampelos, ${name}! Il tuo abbonamento ${plan} è ora attivo.`);
+        showView('home');
+      }
+
+      // Live search
+      function handleLiveSearch(query) {
+        const results = document.getElementById('sim-search-results');
+        if (!results) return;
+
+        const q = query.trim().toLowerCase();
+        if (q.length < 2) {
+          results.innerHTML = '<p style="font-size: 13px; color: var(--ampelos-text-muted);">Digita almeno 2 caratteri per cercare saggi, territori o autori...</p>';
+          return;
+        }
+
+        const matches = articles.filter(a => 
+          a.title.toLowerCase().includes(q) || 
+          a.excerpt.toLowerCase().includes(q) || 
+          a.author.toLowerCase().includes(q) || 
+          a.rubrica.toLowerCase().includes(q)
+        );
+
+        if (!matches.length) {
+          results.innerHTML = `<p style="font-size: 13.5px; color: var(--ampelos-text-muted);">Nessun articolo trovato per "${query}".</p>`;
+          return;
+        }
+
+        let html = '';
+        matches.forEach(m => {
+          html += `
+            <div style="padding: 12px 0; border-bottom: 1px solid var(--ampelos-border-light); cursor: pointer;" onclick="AmpelosApp.closeModal('modal-search'); AmpelosApp.openArticle(${m.id});">
+              <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--ampelos-terracotta);">${m.rubrica}</span>
+              <h4 style="margin: 4px 0 2px; font-size: 16px; color: var(--ampelos-primary);">${m.title}</h4>
+              <div style="font-size: 12.5px; color: var(--ampelos-text-muted);">Di ${m.author} • ${m.readTime}</div>
+            </div>
+          `;
+        });
+        results.innerHTML = html;
+      }
+
+      // Toast notification helper
+      function toast(msg) {
+        const elem = document.getElementById('ampelos-toast');
+        if (!elem) return;
+        elem.textContent = msg;
+        elem.style.display = 'block';
+        setTimeout(() => {
+          elem.style.display = 'none';
+        }, 3200);
+      }
+
+      return {
+        init,
+        showView,
+        toggleSubscription,
+        openModal,
+        closeModal,
+        filterArticles,
+        openArticle,
+        toggleSaveArticle,
+        switchTab,
+        openServicePage,
+        handleLogin,
+        openRegisterWithPlan,
+        handleRegistration,
+        handleLiveSearch,
+        toast,
+        get currentArticleId() { return currentArticleId; }
+      };
+    })();
+
+    document.addEventListener('DOMContentLoaded', AmpelosApp.init);
+  </script>
+</body>
+</html>

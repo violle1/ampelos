@@ -335,8 +335,8 @@
     <!-- STATO B: SUBSCRIBER FEED (PER UTENTI ABBONATI) -->
     <div id="home-subscriber-state" style="display: none;">
       <!-- Welcome Bar -->
-      <div style="background: #eaf1ec; border-bottom: 1px solid var(--ampelos-sage-border); padding: 14px 0;">
-        <div class="ampelos-container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+      <div class="ampelos-welcome-bar">
+        <div class="ampelos-container">
           <div>
             <strong>Bentornato, Andrea</strong> • <span style="color: var(--ampelos-primary); font-weight: 600;">Abbonamento Annuale Attivo</span>
           </div>
@@ -349,9 +349,9 @@
       </div>
 
       <!-- Primo Piano Settimanale -->
-      <section style="padding: 50px 0 60px; border-bottom: 1px solid var(--ampelos-border);">
+      <section style="padding: 40px 0 50px; border-bottom: 1px solid var(--ampelos-border);">
         <div class="ampelos-container">
-          <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center;">
+          <div class="ampelos-hero-featured-grid">
             <div>
               <span class="ampelos-rubrica-badge" style="position: static; margin-bottom: 16px; display: inline-block;">
                 In Primo Piano • Rubrica Luoghi
@@ -371,7 +371,7 @@
                 <span>•</span>
                 <span>22 Ottobre 2026</span>
               </div>
-              <div style="margin-top: 24px; display: flex; gap: 14px;">
+              <div style="margin-top: 24px; display: flex; gap: 14px; flex-wrap: wrap;">
                 <button type="button" class="ampelos-btn ampelos-btn-primary" onclick="AmpelosApp.openArticle(1)">
                   Leggi il saggio integrale
                 </button>
@@ -390,9 +390,9 @@
       </section>
 
       <!-- Griglia Articoli Membri -->
-      <section style="padding: 70px 0;">
+      <section style="padding: 50px 0 70px;">
         <div class="ampelos-container">
-          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 2px solid var(--ampelos-primary); padding-bottom: 12px;">
+          <div class="ampelos-subscriber-section-header">
             <div>
               <span class="ampelos-section-tag">Archivio Membri</span>
               <h2 style="margin: 0; font-size: 28px;">I Saggi Sbloccati</h2>
@@ -1294,6 +1294,10 @@
 
       // Inizializzazione
       function init() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('sub') === '1' || params.get('sub') === 'true') {
+          isSubscribed = true;
+        }
         renderArticles();
         updateUI();
         initModalEvents();
@@ -1422,9 +1426,12 @@
           }
           if (headerRight) {
             headerRight.innerHTML = `
-              <button type="button" class="ampelos-btn ampelos-btn-primary ampelos-btn-sm" onclick="AmpelosApp.showView('area-personale')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <span>Area Personale</span>
+              <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-icon" onclick="AmpelosApp.openModal('modal-search')" aria-label="Cerca" title="Cerca nell'archivio">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              </button>
+              <button type="button" class="ampelos-btn ampelos-btn-primary ampelos-header-user-btn" onclick="AmpelosApp.showView('area-personale')" aria-label="Area Personale" title="Area Personale (Andrea)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span class="ampelos-btn-text">Area Personale</span>
               </button>
               <button type="button" class="ampelos-mobile-toggle" aria-label="Menu di navigazione" onclick="AmpelosApp.toggleMobileDrawer(true)">
                 ☰

@@ -833,6 +833,76 @@ img {
   }
 }
 
+/* COVER STORY PRIMO PIANO RESPONSIVE GRID */
+.ampelos-hero-featured-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+@media (max-width: 991px) {
+  .ampelos-hero-featured-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+/* WELCOME BAR ABBONATO */
+.ampelos-welcome-bar {
+  background: #eaf1ec;
+  border-bottom: 1px solid var(--ampelos-sage-border);
+  padding: 12px 0;
+}
+.ampelos-welcome-bar .ampelos-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+@media (max-width: 768px) {
+  .ampelos-welcome-bar {
+    padding: 10px 0;
+  }
+  .ampelos-welcome-bar .ampelos-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  .ampelos-welcome-bar strong {
+    font-size: 13.5px;
+  }
+  .ampelos-welcome-bar span {
+    font-size: 12.5px;
+  }
+  .ampelos-welcome-bar a {
+    font-size: 12.5px !important;
+  }
+}
+
+/* SUBSCRIBER SECTION HEADING RESPONSIVE */
+.ampelos-subscriber-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 36px;
+  border-bottom: 2px solid var(--ampelos-primary);
+  padding-bottom: 12px;
+  gap: 16px;
+}
+@media (max-width: 768px) {
+  .ampelos-subscriber-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .ampelos-subscriber-section-header .ampelos-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* NATIVE DIALOG / MODAL (Modern Web Guidance & Mobile UX Compliant) */
 dialog.ampelos-modal {
   border: none;
@@ -1171,18 +1241,23 @@ dialog.ampelos-modal::backdrop {
     display: none !important;
   }
 
+  /* Make test simulator bar static on mobile so it never collides with sticky header */
+  .ampelos-sim-bar {
+    position: static !important;
+  }
+
   /* Optimized Mobile Header (Clean 2-element layout: Logo left, Actions right) */
   .ampelos-header {
-    padding: 2px 0;
+    padding: 0 !important;
   }
   .ampelos-header-inner {
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    padding: 8px 0 !important;
+    padding: 6px 0 !important;
   }
   .ampelos-header-left {
-    display: none !important; /* Hide left text tagline so brand logo and buttons have ample space */
+    display: none !important;
   }
   .ampelos-brand-logo {
     margin: 0 !important;
@@ -1191,29 +1266,42 @@ dialog.ampelos-modal::backdrop {
   }
   .ampelos-brand-logo img,
   .ampelos-brand-logo svg {
-    height: 52px !important;
-    max-width: 140px !important;
+    height: 42px !important;
+    max-width: 110px !important;
     width: auto !important;
   }
   .ampelos-header-right {
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important;
+    gap: 6px !important;
     flex-shrink: 0;
   }
   .ampelos-header-right .ampelos-btn {
-    padding: 7px 12px !important;
-    font-size: 13px !important;
+    padding: 6px 10px !important;
+    font-size: 12px !important;
     font-weight: 600 !important;
     border-radius: var(--radius-sm) !important;
     white-space: nowrap !important;
   }
+  /* On mobile for subscribers: icon buttons */
+  .ampelos-header-user-btn .ampelos-btn-text {
+    display: none !important;
+  }
+  .ampelos-header-user-btn,
+  .ampelos-btn-icon {
+    padding: 6px 8px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
   .ampelos-mobile-toggle {
     display: inline-flex !important;
-    min-width: 42px !important;
-    min-height: 42px !important;
-    padding: 6px 10px !important;
-    font-size: 19px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+    padding: 6px 8px !important;
+    font-size: 18px !important;
     border-radius: var(--radius-sm) !important;
   }
 

@@ -39,9 +39,9 @@ $current_user = wp_get_current_user();
     </section>
 
     <!-- IN PRIMO PIANO / COVER STORY DELLA SETTIMANA -->
-    <section style="padding: 50px 0 60px; border-bottom: 1px solid var(--ampelos-border);">
+    <section style="padding: 40px 0 50px; border-bottom: 1px solid var(--ampelos-border);">
         <div class="ampelos-container">
-            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center;">
+            <div class="ampelos-hero-featured-grid">
                 <div>
                     <span class="ampelos-rubrica-badge" style="position: static; margin-bottom: 16px; display: inline-block;">
                         In Primo Piano • Rubrica Luoghi
@@ -61,7 +61,7 @@ $current_user = wp_get_current_user();
                         <span>•</span>
                         <span>22 Ottobre 2026</span>
                     </div>
-                    <div style="margin-top: 24px; display: flex; gap: 14px;">
+                    <div style="margin-top: 24px; display: flex; gap: 14px; flex-wrap: wrap;">
                         <a href="<?php echo esc_url(home_url('/tutti-gli-articoli/')); ?>" class="ampelos-btn ampelos-btn-primary">
                             Leggi il saggio integrale
                         </a>
@@ -80,9 +80,9 @@ $current_user = wp_get_current_user();
     </section>
 
     <!-- ULTIME USCITE DALLE 4 RUBRICHE -->
-    <section style="padding: 70px 0;">
+    <section style="padding: 50px 0 70px;">
         <div class="ampelos-container">
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 2px solid var(--ampelos-primary); padding-bottom: 12px;">
+            <div class="ampelos-subscriber-section-header">
                 <div>
                     <span class="ampelos-section-tag">Archivio Membri</span>
                     <h2 style="margin: 0; font-size: 28px;">Ultimi Saggi e Inchieste</h2>

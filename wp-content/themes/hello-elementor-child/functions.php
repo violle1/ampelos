@@ -610,3 +610,224 @@ function ampelos_restrict_navigation_to_subscribers() {
         exit;
     }
 }
+
+/**
+ * 12. SISTEMA VISIVO: MODALITÀ "SITO IN ALLESTIMENTO" SARTORIALE
+ * Permette di attivare/disattivare con un interruttore visivo la schermata di cortesia.
+ * I visitatori non loggati vedono il template elegante coming-soon.php;
+ * gli utenti autenticati navigano e lavorano normalmente su tutto il sito.
+ */
+
+// 12.1 Intercettazione Template
+add_action('template_redirect', 'ampelos_coming_soon_interceptor', 1);
+function ampelos_coming_soon_interceptor() {
+    $is_active = (bool) get_option('ampelos_coming_soon_active', 1);
+
+    // Se l'opzione è disattivata, il sito è aperto a tutti
+    if (!$is_active && !isset($_GET['ampelos_preview'])) {
+        return;
+    }
+
+    // Modalità Anteprima per l'amministratore (anche se loggato)
+    if (isset($_GET['ampelos_preview']) && current_user_can('manage_options')) {
+        nocache_headers();
+        include AMPELOS_THEME_DIR . '/templates/coming-soon.php';
+        exit;
+    }
+
+    // Se l'utente è loggato, naviga liberamente
+    if (is_user_logged_in()) {
+        return;
+    }
+
+    // Non bloccare la pagina di login e l'area admin
+    if (is_admin() || (isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] === 'wp-login.php')) {
+        return;
+    }
+
+    // Per i visitatori esterni: invia header anti-cache e mostra il template sartoriale
+    nocache_headers();
+    include AMPELOS_THEME_DIR . '/templates/coming-soon.php';
+    exit;
+}
+
+// 12.2 Pagina di Gestione Visiva nel Menu Admin
+add_action('admin_menu', 'ampelos_register_coming_soon_menu');
+function ampelos_register_coming_soon_menu() {
+    add_menu_page(
+        __('Stato Sito Ampelos', 'hello-elementor-child-ampelos'),
+        __('Stato Sito', 'hello-elementor-child-ampelos'),
+        'manage_options',
+        'ampelos-stato-sito',
+        'ampelos_render_coming_soon_admin_page',
+        'dashicons-hammer',
+        2
+    );
+}
+
+function ampelos_render_coming_soon_admin_page() {
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    // Salvataggio impostazioni
+    if (isset($_POST['ampelos_save_cs']) && check_admin_referer('ampelos_cs_action', 'ampelos_cs_nonce')) {
+        $status = isset($_POST['ampelos_coming_soon_active']) ? 1 : 0;
+        update_option('ampelos_coming_soon_active', $status);
+
+        if (isset($_POST['ampelos_cs_title'])) {
+            update_option('ampelos_cs_title', sanitize_text_field($_POST['ampelos_cs_title']));
+        }
+        if (isset($_POST['ampelos_cs_subtitle'])) {
+            update_option('ampelos_cs_subtitle', sanitize_textarea_field($_POST['ampelos_cs_subtitle']));
+        }
+        if (isset($_POST['ampelos_cs_badge'])) {
+            update_option('ampelos_cs_badge', sanitize_text_field($_POST['ampelos_cs_badge']));
+        }
+
+        echo '<div class="notice notice-success is-dismissible"><p><strong>' . esc_html__('Impostazioni aggiornate con successo!', 'hello-elementor-child-ampelos') . '</strong></p></div>';
+    }
+
+    $is_active = (bool) get_option('ampelos_coming_soon_active', 1);
+    $title = get_option('ampelos_cs_title', 'La cultura del vino, nei tempi lenti del pensiero.');
+    $subtitle = get_option('ampelos_cs_subtitle', 'Ampelos è una rivista trimestrale indipendente di cultura del vino, geografie e pensiero critico. Stiamo allestendo la piattaforma editoriale e l\'accesso per gli abbonati.');
+    $badge = get_option('ampelos_cs_badge', 'Edizione 2027 • In preparazione');
+    $preview_url = add_query_arg('ampelos_preview', '1', home_url('/'));
+    ?>
+    <div class="wrap" style="max-width: 820px; margin-top: 24px;">
+        <h1 style="font-size: 26px; font-weight: 600; color: #1a3325; margin-bottom: 8px;">
+            Ampelos • Stato del Sito (Modalità In Allestimento)
+        </h1>
+        <p style="color: #646970; font-size: 14px; margin-bottom: 24px;">
+            Attiva o disattiva con un clic la schermata sartoriale di benvenuto per i visitatori esterni. Quando la modalità è attiva, tu e la redazione continuate a navigare e lavorare normalmente su tutte le pagine.
+        </p>
+
+        <form method="post" action="" style="background: #ffffff; padding: 28px 32px; border-radius: 8px; border: 1px solid #c3c4c7; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+            <?php wp_nonce_field('ampelos_cs_action', 'ampelos_cs_nonce'); ?>
+
+            <!-- STATUS BOX -->
+            <div style="background: <?php echo $is_active ? '#edf5ef' : '#f0f0f1'; ?>; border: 1px solid <?php echo $is_active ? '#9dc4a6' : '#dcdcde'; ?>; padding: 20px 24px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px;">
+                <div>
+                    <strong style="font-size: 16px; display: block; color: <?php echo $is_active ? '#1a3325' : '#3c434a'; ?>; margin-bottom: 4px;">
+                        <?php echo $is_active ? '🟢 Modalità In Allestimento ATTIVA' : '🌐 Sito PUBBLICO e Aperto a Tutti'; ?>
+                    </strong>
+                    <span style="font-size: 13px; color: #646970;">
+                        <?php echo $is_active ? 'I visitatori esterni vedono la schermata di cortesia Ampelos. Tu navighi regolarmente.' : 'Tutti i visitatori possono accedere e consultare il sito liberamente.'; ?>
+                    </span>
+                </div>
+                <div>
+                    <label style="position: relative; display: inline-block; width: 54px; height: 28px; vertical-align: middle;">
+                        <input type="checkbox" name="ampelos_coming_soon_active" value="1" <?php checked($is_active, true); ?> style="opacity: 0; width: 0; height: 0;" onchange="this.form.submit();">
+                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: <?php echo $is_active ? '#1a3325' : '#ccc'; ?>; transition: .3s; border-radius: 34px;">
+                            <span style="position: absolute; content: ''; height: 20px; width: 20px; left: <?php echo $is_active ? '28px' : '4px'; ?>; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%;"></span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- CAMPI TESTO -->
+            <table class="form-table" role="presentation">
+                <tr>
+                    <th scope="row"><label for="ampelos_cs_badge">Etichetta / Badge</label></th>
+                    <td>
+                        <input name="ampelos_cs_badge" type="text" id="ampelos_cs_badge" value="<?php echo esc_attr($badge); ?>" class="regular-text" style="width: 100%; max-width: 480px;">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="ampelos_cs_title">Titolo Principale</label></th>
+                    <td>
+                        <input name="ampelos_cs_title" type="text" id="ampelos_cs_title" value="<?php echo esc_attr($title); ?>" class="large-text" style="width: 100%;">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="ampelos_cs_subtitle">Messaggio Editoriale</label></th>
+                    <td>
+                        <textarea name="ampelos_cs_subtitle" id="ampelos_cs_subtitle" rows="3" class="large-text" style="width: 100%;"><?php echo esc_textarea($subtitle); ?></textarea>
+                    </td>
+                </tr>
+            </table>
+
+            <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #f0f0f1; display: flex; align-items: center; gap: 14px;">
+                <button type="submit" name="ampelos_save_cs" class="button button-primary button-large" style="background: #1a3325; border-color: #1a3325;">
+                    Salva Modifiche
+                </button>
+                <a href="<?php echo esc_url($preview_url); ?>" target="_blank" class="button button-secondary button-large">
+                    👁️ Vedi Anteprima Schermata
+                </a>
+            </div>
+        </form>
+    </div>
+    <?php
+}
+
+// 12.3 Indicatore Visivo nella Admin Bar Superiore
+add_action('admin_bar_menu', 'ampelos_coming_soon_admin_bar', 100);
+function ampelos_coming_soon_admin_bar($admin_bar) {
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    $is_active = (bool) get_option('ampelos_coming_soon_active', 1);
+    $text = $is_active ? '● Sito in Allestimento (ON)' : '○ Sito Pubblico (OFF)';
+    $class = $is_active ? 'ampelos-bar-on' : 'ampelos-bar-off';
+
+    $admin_bar->add_menu(array(
+        'id'    => 'ampelos-coming-soon-status',
+        'title' => '<span style="' . ($is_active ? 'color: #ffbc85; font-weight: 600;' : 'color: #c4d4c9;') . '">' . $text . '</span>',
+        'href'  => admin_url('admin.php?page=ampelos-stato-sito'),
+        'meta'  => array('title' => 'Gestisci lo stato del sito Ampelos')
+    ));
+}
+
+/**
+ * 13. HARDENING E SICUREZZA NATIVA (FIRST-PRINCIPLES)
+ * Protezione strutturale da attacchi malware, brute-force e discovery automatici.
+ */
+
+// 13.1 Disabilitazione totale di XML-RPC (vettore primario di attacchi brute-force amplificati)
+add_filter('xmlrpc_enabled', '__return_false');
+add_filter('xmlrpc_methods', '__return_empty_array');
+remove_action('wp_head', 'rsd_link');
+remove_action('wp_head', 'wlwmanifest_link');
+
+// 13.2 Blocco dell'enumerazione degli autori/utenti (previene la scoperta degli username admin via ?author=1)
+if (!is_admin()) {
+    add_action('init', 'ampelos_block_user_enumeration');
+}
+function ampelos_block_user_enumeration() {
+    if (isset($_REQUEST['author']) && is_numeric($_REQUEST['author'])) {
+        wp_safe_redirect(home_url('/'), 301);
+        exit;
+    }
+}
+
+// 13.3 Protezione REST API contro lo scraping della lista utenti (/wp-json/wp/v2/users)
+add_filter('rest_endpoints', 'ampelos_secure_rest_user_endpoints');
+function ampelos_secure_rest_user_endpoints($endpoints) {
+    if (!is_user_logged_in()) {
+        if (isset($endpoints['/wp/v2/users'])) {
+            unset($endpoints['/wp/v2/users']);
+        }
+        if (isset($endpoints['/wp/v2/users/(?P<id>[\d]+)'])) {
+            unset($endpoints['/wp/v2/users/(?P<id>[\d]+)']);
+        }
+    }
+    return $endpoints;
+}
+
+// 13.4 Rimozione della versione di WordPress da HTML, feed e header
+remove_action('wp_head', 'wp_generator');
+add_filter('the_generator', '__return_empty_string');
+
+// 13.5 Intestazioni di Sicurezza HTTP (Security Headers)
+add_action('send_headers', 'ampelos_send_security_headers');
+function ampelos_send_security_headers() {
+    if (!headers_sent()) {
+        header('X-Content-Type-Options: nosniff');
+        header('X-Frame-Options: SAMEORIGIN');
+        header('Referrer-Policy: strict-origin-when-cross-origin');
+        header('Permissions-Policy: geolocation=(), camera=(), microphone=()');
+    }
+}
+
+

@@ -1477,3 +1477,42 @@ I colori di fondo dell'header e del footer devono rimanere come prima, i fondo b
 #### 3. Ricompilazione Pacchetto e Invio su GitHub
 * Rigenerato l'archivio `hello-elementor-child.zip` nella radice del progetto e sul Desktop (`~/Desktop/hello-elementor-child.zip`).
 * Eseguito commit e push su `origin/main`.
+
+
+## Interazione #36 — [2026-10-28 23:41:00]
+
+### 👤 Richiesta Utente:
+```text
+<USER_REQUEST>
+lasciando attiva l'opzione che chi non è loggato non può vedere il menu di navigazione devi rendere il menu di navigazione un menu di Wordpress
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Registrazione e Integrazione Nativa del Menu di WordPress
+* **Registrazione Posizioni (`functions.php`):**
+  * Registrata la posizione del tema `register_nav_menus()` con ID `'primary'` (*"Menu Principale (Abbonati / Loggati)"*) e `'mobile'` (*"Menu Mobile Ampelos"*).
+* **Creazione Automatica del Menu in WordPress (`ampelos_create_default_wordpress_menu`):**
+  * Creato e popolato via codice il menu nativo **"Menu Principale Ampelos"** visibile e modificabile in **Aspetto → Menu** (`wp-admin/nav-menus.php`), strutturato con:
+    1. *Home*
+    2. *Leggi* (con sottomenu a tendina per *Tutti gli articoli*, *Questioni*, *Luoghi*, *Idee*, *Voci* corredati di descrizioni redazionali)
+    3. *Percorsi* (con badge automatico "In arrivo")
+    4. *Atlante* (con badge automatico "In arrivo")
+    5. *Autori*
+    6. *Volume*
+    7. *Chi siamo*
+  * Il menu viene assegnato automaticamente alla posizione primaria del tema tramite `set_theme_mod('nav_menu_locations')`.
+* **Walker Personalizzato (`Ampelos_Nav_Walker` & `Ampelos_Drawer_Nav_Walker`):**
+  * Supporta la struttura a tendina, i titoli e le descrizioni redazionali dei sottomenu e l'iniezione automatica dei badge editoriali ("In arrivo").
+  * In [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css) è stato aggiunto il supporto completo per le classi standard WordPress `.sub-menu` e `menu-item-has-children`.
+
+#### 2. Restrizione Visibilità Riservata agli Utenti Loggati / Abbonati
+* In [header.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/header.php):
+  * La barra di navigazione principale (`<nav class="ampelos-nav-bar">`) viene renderizzata **esclusivamente se l'utente è loggato / abbonato** (`if ($is_subscribed)`). Chi non è connesso non visualizza la barra di navigazione né il pulsante hamburger.
+* In [footer.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/footer.php):
+  * Anche nel drawer mobile, gli utenti non autenticati visualizzano esclusivamente il link essenziale alla *Home* e i pulsanti di accesso/sottoscrizione, mentre il menu completo WordPress compare solo agli abbonati connessi.
+
+#### 3. Ricompilazione Pacchetto e Sincronizzazione Git
+* Ricompilato l'archivio `hello-elementor-child.zip` nella radice del progetto e sul Desktop (`~/Desktop/hello-elementor-child.zip`).
+* Eseguito commit e push su `origin/main`.

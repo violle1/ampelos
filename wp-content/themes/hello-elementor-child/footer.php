@@ -100,23 +100,23 @@ if (!defined('ABSPATH')) {
     </div>
     <div class="ampelos-drawer-nav">
         <ul>
-            <li><a href="<?php echo esc_url(home_url('/')); ?>">Home</a></li>
-            <li>
-                <a href="<?php echo esc_url(home_url('/tutti-gli-articoli/')); ?>">
-                    <strong>Leggi (Tutti gli articoli)</strong> <span>→</span>
-                </a>
-                <div class="ampelos-drawer-subnav">
-                    <a href="<?php echo esc_url(home_url('/rubrica/questioni/')); ?>">• Questioni</a>
-                    <a href="<?php echo esc_url(home_url('/rubrica/luoghi/')); ?>">• Luoghi</a>
-                    <a href="<?php echo esc_url(home_url('/rubrica/idee/')); ?>">• Idee</a>
-                    <a href="<?php echo esc_url(home_url('/rubrica/voci/')); ?>">• Voci</a>
-                </div>
-            </li>
-            <li><a href="<?php echo esc_url(home_url('/percorsi/')); ?>">Percorsi <span class="ampelos-tag-future">In arrivo</span></a></li>
-            <li><a href="<?php echo esc_url(home_url('/atlante/')); ?>">Atlante <span class="ampelos-tag-future">In arrivo</span></a></li>
-            <li><a href="<?php echo esc_url(home_url('/autori/')); ?>">Autori</a></li>
-            <li><a href="<?php echo esc_url(home_url('/volume/')); ?>">Volume Monografico</a></li>
-            <li><a href="<?php echo esc_url(home_url('/chi-siamo/')); ?>">Chi siamo</a></li>
+            <?php if ($is_subscribed_drawer) : ?>
+                <?php
+                if (has_nav_menu('primary')) {
+                    wp_nav_menu(array(
+                        'theme_location' => 'primary',
+                        'items_wrap'     => '%3$s',
+                        'container'      => false,
+                        'walker'         => new Ampelos_Drawer_Nav_Walker(),
+                        'fallback_cb'    => 'ampelos_default_drawer_menu',
+                    ));
+                } else {
+                    ampelos_default_drawer_menu();
+                }
+                ?>
+            <?php else : ?>
+                <li><a href="<?php echo esc_url(home_url('/')); ?>">Home</a></li>
+            <?php endif; ?>
         </ul>
     </div>
     <div class="ampelos-drawer-footer">

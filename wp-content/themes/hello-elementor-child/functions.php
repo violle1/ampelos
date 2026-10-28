@@ -126,6 +126,356 @@ function ampelos_get_article_sample_image_url($slug_or_id) {
 }
 
 /**
+ * 1.3 REGISTRAZIONE MENU WORDPRESS E WALKER PERSONALIZZATO
+ */
+add_action('after_setup_theme', 'ampelos_register_theme_menus');
+function ampelos_register_theme_menus() {
+    register_nav_menus(array(
+        'primary' => __('Menu Principale (Abbonati / Loggati)', 'hello-elementor-child-ampelos'),
+        'mobile'  => __('Menu Mobile Ampelos', 'hello-elementor-child-ampelos'),
+    ));
+}
+
+/**
+ * Custom Walker per Menu Principale Ampelos
+ * Gestisce dropdown multilivello, descrizioni dei saggi e badge "In arrivo"
+ */
+class Ampelos_Nav_Walker extends Walker_Nav_Menu {
+    public function display_element($element, &$children_elements, $max_depth, $depth, $args, &$output) {
+        if (!$element) return;
+        $id_field = $this->db_fields['id'];
+        if (is_object($args[0])) {
+            $args[0]->has_children = !empty($children_elements[$element->$id_field]);
+        }
+        parent::display_element($element, $children_elements, $max_depth, $depth, $args, $output);
+    }
+
+    public function start_lvl(&$output, $depth = 0, $args = null) {
+        $indent = str_repeat("\t", $depth);
+        $output .= "\n$indent<div class=\"ampelos-dropdown\"><div class=\"ampelos-dropdown-inner\">\n";
+    }
+
+    public function end_lvl(&$output, $depth = 0, $args = null) {
+        $indent = str_repeat("\t", $depth);
+        $output .= "$indent</div></div>\n";
+    }
+
+    public function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
+        $indent = ($depth) ? str_repeat("\t", $depth) : '';
+        $classes = empty($item->classes) ? array() : (array) $item->classes;
+        $has_children = !empty($args->has_children);
+
+        if ($has_children) {
+            $classes[] = 'has-dropdown';
+        }
+
+        $class_names = join(' ', apply_filters('nav_menu_css_class', array_filter($classes), $item, $args, $depth));
+        $class_names = $class_names ? ' class="' . esc_attr($class_names) . '"' : '';
+
+        $output .= $indent . '<li' . $class_names . '>';
+
+        $atts = array();
+        $atts['title']  = !empty($item->attr_title) ? $item->attr_title : '';
+        $atts['target'] = !empty($item->target)     ? $item->target     : '';
+        $atts['rel']    = !empty($item->xfn)        ? $item->xfn        : '';
+        $atts['href']   = !empty($item->url)        ? $item->url        : '';
+
+        if ($depth > 0) {
+            $atts['class'] = 'ampelos-dropdown-item';
+        }
+
+        $atts = apply_filters('nav_menu_link_attributes', $atts, $item, $args, $depth);
+
+        $attributes = '';
+        foreach ($atts as $attr => $value) {
+            if (!empty($value)) {
+                $value = ('href' === $attr) ? esc_url($value) : esc_attr($value);
+                $attributes .= ' ' . $attr . '="' . $value . '"';
+            }
+        }
+
+        $title = apply_filters('the_title', $item->title, $item->ID);
+
+        $item_output = isset($args->before) ? $args->before : '';
+        $item_output .= '<a' . $attributes . '>';
+
+        if ($depth > 0) {
+            $item_output .= '<div class="ampelos-dropdown-title">' . $title . '</div>';
+            if (!empty($item->description)) {
+                $item_output .= '<div class="ampelos-dropdown-desc">' . esc_html($item->description) . '</div>';
+            }
+        } else {
+            $item_output .= $title;
+            if ($has_children) {
+                $item_output .= ' <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+            }
+            $slug_check = sanitize_title($item->title);
+            if ($slug_check === 'percorsi' || $slug_check === 'atlante' || in_array('tag-future', $classes)) {
+                $item_output .= ' <span class="ampelos-tag-future">In arrivo</span>';
+            }
+        }
+
+        $item_output .= '</a>';
+        $item_output .= isset($args->after) ? $args->after : '';
+
+        $output .= apply_filters('walker_nav_menu_start_el', $item_output, $item, $depth, $args);
+    }
+}
+
+/**
+ * Custom Walker per Drawer Mobile
+ */
+class Ampelos_Drawer_Nav_Walker extends Walker_Nav_Menu {
+    public function display_element($element, &$children_elements, $max_depth, $depth, $args, &$output) {
+        if (!$element) return;
+        $id_field = $this->db_fields['id'];
+        if (is_object($args[0])) {
+            $args[0]->has_children = !empty($children_elements[$element->$id_field]);
+        }
+        parent::display_element($element, $children_elements, $max_depth, $depth, $args, $output);
+    }
+
+    public function start_lvl(&$output, $depth = 0, $args = null) {
+        $output .= "\n<div class=\"ampelos-drawer-subnav\">\n";
+    }
+
+    public function end_lvl(&$output, $depth = 0, $args = null) {
+        $output .= "</div>\n";
+    }
+
+    public function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
+        $has_children = !empty($args->has_children);
+        $title = apply_filters('the_title', $item->title, $item->ID);
+        $url = !empty($item->url) ? esc_url($item->url) : '#';
+
+        if ($depth === 0) {
+            $output .= '<li>';
+            $output .= '<a href="' . $url . '">';
+            $output .= '<strong>' . $title . '</strong>';
+            if ($has_children) {
+                $output .= ' <span>→</span>';
+            }
+            $slug_check = sanitize_title($item->title);
+            if ($slug_check === 'percorsi' || $slug_check === 'atlante') {
+                $output .= ' <span class="ampelos-tag-future">In arrivo</span>';
+            }
+            $output .= '</a>';
+        } else {
+            $output .= '<a href="' . $url . '">• ' . $title . '</a>';
+        }
+    }
+
+    public function end_el(&$output, $item, $depth = 0, $args = null) {
+        if ($depth === 0) {
+            $output .= "</li>\n";
+        }
+    }
+}
+
+/**
+ * Fallback Menu Principale Desktop
+ */
+function ampelos_default_primary_menu() {
+    ?>
+    <ul class="ampelos-menu-primary">
+        <li class="<?php echo is_front_page() ? 'current-menu-item' : ''; ?>">
+            <a href="<?php echo esc_url(home_url('/')); ?>">Home</a>
+        </li>
+        <li class="has-dropdown <?php echo (is_home() || is_singular('post') || is_tax('rubrica') || (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'tutti-gli-articoli') !== false)) ? 'current-menu-item' : ''; ?>">
+            <a href="<?php echo esc_url(home_url('/tutti-gli-articoli/')); ?>">
+                Leggi
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </a>
+            <div class="ampelos-dropdown">
+                <a href="<?php echo esc_url(home_url('/tutti-gli-articoli/')); ?>" class="ampelos-dropdown-item">
+                    <div class="ampelos-dropdown-title">Tutti gli articoli</div>
+                    <div class="ampelos-dropdown-desc">Tutta la produzione editoriale e archivio</div>
+                </a>
+                <a href="<?php echo esc_url(home_url('/rubrica/questioni/')); ?>" class="ampelos-dropdown-item">
+                    <div class="ampelos-dropdown-title">Questioni</div>
+                    <div class="ampelos-dropdown-desc">Fatti e cambiamenti nel settore vitivinicolo</div>
+                </a>
+                <a href="<?php echo esc_url(home_url('/rubrica/luoghi/')); ?>" class="ampelos-dropdown-item">
+                    <div class="ampelos-dropdown-title">Luoghi</div>
+                    <div class="ampelos-dropdown-desc">Territori, comunità e paesaggi</div>
+                </a>
+                <a href="<?php echo esc_url(home_url('/rubrica/idee/')); ?>" class="ampelos-dropdown-item">
+                    <div class="ampelos-dropdown-title">Idee</div>
+                    <div class="ampelos-dropdown-desc">Saggi, interpretazioni e pensiero critico</div>
+                </a>
+                <a href="<?php echo esc_url(home_url('/rubrica/voci/')); ?>" class="ampelos-dropdown-item">
+                    <div class="ampelos-dropdown-title">Voci</div>
+                    <div class="ampelos-dropdown-desc">Interviste e ritratti ai protagonisti</div>
+                </a>
+            </div>
+        </li>
+        <li class="<?php echo (is_page('percorsi') || (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'percorsi') !== false)) ? 'current-menu-item' : ''; ?>">
+            <a href="<?php echo esc_url(home_url('/percorsi/')); ?>">
+                Percorsi
+                <span class="ampelos-tag-future">In arrivo</span>
+            </a>
+        </li>
+        <li class="<?php echo (is_page('atlante') || (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'atlante') !== false)) ? 'current-menu-item' : ''; ?>">
+            <a href="<?php echo esc_url(home_url('/atlante/')); ?>">
+                Atlante
+                <span class="ampelos-tag-future">In arrivo</span>
+            </a>
+        </li>
+        <li class="<?php echo (is_page('autori') || (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'autori') !== false)) ? 'current-menu-item' : ''; ?>">
+            <a href="<?php echo esc_url(home_url('/autori/')); ?>">Autori</a>
+        </li>
+        <li class="<?php echo (is_page('volume') || (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'volume') !== false)) ? 'current-menu-item' : ''; ?>">
+            <a href="<?php echo esc_url(home_url('/volume/')); ?>">Volume</a>
+        </li>
+        <li class="<?php echo (is_page('chi-siamo') || (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'chi-siamo') !== false)) ? 'current-menu-item' : ''; ?>">
+            <a href="<?php echo esc_url(home_url('/chi-siamo/')); ?>">Chi siamo</a>
+        </li>
+    </ul>
+    <?php
+}
+
+/**
+ * Fallback Menu Mobile Drawer
+ */
+function ampelos_default_drawer_menu() {
+    ?>
+    <li><a href="<?php echo esc_url(home_url('/')); ?>">Home</a></li>
+    <li>
+        <a href="<?php echo esc_url(home_url('/tutti-gli-articoli/')); ?>">
+            <strong>Leggi (Tutti gli articoli)</strong> <span>→</span>
+        </a>
+        <div class="ampelos-drawer-subnav">
+            <a href="<?php echo esc_url(home_url('/rubrica/questioni/')); ?>">• Questioni</a>
+            <a href="<?php echo esc_url(home_url('/rubrica/luoghi/')); ?>">• Luoghi</a>
+            <a href="<?php echo esc_url(home_url('/rubrica/idee/')); ?>">• Idee</a>
+            <a href="<?php echo esc_url(home_url('/rubrica/voci/')); ?>">• Voci</a>
+        </div>
+    </li>
+    <li><a href="<?php echo esc_url(home_url('/percorsi/')); ?>">Percorsi <span class="ampelos-tag-future">In arrivo</span></a></li>
+    <li><a href="<?php echo esc_url(home_url('/atlante/')); ?>">Atlante <span class="ampelos-tag-future">In arrivo</span></a></li>
+    <li><a href="<?php echo esc_url(home_url('/autori/')); ?>">Autori</a></li>
+    <li><a href="<?php echo esc_url(home_url('/volume/')); ?>">Volume Monografico</a></li>
+    <li><a href="<?php echo esc_url(home_url('/chi-siamo/')); ?>">Chi siamo</a></li>
+    <?php
+}
+
+/**
+ * Crea e assegna automaticamente il Menu WordPress "Menu Principale Ampelos" in Aspetto -> Menu
+ */
+function ampelos_create_default_wordpress_menu() {
+    $menu_name = 'Menu Principale Ampelos';
+    $menu_exists = wp_get_nav_menu_object($menu_name);
+
+    if (!$menu_exists) {
+        $menu_id = wp_create_nav_menu($menu_name);
+
+        if (!is_wp_error($menu_id)) {
+            // 1. Home
+            wp_update_nav_menu_item($menu_id, 0, array(
+                'menu-item-title'   => 'Home',
+                'menu-item-url'     => home_url('/'),
+                'menu-item-status'  => 'publish',
+            ));
+
+            // 2. Leggi
+            $parent_leggi_id = wp_update_nav_menu_item($menu_id, 0, array(
+                'menu-item-title'   => 'Leggi',
+                'menu-item-url'     => home_url('/tutti-gli-articoli/'),
+                'menu-item-status'  => 'publish',
+            ));
+
+            if ($parent_leggi_id && !is_wp_error($parent_leggi_id)) {
+                wp_update_nav_menu_item($menu_id, 0, array(
+                    'menu-item-title'       => 'Tutti gli articoli',
+                    'menu-item-url'         => home_url('/tutti-gli-articoli/'),
+                    'menu-item-description' => 'Tutta la produzione editoriale e archivio',
+                    'menu-item-parent-id'   => $parent_leggi_id,
+                    'menu-item-status'      => 'publish',
+                ));
+                wp_update_nav_menu_item($menu_id, 0, array(
+                    'menu-item-title'       => 'Questioni',
+                    'menu-item-url'         => home_url('/rubrica/questioni/'),
+                    'menu-item-description' => 'Fatti e cambiamenti nel settore vitivinicolo',
+                    'menu-item-parent-id'   => $parent_leggi_id,
+                    'menu-item-status'      => 'publish',
+                ));
+                wp_update_nav_menu_item($menu_id, 0, array(
+                    'menu-item-title'       => 'Luoghi',
+                    'menu-item-url'         => home_url('/rubrica/luoghi/'),
+                    'menu-item-description' => 'Territori, comunità e paesaggi',
+                    'menu-item-parent-id'   => $parent_leggi_id,
+                    'menu-item-status'      => 'publish',
+                ));
+                wp_update_nav_menu_item($menu_id, 0, array(
+                    'menu-item-title'       => 'Idee',
+                    'menu-item-url'         => home_url('/rubrica/idee/'),
+                    'menu-item-description' => 'Saggi, interpretazioni e pensiero critico',
+                    'menu-item-parent-id'   => $parent_leggi_id,
+                    'menu-item-status'      => 'publish',
+                ));
+                wp_update_nav_menu_item($menu_id, 0, array(
+                    'menu-item-title'       => 'Voci',
+                    'menu-item-url'         => home_url('/rubrica/voci/'),
+                    'menu-item-description' => 'Interviste e ritratti ai protagonisti',
+                    'menu-item-parent-id'   => $parent_leggi_id,
+                    'menu-item-status'      => 'publish',
+                ));
+            }
+
+            // 3. Percorsi
+            wp_update_nav_menu_item($menu_id, 0, array(
+                'menu-item-title'   => 'Percorsi',
+                'menu-item-url'     => home_url('/percorsi/'),
+                'menu-item-classes' => 'tag-future',
+                'menu-item-status'  => 'publish',
+            ));
+
+            // 4. Atlante
+            wp_update_nav_menu_item($menu_id, 0, array(
+                'menu-item-title'   => 'Atlante',
+                'menu-item-url'     => home_url('/atlante/'),
+                'menu-item-classes' => 'tag-future',
+                'menu-item-status'  => 'publish',
+            ));
+
+            // 5. Autori
+            wp_update_nav_menu_item($menu_id, 0, array(
+                'menu-item-title'   => 'Autori',
+                'menu-item-url'     => home_url('/autori/'),
+                'menu-item-status'  => 'publish',
+            ));
+
+            // 6. Volume
+            wp_update_nav_menu_item($menu_id, 0, array(
+                'menu-item-title'   => 'Volume',
+                'menu-item-url'     => home_url('/volume/'),
+                'menu-item-status'  => 'publish',
+            ));
+
+            // 7. Chi siamo
+            wp_update_nav_menu_item($menu_id, 0, array(
+                'menu-item-title'   => 'Chi siamo',
+                'menu-item-url'     => home_url('/chi-siamo/'),
+                'menu-item-status'  => 'publish',
+            ));
+        }
+    } else {
+        $menu_id = $menu_exists->term_id;
+    }
+
+    // Assegna la posizione del tema 'primary' e 'mobile'
+    $locations = get_theme_mod('nav_menu_locations');
+    if (!is_array($locations)) {
+        $locations = array();
+    }
+    if (empty($locations['primary']) || $locations['primary'] != $menu_id) {
+        $locations['primary'] = $menu_id;
+        $locations['mobile']  = $menu_id;
+        set_theme_mod('nav_menu_locations', $locations);
+    }
+}
+
+/**
  * 2. REGISTRAZIONE RUOLO "ABBONATO AMPELOS"
  */
 add_action('init', 'ampelos_register_subscriber_role');
@@ -665,16 +1015,18 @@ function ampelos_auto_seed_demo_content() {
     if ((isset($_GET['ampelos_action']) && $_GET['ampelos_action'] === 'seed_demo' && check_admin_referer('ampelos_seed_demo_nonce')) ||
         (isset($_GET['ampelos_seed']) && current_user_can('manage_options'))) {
         ampelos_populate_all_demo_content(true);
+        ampelos_create_default_wordpress_menu();
         flush_rewrite_rules(false);
         wp_safe_redirect(add_query_arg(array('page' => 'ampelos-stato-sito', 'ampelos_seeded' => '1'), admin_url('admin.php')));
         exit;
     }
 
     // Esegui automaticamente al primo avvio della nuova versione
-    if (!get_option('ampelos_demo_content_seeded_v5')) {
+    if (!get_option('ampelos_demo_content_seeded_v6')) {
         ampelos_populate_all_demo_content(true);
+        ampelos_create_default_wordpress_menu();
         flush_rewrite_rules(false);
-        update_option('ampelos_demo_content_seeded_v5', 1);
+        update_option('ampelos_demo_content_seeded_v6', 1);
         update_option('ampelos_pages_initialized', 1);
     }
 }

@@ -1577,3 +1577,31 @@ guarda il menu adesso è un disastro.
 * Versione del tema elevata a **1.0.8** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
 * Rigenerato `hello-elementor-child.zip` in radice e sulla Scrivania (`~/Desktop/hello-elementor-child.zip`).
 * Eseguito commit `d8e1a61` e push su `origin/main`.
+
+
+## Interazione #39 — [2026-10-29 00:00:00]
+
+### 👤 Richiesta Utente:
+```text
+<USER_REQUEST>
+il menu deve avere la stessa estetica di prima
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Ripristino Integrale dell'Estetica Originale del Menu
+* **Markup Strutturale ([header.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/header.php)):**
+  * Ripristinato il markup sartoriale pulito identico a `index.html` (e al commit originale di riferimento):
+    * 7 elementi orizzontali centrati: *Home*, *Leggi* (con chevron SVG), *Percorsi* (badge "In arrivo"), *Atlante* (badge "In arrivo"), *Autori*, *Volume*, *Chi siamo*.
+    * Dropdown integrato per *Leggi* con `<div class="ampelos-dropdown">` e schede redazionali complete (titolo serif *Cormorant Garamond* e descrizione *Plus Jakarta Sans*).
+    * Restrizione di accesso mantenuta: la barra è visibile **esclusivamente agli utenti loggati / abbonati** (`if ($is_subscribed)`).
+* **Markup Mobile Drawer ([footer.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/footer.php)):**
+  * Ripristinato l'albero pulito del drawer laterale con sottomenu indentato.
+* **Stili CSS Originali ([style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css)):**
+  * Ripristinate tutte le regole CSS originali: spaziatura a 28px, font sans 13.5px bold maiuscolo con spaziatura 0.08em, riga animata inferiore alla selezione e hover, dropdown bianco con ombra morbida `box-shadow: var(--shadow-md)` e hover `var(--ampelos-paper)`.
+
+#### 2. Rigenerazione Pacchetto e Sincronizzazione Git
+* Versione del tema elevata a **1.0.9** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
+* Rigenerato `hello-elementor-child.zip` nella radice e sulla Scrivania (`~/Desktop/hello-elementor-child.zip`).
+* Eseguito commit `1daf757` e push su `origin/main`.

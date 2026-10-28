@@ -541,31 +541,146 @@ function ampelos_shortcode_plans($atts) {
 }
 
 /**
- * 10. SETUP AUTOMATICO STRUTTURA DEL SITO (MATCHING RADICE SITO AMPELOS)
- * Crea le pagine principali se non esistono già
+ * 10. SETUP AUTOMATICO E POPOLAMENTO CONTENUTI DEMO (INTEGRALE)
+ * Popola tassonomie, articoli demo, profili autori e pagine di servizio
  */
-add_action('admin_init', 'ampelos_check_and_create_pages');
-function ampelos_check_and_create_pages() {
-    if (!current_user_can('manage_options') || get_option('ampelos_pages_initialized')) {
+add_action('admin_init', 'ampelos_auto_seed_demo_content');
+function ampelos_auto_seed_demo_content() {
+    if (!current_user_can('manage_options')) {
         return;
     }
 
+    // Gestione trigger manuale con nonce
+    if (isset($_GET['ampelos_action']) && $_GET['ampelos_action'] === 'seed_demo' && check_admin_referer('ampelos_seed_demo_nonce')) {
+        ampelos_populate_all_demo_content(true);
+        wp_safe_redirect(add_query_arg(array('page' => 'ampelos-stato-sito', 'ampelos_seeded' => '1'), admin_url('admin.php')));
+        exit;
+    }
+
+    // Esegui automaticamente al primo avvio
+    if (!get_option('ampelos_demo_content_seeded_v3')) {
+        ampelos_populate_all_demo_content(false);
+        update_option('ampelos_demo_content_seeded_v3', 1);
+        update_option('ampelos_pages_initialized', 1);
+    }
+}
+
+function ampelos_populate_all_demo_content($force = false) {
+    // 1. Tassonomia Rubrica
+    ampelos_populate_default_terms();
+
+    // 2. Autori Dimostrativi
+    $authors_data = array(
+        'matteo_rives' => array(
+            'user_login'   => 'matteo_rives',
+            'user_email'   => 'matteo.rives@ampelos.it',
+            'display_name' => 'Matteo Rives',
+            'first_name'   => 'Matteo',
+            'last_name'    => 'Rives',
+            'description'  => 'Docente e ricercatore agrario. Indaga le risposte delle vigne d\'alta quota all\'instabilità climatica.',
+            'role'         => 'author',
+        ),
+        'elena_moretti' => array(
+            'user_login'   => 'elena_moretti',
+            'user_email'   => 'elena.moretti@ampelos.it',
+            'display_name' => 'Elena Moretti',
+            'first_name'   => 'Elena',
+            'last_name'    => 'Moretti',
+            'description'  => 'Geografa e cartografa. Ha svolto ampi rilievi sui terreni vulcanici etnei e sui basalti europei.',
+            'role'         => 'author',
+        ),
+        'carlo_ferrini' => array(
+            'user_login'   => 'carlo_ferrini',
+            'user_email'   => 'carlo.ferrini@ampelos.it',
+            'display_name' => 'Carlo Ferrini',
+            'first_name'   => 'Carlo',
+            'last_name'    => 'Ferrini',
+            'description'  => 'Filosofo e saggista. Esplora l\'etica del gusto, il tempo lento e l\'antropologia del vino.',
+            'role'         => 'author',
+        ),
+    );
+
+    $author_ids = array();
+    $current_admin_id = get_current_user_id();
+
+    foreach ($authors_data as $login => $a) {
+        $u = get_user_by('login', $login);
+        if (!$u) {
+            $u = get_user_by('email', $a['user_email']);
+        }
+
+        if (!$u) {
+            $user_id = wp_insert_user(array(
+                'user_login'   => $a['user_login'],
+                'user_pass'    => wp_generate_password(24),
+                'user_email'   => $a['user_email'],
+                'display_name' => $a['display_name'],
+                'first_name'   => $a['first_name'],
+                'last_name'    => $a['last_name'],
+                'description'  => $a['description'],
+                'role'         => $a['role'],
+            ));
+            if (!is_wp_error($user_id)) {
+                $author_ids[$login] = $user_id;
+            } else {
+                $author_ids[$login] = $current_admin_id;
+            }
+        } else {
+            wp_update_user(array(
+                'ID'           => $u->ID,
+                'display_name' => $a['display_name'],
+                'description'  => $a['description'],
+            ));
+            $author_ids[$login] = $u->ID;
+        }
+    }
+
+    // 3. Pagine Istituzionali e di Servizio con contenuti completi da index.html
     $pages = array(
-        'home'                  => array('title' => 'Home', 'template' => 'front-page.php'),
-        'tutti-gli-articoli'    => array('title' => 'Tutti gli articoli', 'template' => 'archive.php'),
-        'percorsi'              => array('title' => 'Percorsi', 'template' => 'page.php'),
-        'atlante'               => array('title' => 'Atlante', 'template' => 'page.php'),
-        'autori'                => array('title' => 'Autori', 'template' => 'page-autori.php'),
-        'volume'                => array('title' => 'Volume', 'template' => 'page-volume.php'),
-        'chi-siamo'             => array('title' => 'Chi siamo', 'template' => 'page-chi-siamo.php'),
-        'abbonati'              => array('title' => 'Abbonati', 'template' => 'page-abbonati.php'),
-        'area-personale'        => array('title' => 'Area Personale', 'template' => 'page-area-personale.php'),
-        'privacy'               => array('title' => 'Privacy Policy', 'template' => 'page.php'),
-        'cookie'                => array('title' => 'Cookie Policy', 'template' => 'page.php'),
-        'accessibilita'         => array('title' => 'Accessibilità', 'template' => 'page.php'),
-        'condizioni-di-utilizzo'=> array('title' => 'Condizioni di utilizzo', 'template' => 'page.php'),
-        'condizioni-abbonamento'=> array('title' => 'Condizioni di abbonamento', 'template' => 'page.php'),
-        'informazioni-testata'  => array('title' => 'Informazioni sulla testata', 'template' => 'page.php'),
+        'home'                  => array('title' => 'Home', 'template' => 'front-page.php', 'content' => ''),
+        'tutti-gli-articoli'    => array('title' => 'Tutti gli articoli', 'template' => 'archive.php', 'content' => ''),
+        'percorsi'              => array('title' => 'Percorsi', 'template' => 'page.php', 'content' => ''),
+        'atlante'               => array('title' => 'Atlante', 'template' => 'page.php', 'content' => ''),
+        'autori'                => array('title' => 'Autori', 'template' => 'page-autori.php', 'content' => ''),
+        'volume'                => array('title' => 'Volume', 'template' => 'page-volume.php', 'content' => ''),
+        'chi-siamo'             => array('title' => 'Chi siamo', 'template' => 'page-chi-siamo.php', 'content' => ''),
+        'abbonati'              => array('title' => 'Abbonati', 'template' => 'page-abbonati.php', 'content' => '[ampelos_piani]'),
+        'area-personale'        => array('title' => 'Area Personale', 'template' => 'page-area-personale.php', 'content' => ''),
+        'newsletter'            => array(
+            'title'    => 'La Newsletter di Ampelos',
+            'template' => 'page.php',
+            'content'  => '<p>La newsletter di Ampelos è uno strumento editoriale autonomo curato ogni settimana dal Direttore e dai collaboratori della rivista. Offre approfondimenti inediti, segnalazioni bibliografiche ed estratti delle inchieste in corso. Puoi gestire o cancellare la tua iscrizione in qualsiasi momento dall\'Area Personale.</p>',
+        ),
+        'informazioni-testata'  => array(
+            'title'    => 'Informazioni sulla testata',
+            'template' => 'page.php',
+            'content'  => '<p><strong>Ampelos</strong> – Rivista di Cultura del Vino e Territori.<br>Pubblicazione periodica trimestrale registrata presso il Registro della Stampa del Tribunale di Roma al n. 42/2026. Iscrizione ROC n. 39182.<br>Editore: Ampelos Edizioni S.r.l., Via della Vigna Antica 14, 00186 Roma. P.IVA e C.F. 09849120584.<br>Direttore Responsabile: Matteo Rives.</p>',
+        ),
+        'privacy'               => array(
+            'title'    => 'Informativa sulla Privacy (GDPR)',
+            'template' => 'page.php',
+            'content'  => '<p>La presente Privacy Policy descrive le modalità di trattamento dei dati personali degli utenti ai sensi del Regolamento UE 2016/679 (GDPR). Ampelos tratta unicamente i dati necessari per la gestione degli abbonamenti e delle comunicazioni della rivista, senza alcuna cessione a terze parti a scopi commerciali o profilazione pubblicitaria.</p>',
+        ),
+        'cookie'                => array(
+            'title'    => 'Cookie Policy',
+            'template' => 'page.php',
+            'content'  => '<p>Ampelos adotta esclusivamente cookie tecnici strettamente necessari al funzionamento della navigazione, all\'autenticazione delle sessioni e alla sicurezza del portale. Nessun cookie pubblicitario o tracciante commerciale di profilazione è presente nelle nostre pagine.</p>',
+        ),
+        'accessibilita'         => array(
+            'title'    => 'Dichiarazione di Accessibilità',
+            'template' => 'page.php',
+            'content'  => '<p>Ampelos garantisce la conformità alle linee guida WCAG 2.1 livello AA per consentire una fruizione fluida e confortevole a tutti i lettori, supportando la navigazione completa da tastiera, contrasti cromatici ottimali e compatibilità con lettori di schermo.</p>',
+        ),
+        'condizioni-di-utilizzo'=> array(
+            'title'    => 'Condizioni di utilizzo',
+            'template' => 'page.php',
+            'content'  => '<p>I contenuti pubblicati su ampelos.it sono protetti dalla legge sul diritto d\'autore. È vietata qualsiasi riproduzione sistematica, scraping o redistribuzione non autorizzata di saggi, cartografie e fotografie senza previo consenso scritto dell\'editore.</p>',
+        ),
+        'condizioni-abbonamento'=> array(
+            'title'    => 'Condizioni di abbonamento',
+            'template' => 'page.php',
+            'content'  => '<p>L\'abbonamento decorre dal momento del pagamento e si rinnova tacitamente alla scadenza prescelta (mensile o annuale). È possibile disattivare il rinnovo in ogni momento dall\'Area Personale con un semplice clic. Il diritto di recesso è garantito entro 14 giorni dall\'acquisto.</p>',
+        ),
     );
 
     foreach ($pages as $slug => $data) {
@@ -574,17 +689,117 @@ function ampelos_check_and_create_pages() {
             $page_id = wp_insert_post(array(
                 'post_title'     => $data['title'],
                 'post_name'      => $slug,
+                'post_content'   => $data['content'],
                 'post_status'    => 'publish',
                 'post_type'      => 'page',
-                'comment_status' => 'closed'
+                'comment_status' => 'closed',
             ));
             if ($page_id && !empty($data['template'])) {
                 update_post_meta($page_id, '_wp_page_template', $data['template']);
             }
+        } else {
+            if (!empty($data['content']) && ($force || empty($existing->post_content))) {
+                wp_update_post(array(
+                    'ID'           => $existing->ID,
+                    'post_content' => $data['content'],
+                ));
+            }
+            if (!empty($data['template'])) {
+                update_post_meta($existing->ID, '_wp_page_template', $data['template']);
+            }
         }
     }
 
-    update_option('ampelos_pages_initialized', 1);
+    // 4. I 4 Articoli dimostrativi completi (identici alla versione di sviluppo index.html)
+    $articles = array(
+        array(
+            'slug'          => 'le-vigne-di-pietra-calcarea-nel-vallese',
+            'title'         => 'Le vigne di pietra calcarea nel Vallese: una memoria geologica millenaria',
+            'excerpt'       => 'Reportage lungo le pareti della valle del Rodano, dove i terrazzamenti sfidano la gravità e i vitigni autoctoni conservano una purezza minerale inviolata.',
+            'rubrica'       => 'luoghi',
+            'author_login'  => 'matteo_rives',
+            'author_name'   => 'Matteo Rives',
+            'date'          => '2026-10-22 10:00:00',
+            'read_time'     => '16 Min',
+            'hero_caption'  => 'I muri a secco del Vallese',
+            'hero_gradient' => 'linear-gradient(135deg, #1b3527, #2f523d)',
+            'content'       => '<p>Salendo lungo i pendii scoscesi che costeggiano il corso alto del Rodano, il paesaggio si trasforma in una vertigine minerale. Qui la viticoltura non è semplicemente una pratica agricola, ma un patto di resistenza stretto tra l\'uomo e la roccia friabile dei contrafforti alpini.</p><p>I muri a secco, eretti con blocchi di calcare compatto e scisto metamorfico, sostengono terrazze microscopiche dove il Petite Arvine e l\'Humagne Rouge affondano radici che non hanno mai conosciuto terreni soffici. In queste condizioni estreme, ogni millimetro di linfa è un prodigio di tensione osmotica.</p><div class="ampelos-quote-callout">"Coltivare la vite su pendenze superiori al 50% significa rifiutare qualsiasi scorciatoia meccanica. Ogni gesto è calcolato sulla scala del passo umano."</div><p>Durante il nostro soggiorno a Fully e Sion, abbiamo seguito i rilievi pedologici condotti dall\'Università di Losanna: i campionamenti confermano come la straordinaria acidità salina di questi vini non derivi unicamente dal clima continentale freddo, ma da una complessa interazione radicale con le vene gessose del sottosuolo.</p><p>In un\'epoca segnata dall\'omologazione del gusto, i vini del Vallese ci ricordano che il terroir non è un\'invenzione commerciale, ma l\'impronta indelebile che la geologia imprime nella coscienza sensoriale di una comunità.</p>',
+        ),
+        array(
+            'slug'          => 'la-nuova-mappa-dei-dazi',
+            'title'         => 'La nuova mappa dei dazi: come la geopolitica ridefinisce le rotte del vino europeo',
+            'excerpt'       => 'Analisi degli equilibri commerciali fra Nord America e mercati asiatici emergenti, tra flessione dei volumi e riscoperta delle produzioni di nicchia.',
+            'rubrica'       => 'questioni',
+            'author_login'  => 'elena_moretti',
+            'author_name'   => 'Elena Moretti',
+            'date'          => '2026-10-18 10:00:00',
+            'read_time'     => '14 Min',
+            'hero_caption'  => 'Geopolitica delle dogane',
+            'hero_gradient' => 'linear-gradient(135deg, #1e3527, #375341)',
+            'content'       => '<p>L\'introduzione delle nuove tariffe doganali e le tensioni protezionistiche internazionali stanno ridisegnando in profondità le economie dei grandi distretti vinicoli europei. Dalle storiche maison di Bordeaux ai colli toscani, la dipendenza dai mercati d\'oltreoceano si è trasformata in una vulnerabilità strutturale.</p><p>La nostra inchiesta analizza i dati doganali degli ultimi ventiquattro mesi: mentre i prodotti di largo consumo soffrono una contrazione sensibile nei volumi, i vini ad alta identità territoriale e tiratura limitata mantengono quotazioni stabili.</p><div class="ampelos-quote-callout">"Il mercato globale sta penalizzando la standardizzazione industriale, premiando l\'unicità e la veridicità delle piccole denominazioni."</div><p>Resta aperto l\'interrogativo cruciale su come i consorzi di tutela e le piccole cantine familiari sapranno orientarsi nei mercati asiatici emergenti, dove la cultura dell\'assaggio richiede un lavoro di alfabetizzazione culturale prima ancora che distributivo.</p>',
+        ),
+        array(
+            'slug'          => 'l-estetica-del-silenzio',
+            'title'         => 'L\'estetica del silenzio: perché abbiamo smesso di ascoltare il vino prima di giudicarlo?',
+            'excerpt'       => 'Un saggio contro la fretta delle schede di punteggio e il vocabolario standardizzato dei descrittori sintetici. Verso un\'antropologia del tempo lungo.',
+            'rubrica'       => 'idee',
+            'author_login'  => 'carlo_ferrini',
+            'author_name'   => 'Carlo Ferrini',
+            'date'          => '2026-10-14 10:00:00',
+            'read_time'     => '12 Min',
+            'hero_caption'  => 'Estetica del silenzio',
+            'hero_gradient' => 'linear-gradient(135deg, #2a2c35, #3f4350)',
+            'content'       => '<p>Nella società contemporanea dell\'iper-comunicazione visiva, anche l\'atto dell\'assaggio ha subito una progressiva accelerazione consumistica. I campioni vengono degustati in serie asfissianti, catalogati con tabelle a punti e liquidati in giudizi sintetici destinati ai social media.</p><p>Abbiamo dimenticato che il vino necessita di respiro, di attesa e di silenzio. Un grande saggio enologico non si concede al primo sorso: muta nel bicchiere, svela reticenze, racconta la pioggia dell\'annata e le esitazioni di chi l\'ha accompagnato in cantina.</p><div class="ampelos-quote-callout">"Misurare un vino con una scala da 1 a 100 è come valutare una poesia calcolando il numero di sillabe per pagina."</div><p>Recuperare una dimensione meditativa dell\'assaggio significa riappropriarsi del proprio tempo interiore e restituire dignità all\'intelligenza sensoriale dell\'uomo.</p>',
+        ),
+        array(
+            'slug'          => 'la-terra-non-ha-fretta',
+            'title'         => '«La terra non ha fretta»: quarant\'anni di riflessioni tra macerazioni, argille e libertà',
+            'excerpt'       => 'Lungo dialogo a ruota libera sulle colline di confine del Collio: la ricerca della verità del grappolo oltre qualsiasi etichetta e ideologia commerciale.',
+            'rubrica'       => 'voci',
+            'author_login'  => 'matteo_rives',
+            'author_name'   => 'Matteo Rives',
+            'date'          => '2026-10-09 10:00:00',
+            'read_time'     => '20 Min',
+            'hero_caption'  => 'Conversazione con Josko',
+            'hero_gradient' => 'linear-gradient(135deg, #3c2a23, #573e33)',
+            'content'       => '<p>Seduti attorno al grande tavolo di legno grezzo nella cantina scavata nella ponca, il rumore del vento sulle vigne di Oslavia accompagna un dialogo intimo e radicale. Qui non si parla di mercati o tendenze enologiche effimere, ma di fedeltà biologica alla buccia dell\'uva.</p><p>La tecnica del contatto prolungato con le bucce in anfore interrate non è stata una moda passeggera, ma un ritorno filologico alle origini caucasiche della civiltà del vino. Un cammino di quarant\'anni costellato di incomprensioni iniziali, rifiuti e infine universale riconoscimento critico.</p><div class="ampelos-quote-callout">"L\'uva sana ha già in sé tutto quello che serve per farsi vino. Il nostro unico compito è non rovinarla con la paura."</div><p>In questo ritratto a tutto tondo, emerge la figura di un uomo che ha saputo ascoltare la terra quando tutti guardavano alle chimiche di sintesi, tracciando una via che ha ispirato generazioni di giovani vignaioli in tutta Europa.</p>',
+        ),
+    );
+
+    foreach ($articles as $art) {
+        $existing = get_page_by_path($art['slug'], OBJECT, 'post');
+        $author_id = isset($author_ids[$art['author_login']]) ? $author_ids[$art['author_login']] : $current_admin_id;
+
+        $post_args = array(
+            'post_title'     => $art['title'],
+            'post_name'      => $art['slug'],
+            'post_excerpt'   => $art['excerpt'],
+            'post_content'   => $art['content'],
+            'post_status'    => 'publish',
+            'post_type'      => 'post',
+            'post_author'    => $author_id,
+            'post_date'      => $art['date'],
+            'comment_status' => 'closed',
+        );
+
+        if (!$existing) {
+            $post_id = wp_insert_post($post_args);
+        } else {
+            $post_id = $existing->ID;
+            if ($force || empty($existing->post_content)) {
+                $post_args['ID'] = $post_id;
+                wp_update_post($post_args);
+            }
+        }
+
+        if ($post_id && !is_wp_error($post_id)) {
+            wp_set_object_terms($post_id, $art['rubrica'], 'rubrica');
+            update_post_meta($post_id, '_ampelos_read_time', $art['read_time']);
+            update_post_meta($post_id, '_ampelos_author_name', $art['author_name']);
+            update_post_meta($post_id, '_ampelos_hero_caption', $art['hero_caption']);
+            update_post_meta($post_id, '_ampelos_hero_gradient', $art['hero_gradient']);
+        }
+    }
 }
 
 /**
@@ -668,6 +883,11 @@ function ampelos_register_coming_soon_menu() {
 function ampelos_render_coming_soon_admin_page() {
     if (!current_user_can('manage_options')) {
         return;
+    }
+
+    // Feedback avvenuta sincronizzazione contenuti demo
+    if (isset($_GET['ampelos_seeded'])) {
+        echo '<div class="notice notice-success is-dismissible" style="border-left-color: #1a3325;"><p><strong>' . esc_html__('✓ Contenuti Demo sincronizzati con successo: 4 articoli completi con quote callout, 4 rubriche, 3 profili autori (Matteo Rives, Elena Moretti, Carlo Ferrini) e tutte le pagine istituzionali e legali sono ora popolate!', 'hello-elementor-child-ampelos') . '</strong></p></div>';
     }
 
     // Salvataggio impostazioni
@@ -756,6 +976,31 @@ function ampelos_render_coming_soon_admin_page() {
                 </a>
             </div>
         </form>
+
+        <!-- SEZIONE POPOLAMENTO CONTENUTI DEMO -->
+        <div style="margin-top: 36px; background: #ffffff; padding: 28px 32px; border-radius: 8px; border: 1px solid #c3c4c7; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+                <div style="max-width: 540px;">
+                    <h2 style="font-size: 19px; color: #1a3325; margin-top: 0; margin-bottom: 8px;">
+                        📚 Contenuti Demo della Rivista (Ripristino &amp; Allineamento)
+                    </h2>
+                    <p style="color: #646970; font-size: 13.5px; line-height: 1.6; margin-bottom: 12px;">
+                        Allinea e ripristina istantaneamente l'intero database di contenuti dimostrativi impiegati nella versione di sviluppo:
+                    </p>
+                    <ul style="font-size: 13px; color: #3c434a; line-height: 1.8; margin-left: 18px; list-style-type: disc;">
+                        <li><strong>4 Rubriche:</strong> <em>Questioni</em>, <em>Luoghi</em>, <em>Idee</em>, <em>Voci</em>.</li>
+                        <li><strong>4 Articoli completi:</strong> testi integrali, estratti, tempi di lettura, quote callout e gradienti editoriali.</li>
+                        <li><strong>3 Profili Autori:</strong> <em>Matteo Rives</em>, <em>Elena Moretti</em>, <em>Carlo Ferrini</em> con bio e saggistica.</li>
+                        <li><strong>16 Pagine:</strong> Home, Archivio, Chi siamo (Manifesto/Redazione), Volume 2027, Percorsi, Atlante, Piani, Privacy, Cookie, Condizioni, Info Testata, ecc.</li>
+                    </ul>
+                </div>
+                <div>
+                    <a href="<?php echo esc_url(wp_nonce_url(admin_url('admin.php?page=ampelos-stato-sito&ampelos_action=seed_demo'), 'ampelos_seed_demo_nonce')); ?>" class="button button-primary button-large" style="background: #1a3325; border-color: #1a3325; font-weight: 600; padding: 6px 18px;" onclick="return confirm('Vuoi sincronizzare e ripristinare i contenuti demo di Ampelos?');">
+                        ⚡ Popola / Sincronizza Ora
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
     <?php
 }

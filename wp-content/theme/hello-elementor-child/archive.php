@@ -16,7 +16,7 @@ $term_name    = $is_rubrica ? $current_term->name : 'Tutti gli articoli';
 $term_desc    = $is_rubrica ? $current_term->description : 'L\'intero archivio di saggi, inchieste, territori e conversazioni.';
 ?>
 
-<main id="primary" class="site-main" style="padding: 50px 0 80px;">
+<main id="primary" class="site-main" style="padding: 50px 0 80px; background: #ffffff;">
     <div class="ampelos-container">
         
         <!-- Header Archivio con Rubriche Tabs -->
@@ -55,23 +55,26 @@ $term_desc    = $is_rubrica ? $current_term->description : 'L\'intero archivio d
                 <?php
                 while (have_posts()) :
                     the_post();
-                    $r_terms = get_the_terms(get_the_ID(), 'rubrica');
-                    $badge   = (!empty($r_terms) && !is_wp_error($r_terms)) ? $r_terms[0]->name : 'Saggio';
+                    $r_terms       = get_the_terms(get_the_ID(), 'rubrica');
+                    $badge         = (!empty($r_terms) && !is_wp_error($r_terms)) ? $r_terms[0]->name : 'Saggio';
+                    $read_time     = get_post_meta(get_the_ID(), '_ampelos_read_time', true) ?: '14 Min';
+                    $hero_gradient = get_post_meta(get_the_ID(), '_ampelos_hero_gradient', true) ?: '#203528';
+                    $hero_caption  = get_post_meta(get_the_ID(), '_ampelos_hero_caption', true) ?: get_the_title();
                 ?>
-                    <article class="ampelos-article-card">
+                    <article class="ampelos-article-card" style="background: #ffffff;">
                         <div class="ampelos-article-thumb">
                             <div class="ampelos-rubrica-badge"><?php echo esc_html($badge); ?></div>
                             <?php if (has_post_thumbnail()) : ?>
                                 <?php the_post_thumbnail('medium_large'); ?>
                             <?php else : ?>
-                                <div style="background: #203528; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 20px; font-style: italic; padding: 20px; text-align: center;">
-                                    <?php the_title(); ?>
+                                <div style="background: <?php echo esc_attr($hero_gradient); ?>; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 20px; font-style: italic; padding: 20px; text-align: center;">
+                                    <?php echo esc_html($hero_caption); ?>
                                 </div>
                             <?php endif; ?>
                         </div>
                         <div class="ampelos-article-content">
                             <div class="ampelos-article-meta">
-                                <span><?php echo get_the_date('j M Y'); ?></span> • <span>12 Min lettura</span>
+                                <span><?php echo get_the_date('j M Y'); ?></span> • <span><?php echo esc_html($read_time); ?> lettura</span>
                             </div>
                             <h3 class="ampelos-article-title">
                                 <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>

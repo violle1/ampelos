@@ -39,7 +39,74 @@ $current_user = wp_get_current_user();
     </section>
 
     <!-- IN PRIMO PIANO / COVER STORY DELLA SETTIMANA -->
-    <section style="padding: 40px 0 50px; border-bottom: 1px solid var(--ampelos-border);">
+    <?php
+    $featured_query = new WP_Query(array(
+        'post_type'      => 'post',
+        'posts_per_page' => 1,
+        'post_status'    => 'publish',
+    ));
+    $featured_id = 0;
+
+    if ($featured_query->have_posts()) :
+        while ($featured_query->have_posts()) : $featured_query->the_post();
+            $featured_id   = get_the_ID();
+            $r_terms       = get_the_terms($featured_id, 'rubrica');
+            $rubrica_badge = (!empty($r_terms) && !is_wp_error($r_terms)) ? $r_terms[0]->name : 'Luoghi';
+            $read_time     = get_post_meta($featured_id, '_ampelos_read_time', true) ?: '16 Min';
+            $hero_text     = get_post_meta($featured_id, '_ampelos_hero_caption', true) ?: get_the_title();
+            $hero_gradient = get_post_meta($featured_id, '_ampelos_hero_gradient', true) ?: '#253d2f';
+    ?>
+    <section style="padding: 40px 0 50px; border-bottom: 1px solid var(--ampelos-border); background: #ffffff;">
+        <div class="ampelos-container">
+            <div class="ampelos-hero-featured-grid">
+                <div>
+                    <span class="ampelos-rubrica-badge" style="position: static; margin-bottom: 16px; display: inline-block;">
+                        In Primo Piano • Rubrica <?php echo esc_html($rubrica_badge); ?>
+                    </span>
+                    <h1 style="font-size: clamp(2.4rem, 4vw, 3.4rem); line-height: 1.15; margin-bottom: 18px;">
+                        <a href="<?php the_permalink(); ?>">
+                            <?php the_title(); ?>
+                        </a>
+                    </h1>
+                    <p style="font-size: 19px; font-family: var(--font-serif); font-style: italic; color: var(--ampelos-text-muted); line-height: 1.5; margin-bottom: 24px;">
+                        <?php echo wp_strip_all_tags(get_the_excerpt()); ?>
+                    </p>
+                    <div style="display: flex; align-items: center; gap: 18px; font-size: 13px; color: var(--ampelos-text-muted);">
+                        <span><strong>Di <?php the_author(); ?></strong></span>
+                        <span>•</span>
+                        <span><?php echo esc_html($read_time); ?> di lettura</span>
+                        <span>•</span>
+                        <span><?php echo get_the_date('j F Y'); ?></span>
+                    </div>
+                    <div style="margin-top: 24px; display: flex; gap: 14px; flex-wrap: wrap;">
+                        <a href="<?php the_permalink(); ?>" class="ampelos-btn ampelos-btn-primary">
+                            Leggi il saggio integrale
+                        </a>
+                        <button type="button" class="ampelos-btn ampelos-btn-outline" onclick="AmpelosUI.toggleSaveArticle(<?php echo $featured_id; ?>, this)">
+                            <span class="ampelos-save-label">Salva per dopo</span>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <?php if (has_post_thumbnail()) : ?>
+                        <div style="border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-lg); aspect-ratio: 4/3;">
+                            <?php the_post_thumbnail('large', array('style' => 'width:100%;height:100%;object-fit:cover;')); ?>
+                        </div>
+                    <?php else : ?>
+                        <div style="border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-lg); aspect-ratio: 4/3; background: <?php echo esc_attr($hero_gradient); ?>; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 32px; font-style: italic; text-align: center; padding: 24px;">
+                            <?php echo esc_html($hero_text); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php
+        endwhile;
+        wp_reset_postdata();
+    else :
+    ?>
+    <section style="padding: 40px 0 50px; border-bottom: 1px solid var(--ampelos-border); background: #ffffff;">
         <div class="ampelos-container">
             <div class="ampelos-hero-featured-grid">
                 <div>
@@ -55,7 +122,7 @@ $current_user = wp_get_current_user();
                         Reportage lungo le pareti strapiombanti della valle del Rodano, dove i terrazzamenti sfidano la gravità e i vitigni autoctoni conservano una purezza minerale inviolata.
                     </p>
                     <div style="display: flex; align-items: center; gap: 18px; font-size: 13px; color: var(--ampelos-text-muted);">
-                        <span><strong>Di Andrea Cavallaro</strong></span>
+                        <span><strong>Di Matteo Rives</strong></span>
                         <span>•</span>
                         <span>16 Minuti di lettura</span>
                         <span>•</span>
@@ -65,7 +132,7 @@ $current_user = wp_get_current_user();
                         <a href="<?php echo esc_url(home_url('/tutti-gli-articoli/')); ?>" class="ampelos-btn ampelos-btn-primary">
                             Leggi il saggio integrale
                         </a>
-                        <button type="button" class="ampelos-btn ampelos-btn-outline" onclick="AmpelosUI.toggleSaveArticle(101, this)">
+                        <button type="button" class="ampelos-btn ampelos-btn-outline" onclick="AmpelosUI.toggleSaveArticle(1, this)">
                             <span class="ampelos-save-label">Salva per dopo</span>
                         </button>
                     </div>
@@ -78,9 +145,10 @@ $current_user = wp_get_current_user();
             </div>
         </div>
     </section>
+    <?php endif; ?>
 
     <!-- ULTIME USCITE DALLE 4 RUBRICHE -->
-    <section style="padding: 50px 0 70px;">
+    <section style="padding: 50px 0 70px; background: #ffffff;">
         <div class="ampelos-container">
             <div class="ampelos-subscriber-section-header">
                 <div>
@@ -96,8 +164,56 @@ $current_user = wp_get_current_user();
 
             <!-- Griglia Articoli -->
             <div class="ampelos-grid-3">
-                <!-- Card 1 (Questioni) -->
-                <article class="ampelos-article-card">
+            <?php
+            $recent_query = new WP_Query(array(
+                'post_type'      => 'post',
+                'posts_per_page' => 3,
+                'post__not_in'   => $featured_id ? array($featured_id) : array(),
+                'post_status'    => 'publish',
+            ));
+
+            if ($recent_query->have_posts()) :
+                while ($recent_query->have_posts()) : $recent_query->the_post();
+                    $r_terms       = get_the_terms(get_the_ID(), 'rubrica');
+                    $rubrica_badge = (!empty($r_terms) && !is_wp_error($r_terms)) ? $r_terms[0]->name : 'Saggio';
+                    $read_time     = get_post_meta(get_the_ID(), '_ampelos_read_time', true) ?: '14 Min';
+                    $hero_text     = get_post_meta(get_the_ID(), '_ampelos_hero_caption', true) ?: get_the_title();
+                    $hero_gradient = get_post_meta(get_the_ID(), '_ampelos_hero_gradient', true) ?: '#1e3527';
+            ?>
+                <article class="ampelos-article-card" style="background: #ffffff;">
+                    <div class="ampelos-article-thumb">
+                        <div class="ampelos-rubrica-badge"><?php echo esc_html($rubrica_badge); ?></div>
+                        <?php if (has_post_thumbnail()) : ?>
+                            <?php the_post_thumbnail('medium_large'); ?>
+                        <?php else : ?>
+                            <div style="background: <?php echo esc_attr($hero_gradient); ?>; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 22px; text-align: center; padding: 20px;">
+                                <?php echo esc_html($hero_text); ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="ampelos-article-content">
+                        <div class="ampelos-article-meta">
+                            <span><?php echo esc_html($read_time); ?> lettura</span> • <span><?php echo esc_html($rubrica_badge); ?></span>
+                        </div>
+                        <h3 class="ampelos-article-title">
+                            <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                        </h3>
+                        <p class="ampelos-article-excerpt">
+                            <?php echo wp_strip_all_tags(get_the_excerpt()); ?>
+                        </p>
+                        <div class="ampelos-article-footer">
+                            <span class="ampelos-author-name">Di <?php the_author(); ?></span>
+                            <a href="<?php the_permalink(); ?>" style="font-weight: 600;">Leggi →</a>
+                        </div>
+                    </div>
+                </article>
+            <?php
+                endwhile;
+                wp_reset_postdata();
+            else :
+            ?>
+                <!-- Card 1 (Questioni) Fallback -->
+                <article class="ampelos-article-card" style="background: #ffffff;">
                     <div class="ampelos-article-thumb">
                         <div class="ampelos-rubrica-badge">Questioni</div>
                         <div style="background: #1e3527; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 22px;">
@@ -121,8 +237,8 @@ $current_user = wp_get_current_user();
                     </div>
                 </article>
 
-                <!-- Card 2 (Idee) -->
-                <article class="ampelos-article-card">
+                <!-- Card 2 (Idee) Fallback -->
+                <article class="ampelos-article-card" style="background: #ffffff;">
                     <div class="ampelos-article-thumb">
                         <div class="ampelos-rubrica-badge">Idee</div>
                         <div style="background: #2a2c35; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 22px;">
@@ -131,7 +247,7 @@ $current_user = wp_get_current_user();
                     </div>
                     <div class="ampelos-article-content">
                         <div class="ampelos-article-meta">
-                            <span>11 Min lettura</span> • <span>Idee</span>
+                            <span>12 Min lettura</span> • <span>Idee</span>
                         </div>
                         <h3 class="ampelos-article-title">
                             L'estetica del silenzio: perché abbiamo smesso di ascoltare il vino prima di giudicarlo?
@@ -146,8 +262,8 @@ $current_user = wp_get_current_user();
                     </div>
                 </article>
 
-                <!-- Card 3 (Voci) -->
-                <article class="ampelos-article-card">
+                <!-- Card 3 (Voci) Fallback -->
+                <article class="ampelos-article-card" style="background: #ffffff;">
                     <div class="ampelos-article-thumb">
                         <div class="ampelos-rubrica-badge">Voci</div>
                         <div style="background: #3c2a23; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 22px;">
@@ -170,6 +286,10 @@ $current_user = wp_get_current_user();
                         </div>
                     </div>
                 </article>
+            <?php endif; ?>
+            </div>
+        </div>
+    </section>
             </div>
         </div>
     </section>

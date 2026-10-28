@@ -1516,3 +1516,31 @@ lasciando attiva l'opzione che chi non è loggato non può vedere il menu di nav
 #### 3. Ricompilazione Pacchetto e Sincronizzazione Git
 * Ricompilato l'archivio `hello-elementor-child.zip` nella radice del progetto e sul Desktop (`~/Desktop/hello-elementor-child.zip`).
 * Eseguito commit e push su `origin/main`.
+
+
+## Interazione #37 — [2026-10-28 23:48:00]
+
+### 👤 Richiesta Utente:
+Caricamento screenshot di riscontro su `ampelos.it`: il browser mostrava ancora la vecchia schermata d'archivio vuota con *"Nessun articolo trovato in questa sezione"* e la scheda *"Autori"* evidenziata, indicando la necessità di aggiornare il pacchetto tema sul server e garantire l'auto-seeding immediato dei contenuti demo senza passaggi manuali.
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Diagnosi dello Stato e Meccanismo Auto-Seeding Immediato (v7)
+* **Causa del messaggio visualizzato:** Lo screenshot mostrava il codice precedente all'aggiornamento. Inoltre, la procedura di popolamento demo era precedentemente agganciata a `admin_init`, richiedendo una specifica visita nelle schermate di amministrazione con permessi admin.
+* **Auto-Popolamento Istantaneo su hook `init` ([functions.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/functions.php)):**
+  * Introdotta la funzione `ampelos_check_and_ensure_demo_content` agganciata ad `init` (priorità 25): verifica istantaneamente se nel database sono presenti meno di 4 articoli pubblicati (`wp_count_posts('post')->publish < 4`) o se il flag `v7` non è ancora registrato.
+  * In caso positivo, genera e pubblica automaticamente:
+    * I **4 Articoli completi** con testi integrali, callout, estratti, tempi di lettura, gradienti e immagini campione.
+    * Le **4 Rubriche tassonomiche**: *Questioni*, *Luoghi*, *Idee*, *Voci*.
+    * I **3 Autori editoriali**: *Matteo Rives*, *Elena Moretti*, *Carlo Ferrini*.
+    * Le **16 Pagine istituzionali e di servizio**: *Home*, *Tutti gli articoli*, *Percorsi*, *Atlante*, *Autori*, *Volume*, *Chi siamo*, *Abbonati*, ecc.
+    * Il **Menu Nativo WordPress** collegato alle posizioni del tema.
+  * Reso infallibile il fallback in [archive.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/archive.php) e [front-page.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/front-page.php) che renderizza sempre la griglia completa degli articoli demo.
+
+#### 2. Bump Versione Tema a 1.0.7
+* In [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css), la versione del tema child è stata elevata da `1.0.0` a `1.0.7`.
+* Questo permette a WordPress, durante l'upload su `wp-admin/theme-install.php?upload`, di riconoscere chiaramente l'aggiornamento con il pulsante *"Sostituisci la versione corrente con quella caricata"*.
+
+#### 3. Rigenerazione Pacchetto e Sincronizzazione Git
+* Rigenerato l'archivio `hello-elementor-child.zip` (3.5MB) nella radice e copiato su Desktop (`~/Desktop/hello-elementor-child.zip`).
+* Eseguito commit `e29b49a` e push sul repository remoto `origin/main`.

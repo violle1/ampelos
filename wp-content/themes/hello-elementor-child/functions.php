@@ -85,6 +85,39 @@ function ampelos_force_white_background_css() {
 }
 
 /**
+ * 1.2 HELPER IMMAGINI CAMPIONE EDITORIALI PER GLI ARTICOLI
+ * Restituisce l'URL dell'immagine campione associata allo slug del saggio se presente negli asset del tema
+ */
+function ampelos_get_article_sample_image_url($slug_or_id) {
+    if (is_numeric($slug_or_id)) {
+        $post = get_post($slug_or_id);
+        $slug = $post ? $post->post_name : '';
+    } else {
+        $slug = $slug_or_id;
+    }
+
+    $map = array(
+        'le-vigne-di-pietra-calcarea-nel-vallese' => 'valese-vigne-calcare.png',
+        'la-nuova-mappa-dei-dazi'                 => 'geopolitica-dazi-dogane.png',
+        'l-estetica-del-silenzio'                 => 'estetica-del-silenzio.png',
+        'la-terra-non-ha-fretta'                  => 'terra-non-ha-fretta.png',
+    );
+
+    if (isset($map[$slug])) {
+        $file_name = $map[$slug];
+        if (file_exists(AMPELOS_THEME_DIR . '/assets/images/articles/' . $file_name)) {
+            return AMPELOS_THEME_URI . '/assets/images/articles/' . $file_name;
+        }
+        $file_name_jpg = str_replace('.png', '.jpg', $file_name);
+        if (file_exists(AMPELOS_THEME_DIR . '/assets/images/articles/' . $file_name_jpg)) {
+            return AMPELOS_THEME_URI . '/assets/images/articles/' . $file_name_jpg;
+        }
+    }
+
+    return '';
+}
+
+/**
  * 2. REGISTRAZIONE RUOLO "ABBONATO AMPELOS"
  */
 add_action('init', 'ampelos_register_subscriber_role');

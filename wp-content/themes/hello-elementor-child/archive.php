@@ -106,8 +106,12 @@ $articles_query = new WP_Query($query_args);
                     <article class="ampelos-article-card" style="background: #ffffff;">
                         <div class="ampelos-article-thumb">
                             <div class="ampelos-rubrica-badge"><?php echo esc_html($badge); ?></div>
-                            <?php if (has_post_thumbnail()) : ?>
+                            <?php 
+                            $sample_img = function_exists('ampelos_get_article_sample_image_url') ? ampelos_get_article_sample_image_url(get_the_ID()) : '';
+                            if (has_post_thumbnail()) : ?>
                                 <?php the_post_thumbnail('medium_large'); ?>
+                            <?php elseif (!empty($sample_img)) : ?>
+                                <img src="<?php echo esc_url($sample_img); ?>" alt="<?php the_title_attribute(); ?>" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                             <?php else : ?>
                                 <div style="background: <?php echo esc_attr($hero_gradient); ?>; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 20px; font-style: italic; padding: 20px; text-align: center;">
                                     <?php echo esc_html($hero_caption); ?>
@@ -210,9 +214,15 @@ $articles_query = new WP_Query($query_args);
                     <article class="ampelos-article-card" style="background: #ffffff;">
                         <div class="ampelos-article-thumb">
                             <div class="ampelos-rubrica-badge"><?php echo esc_html($art['rubrica_name']); ?></div>
-                            <div style="background: <?php echo esc_attr($art['hero_gradient']); ?>; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 20px; font-style: italic; padding: 20px; text-align: center;">
-                                <?php echo esc_html($art['hero_caption']); ?>
-                            </div>
+                            <?php 
+                            $sample_img = function_exists('ampelos_get_article_sample_image_url') ? ampelos_get_article_sample_image_url($art['slug']) : '';
+                            if (!empty($sample_img)) : ?>
+                                <img src="<?php echo esc_url($sample_img); ?>" alt="<?php echo esc_attr($art['title']); ?>" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                            <?php else : ?>
+                                <div style="background: <?php echo esc_attr($art['hero_gradient']); ?>; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 20px; font-style: italic; padding: 20px; text-align: center;">
+                                    <?php echo esc_html($art['hero_caption']); ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div class="ampelos-article-content">
                             <div class="ampelos-article-meta">

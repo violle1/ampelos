@@ -88,9 +88,15 @@ $current_user = wp_get_current_user();
                     </div>
                 </div>
                 <div>
-                    <?php if (has_post_thumbnail()) : ?>
+                    <?php 
+                    $f_sample = function_exists('ampelos_get_article_sample_image_url') ? ampelos_get_article_sample_image_url($featured_id) : '';
+                    if (has_post_thumbnail()) : ?>
                         <div style="border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-lg); aspect-ratio: 4/3;">
                             <?php the_post_thumbnail('large', array('style' => 'width:100%;height:100%;object-fit:cover;')); ?>
+                        </div>
+                    <?php elseif (!empty($f_sample)) : ?>
+                        <div style="border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-lg); aspect-ratio: 4/3;">
+                            <img src="<?php echo esc_url($f_sample); ?>" alt="<?php the_title_attribute(); ?>" style="width:100%; height:100%; object-fit:cover; display:block;">
                         </div>
                     <?php else : ?>
                         <div style="border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-lg); aspect-ratio: 4/3; background: <?php echo esc_attr($hero_gradient); ?>; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 32px; font-style: italic; text-align: center; padding: 24px;">
@@ -183,8 +189,12 @@ $current_user = wp_get_current_user();
                 <article class="ampelos-article-card" style="background: #ffffff;">
                     <div class="ampelos-article-thumb">
                         <div class="ampelos-rubrica-badge"><?php echo esc_html($rubrica_badge); ?></div>
-                        <?php if (has_post_thumbnail()) : ?>
+                        <?php 
+                        $card_sample = function_exists('ampelos_get_article_sample_image_url') ? ampelos_get_article_sample_image_url(get_the_ID()) : '';
+                        if (has_post_thumbnail()) : ?>
                             <?php the_post_thumbnail('medium_large'); ?>
+                        <?php elseif (!empty($card_sample)) : ?>
+                            <img src="<?php echo esc_url($card_sample); ?>" alt="<?php the_title_attribute(); ?>" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                         <?php else : ?>
                             <div style="background: <?php echo esc_attr($hero_gradient); ?>; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 22px; text-align: center; padding: 20px;">
                                 <?php echo esc_html($hero_text); ?>
@@ -216,9 +226,15 @@ $current_user = wp_get_current_user();
                 <article class="ampelos-article-card" style="background: #ffffff;">
                     <div class="ampelos-article-thumb">
                         <div class="ampelos-rubrica-badge">Questioni</div>
-                        <div style="background: #1e3527; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 22px;">
-                            Geopolitica delle dogane
-                        </div>
+                        <?php 
+                        $img1 = function_exists('ampelos_get_article_sample_image_url') ? ampelos_get_article_sample_image_url('la-nuova-mappa-dei-dazi') : '';
+                        if (!empty($img1)) : ?>
+                            <img src="<?php echo esc_url($img1); ?>" alt="La nuova mappa dei dazi" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <?php else : ?>
+                            <div style="background: #1e3527; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 22px;">
+                                Geopolitica delle dogane
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <div class="ampelos-article-content">
                         <div class="ampelos-article-meta">
@@ -241,9 +257,15 @@ $current_user = wp_get_current_user();
                 <article class="ampelos-article-card" style="background: #ffffff;">
                     <div class="ampelos-article-thumb">
                         <div class="ampelos-rubrica-badge">Idee</div>
-                        <div style="background: #2a2c35; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 22px;">
-                            Estetica del silenzio
-                        </div>
+                        <?php 
+                        $img2 = function_exists('ampelos_get_article_sample_image_url') ? ampelos_get_article_sample_image_url('l-estetica-del-silenzio') : '';
+                        if (!empty($img2)) : ?>
+                            <img src="<?php echo esc_url($img2); ?>" alt="L'estetica del silenzio" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <?php else : ?>
+                            <div style="background: #2a2c35; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 22px;">
+                                Estetica del silenzio
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <div class="ampelos-article-content">
                         <div class="ampelos-article-meta">
@@ -266,9 +288,15 @@ $current_user = wp_get_current_user();
                 <article class="ampelos-article-card" style="background: #ffffff;">
                     <div class="ampelos-article-thumb">
                         <div class="ampelos-rubrica-badge">Voci</div>
-                        <div style="background: #3c2a23; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 22px;">
-                            Conversazione con Josko
-                        </div>
+                        <?php 
+                        $img3 = function_exists('ampelos_get_article_sample_image_url') ? ampelos_get_article_sample_image_url('la-terra-non-ha-fretta') : '';
+                        if (!empty($img3)) : ?>
+                            <img src="<?php echo esc_url($img3); ?>" alt="La terra non ha fretta" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <?php else : ?>
+                            <div style="background: #3c2a23; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-serif); font-size: 22px;">
+                                Conversazione con Josko
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <div class="ampelos-article-content">
                         <div class="ampelos-article-meta">

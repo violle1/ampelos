@@ -55,9 +55,18 @@ $rubrica_name  = (!empty($rubriche) && !is_wp_error($rubriche)) ? $rubriche[0]->
             </header>
 
             <!-- Media Principale / Immagine di Copertina -->
-            <?php if (has_post_thumbnail()) : ?>
+            <?php 
+            $sample_img = function_exists('ampelos_get_article_sample_image_url') ? ampelos_get_article_sample_image_url($post_id) : '';
+            if (has_post_thumbnail()) : ?>
                 <div class="ampelos-article-hero-media">
                     <?php the_post_thumbnail('full'); ?>
+                    <div class="ampelos-article-hero-caption">
+                        <?php echo esc_html(get_post_meta($post_id, '_ampelos_hero_caption', true) ?: 'Fotografia originale dall\'archivio Ampelos. Riproduzione riservata.'); ?>
+                    </div>
+                </div>
+            <?php elseif (!empty($sample_img)) : ?>
+                <div class="ampelos-article-hero-media" style="border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-md);">
+                    <img src="<?php echo esc_url($sample_img); ?>" alt="<?php the_title_attribute(); ?>" style="width: 100%; height: auto; max-height: 520px; object-fit: cover; display: block;">
                     <div class="ampelos-article-hero-caption">
                         <?php echo esc_html(get_post_meta($post_id, '_ampelos_hero_caption', true) ?: 'Fotografia originale dall\'archivio Ampelos. Riproduzione riservata.'); ?>
                     </div>

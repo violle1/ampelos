@@ -1409,3 +1409,40 @@ l'intero blocco dei contenuti deve avere fondo bianco
 #### 2. Rigenerazione Pacchetto Theme e Push Git
 * Ricompilato l'archivio `hello-elementor-child.zip` nella radice del progetto e copiato sul Desktop (`~/Desktop/hello-elementor-child.zip`).
 * Eseguito commit e push su `origin/main`.
+
+
+## Interazione #34 — [2026-10-28 23:31:00]
+
+### 👤 Richiesta Utente:
+```text
+<USER_REQUEST>
+genere una imamgine campione per ogni articolo
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Generazione Immagini Editoriali Campione per i 4 Saggi
+Attraverso il subagent specializzato `image-generator`, sono state generate 4 immagini fotografiche editoriali originali in formato landscape 16:9 con stile documentario ad altissima fedeltà, coerenti con l'identità visiva di Ampelos:
+1. **Luoghi — *«Le vigne di pietra calcarea nel Vallese: una memoria geologica millenaria»*:**
+   * File: `assets/images/articles/valese-vigne-calcare.jpg`
+   * Soggetto: Antichi terrazzamenti a secco su pareti calcaree scoscese nella valle alpina del Rodano nel Vallese, luce radente pomeridiana, rocce calcaree e vigne minerali ad alta quota.
+2. **Questioni — *«La nuova mappa dei dazi: come la geopolitica ridefinisce le rotte del vino europeo»*:**
+   * File: `assets/images/articles/geopolitica-dazi-dogane.jpg`
+   * Soggetto: Terminal portuale all'alba, casse di vino d'autore su molo umido accanto a container e sagome di gru nella nebbia, toni ruggine, terracotta e verde bosco.
+3. **Idee — *«L'estetica del silenzio: perché abbiamo smesso di ascoltare il vino prima di giudicarlo?»*:**
+   * File: `assets/images/articles/estetica-del-silenzio.jpg`
+   * Soggetto: Calice di vino ambrato/aranciato su antico tavolo in massello di rovere in cantina storica con archi a volta, fascio di luce diagonale polverosa, atmosfera contemplativa.
+4. **Voci — *«"La terra non ha fretta": quarant'anni di riflessioni tra macerazioni, argille e libertà»*:**
+   * File: `assets/images/articles/terra-non-ha-fretta.jpg`
+   * Soggetto: Mani segnate dal lavoro di un anziano vignaiolo posate sul bordo di un'anfora in terracotta interrata nella ghiaia del Collio, toni caldi d'argilla e terra naturale.
+
+#### 2. Integrazione Automatica nei Template del Tema
+* In **`functions.php`**: Creata la funzione `ampelos_get_article_sample_image_url($slug_or_id)` che mappa ciascun articolo alla sua immagine campione presente in `assets/images/articles/`.
+* In **`single.php`**: Mostra l'immagine campione ad alta risoluzione sotto l'intestazione come hero media nel caso in cui non sia impostata un'immagine in evidenza personalizzata.
+* In **`front-page.php`**: Integrata sia nel saggio in primo piano sia nelle tre card secondarie recenti (e nei rispettivi blocchi di fallback).
+* In **`archive.php`**: Integrata nella griglia degli articoli sia per "Tutti gli articoli" che per le singole rubriche (e nei fallback).
+
+#### 3. Ricompilazione Pacchetto e Sincronizzazione Git
+* Ricompilato l'archivio `hello-elementor-child.zip` (ora comprensivo della cartella `assets/images/articles/`) sia nella radice del progetto sia sul Desktop (`~/Desktop/hello-elementor-child.zip`).
+* Eseguito commit e push su `origin/main`.

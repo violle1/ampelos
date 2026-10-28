@@ -1702,3 +1702,48 @@ la x dell'icona di chiusura di questa schermata non è allineata. Risolvi
 * Versione del tema elevata a **1.1.3** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
 * Rigenerato l'archivio ZIP pronto all'uso `hello-elementor-child.zip` (3.5MB) nella radice e sulla Scrivania dell'utente (`/Users/mainstudio/Desktop/hello-elementor-child.zip`).
 * Eseguito commit e push su GitHub (`origin/main`).
+
+
+## Interazione #43 — [2026-10-29 00:33:00]
+
+### 👤 Richiesta Utente:
+```text
+<USER_REQUEST>
+nell'header ci sono due campi ricerca, lascia quello sul lato sinistro e rendilo della stessa altezza del pulsante Area Personale
+[Caricamento screenshot: header con doppio campo ricerca a sinistra e a destra, pulsante cerca sinistro con altezza ridotta rispetto ad Area Personale]
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Rimozione della Ricerca Duplicata sul Lato Destro
+* In [header.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/header.php), all'interno di `.ampelos-header-right`, è stato rimosso il pulsante icona duplicato di ricerca (`ampelos-btn-icon`), lasciando come unico punto di accesso alla ricerca quello principale posizionato sul lato sinistro dell'header.
+
+#### 2. Allineamento e Parità d'Altezza tra Pulsante Cerca e Area Personale
+* In [header.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/header.php):
+  * Rimosso il modificatore compatto `ampelos-btn-sm` dal pulsante di ricerca sinistro e introdotta la classe dedicata `ampelos-header-search-btn`.
+* In [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css):
+  * Impostata una regola di parità esatta tra `.ampelos-header-search-btn` e `.ampelos-header-user-btn`:
+    ```css
+    .ampelos-header-search-btn,
+    .ampelos-header-user-btn {
+      height: 40px !important;
+      min-height: 40px !important;
+      box-sizing: border-box !important;
+      padding: 0 18px !important;
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 8px !important;
+      border-radius: var(--radius-sm) !important;
+      line-height: 1 !important;
+    }
+    ```
+  * I due pulsanti presentano ora identica altezza (40px esatti), identico padding orizzontale e perfetto equilibrio visivo rispetto al logo centrale.
+
+#### 3. Bump Versione Tema a 1.1.4 e Aggiornamento
+* Versione del tema elevata a **1.1.4** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
+* Rigenerato l'archivio ZIP pronto all'uso `hello-elementor-child.zip` (3.5MB) nella radice e sulla Scrivania dell'utente (`/Users/mainstudio/Desktop/hello-elementor-child.zip`).
+* Eseguito commit e push su GitHub (`origin/main`).

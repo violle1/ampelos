@@ -5,7 +5,7 @@ Description: Tema child per Hello Elementor sviluppato per la rivista Ampelos - 
 Author: Redazione Ampelos
 Author URI: https://ampelos.it
 Template: hello-elementor
-Version: 1.1.3
+Version: 1.1.4
 Text Domain: hello-elementor-child-ampelos
 */
 
@@ -214,6 +214,23 @@ img {
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
+}
+
+/* Header Buttons Height Parity */
+.ampelos-header-search-btn,
+.ampelos-header-user-btn {
+  height: 40px !important;
+  min-height: 40px !important;
+  box-sizing: border-box !important;
+  padding: 0 18px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  border-radius: var(--radius-sm) !important;
+  line-height: 1 !important;
 }
 
 /* Nav Menu Bar */
@@ -1328,10 +1345,12 @@ dialog.ampelos-modal::backdrop {
     white-space: nowrap !important;
   }
   /* On mobile for subscribers: icon buttons */
-  .ampelos-header-user-btn .ampelos-btn-text {
+  .ampelos-header-user-btn .ampelos-btn-text,
+  .ampelos-header-search-btn span {
     display: none !important;
   }
   .ampelos-header-user-btn,
+  .ampelos-header-search-btn,
   .ampelos-btn-icon {
     padding: 6px 8px !important;
     min-width: 36px !important;

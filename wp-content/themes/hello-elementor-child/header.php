@@ -53,7 +53,7 @@ $current_user  = wp_get_current_user();
             <!-- Left: Cerca solo per abbonati, badge informativo per ospiti -->
             <div class="ampelos-header-left">
                 <?php if ($is_subscribed) : ?>
-                    <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosUI.openModal('modal-search')" aria-label="Cerca nel sito">
+                    <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-header-search-btn" onclick="AmpelosUI.openModal('modal-search')" aria-label="Cerca nel sito">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         <span>Cerca</span>
                     </button>
@@ -74,9 +74,6 @@ $current_user  = wp_get_current_user();
             <!-- Right: Subscription / User CTA -->
             <div class="ampelos-header-right">
                 <?php if ($is_subscribed) : ?>
-                    <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-icon" onclick="AmpelosUI.openModal('modal-search')" aria-label="Cerca" title="Cerca nell'archivio">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    </button>
                     <a href="<?php echo esc_url(home_url('/area-personale/')); ?>" class="ampelos-btn ampelos-btn-primary ampelos-header-user-btn" aria-label="Area Personale" title="Area Personale (<?php echo esc_html($current_user->display_name); ?>)">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                         <span class="ampelos-btn-text">Area Personale</span>

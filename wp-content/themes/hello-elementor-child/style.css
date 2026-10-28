@@ -5,7 +5,7 @@ Description: Tema child per Hello Elementor sviluppato per la rivista Ampelos - 
 Author: Redazione Ampelos
 Author URI: https://ampelos.it
 Template: hello-elementor
-Version: 1.0.7
+Version: 1.0.8
 Text Domain: hello-elementor-child-ampelos
 */
 
@@ -216,32 +216,38 @@ img {
 .ampelos-nav-bar {
   border-top: 1px solid var(--ampelos-border-light);
   padding: 0;
+  position: relative;
+  z-index: 100;
 }
+.ampelos-nav-bar ul.ampelos-menu-primary,
 .ampelos-menu-primary {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 28px;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 28px !important;
 }
 .ampelos-menu-primary > li {
-  position: relative;
-  padding: 12px 0;
+  position: relative !important;
+  padding: 12px 0 !important;
+  list-style: none !important;
+  margin: 0 !important;
 }
 .ampelos-menu-primary > li > a {
-  font-family: var(--font-sans);
-  font-size: 13.5px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ampelos-primary);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 0;
-  position: relative;
+  font-family: var(--font-sans) !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: var(--ampelos-primary) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 4px 0 !important;
+  position: relative !important;
+  text-decoration: none !important;
 }
 .ampelos-menu-primary > li > a::after {
   content: '';
@@ -254,73 +260,101 @@ img {
   transition: width 0.25s ease;
 }
 .ampelos-menu-primary > li:hover > a::after,
-.ampelos-menu-primary > li.current-menu-item > a::after {
-  width: 100%;
+.ampelos-menu-primary > li.current-menu-item > a::after,
+.ampelos-menu-primary > li.current-menu-ancestor > a::after {
+  width: 100% !important;
 }
 
 /* Dropdown Submenu (Leggi: Questioni, Luoghi, Idee, Voci) */
-.ampelos-dropdown,
-.ampelos-menu-primary .sub-menu {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(10px);
-  background: #ffffff;
-  min-width: 290px;
-  box-shadow: var(--shadow-md);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--ampelos-border);
-  padding: 12px 0;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-  z-index: 120;
-  list-style: none;
-  margin: 0;
+.ampelos-menu-primary .sub-menu,
+.ampelos-menu-primary .ampelos-dropdown {
+  position: absolute !important;
+  top: 100% !important;
+  left: 50% !important;
+  transform: translateX(-50%) translateY(10px) !important;
+  background: #ffffff !important;
+  min-width: 290px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--ampelos-border) !important;
+  padding: 12px 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease !important;
+  z-index: 120 !important;
+  list-style: none !important;
+  margin: 0 !important;
+  pointer-events: none !important;
 }
-.ampelos-menu-primary > li:hover .ampelos-dropdown,
 .ampelos-menu-primary > li:hover > .sub-menu,
-.ampelos-menu-primary > li:focus-within > .sub-menu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(0);
+.ampelos-menu-primary > li:hover > .ampelos-dropdown,
+.ampelos-menu-primary > li:focus-within > .sub-menu,
+.ampelos-menu-primary > li:focus-within > .ampelos-dropdown {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateX(-50%) translateY(0) !important;
+  pointer-events: auto !important;
 }
+
+/* Elementi interni al Submenu Dropdown */
+.ampelos-menu-primary .sub-menu > li,
+.ampelos-menu-primary .ampelos-dropdown > li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  width: 100% !important;
+}
+.ampelos-menu-primary .sub-menu > li > a,
+.ampelos-menu-primary .ampelos-dropdown > li > a,
 .ampelos-dropdown-item {
-  display: block;
-  padding: 10px 20px;
-  transition: background 0.2s ease;
+  display: block !important;
+  padding: 10px 20px !important;
+  transition: background 0.15s ease !important;
+  text-decoration: none !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  border-bottom: none !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
-.ampelos-dropdown-item:hover,
-.ampelos-menu-primary .sub-menu > li > a:hover {
-  background: #faf7f2;
+.ampelos-menu-primary .sub-menu > li > a:hover,
+.ampelos-menu-primary .ampelos-dropdown > li > a:hover,
+.ampelos-dropdown-item:hover {
+  background: #faf7f2 !important;
 }
-.ampelos-menu-primary .sub-menu > li > a::after {
+.ampelos-menu-primary .sub-menu > li > a::after,
+.ampelos-menu-primary .ampelos-dropdown > li > a::after,
+.ampelos-dropdown-item::after {
   display: none !important;
 }
 .ampelos-dropdown-title {
-  font-family: var(--font-serif);
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--ampelos-primary);
-  margin-bottom: 2px;
+  font-family: var(--font-serif) !important;
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  color: var(--ampelos-primary) !important;
+  margin-bottom: 2px !important;
+  line-height: 1.25 !important;
 }
 .ampelos-dropdown-desc {
-  font-family: var(--font-sans);
-  font-size: 12px;
-  color: var(--ampelos-text-muted);
+  font-family: var(--font-sans) !important;
+  font-size: 12px !important;
+  color: var(--ampelos-text-muted) !important;
+  line-height: 1.4 !important;
 }
 
 /* Tag Badge for Future Activation */
 .ampelos-tag-future {
-  font-size: 9px;
-  text-transform: uppercase;
-  font-weight: 700;
-  padding: 2px 5px;
-  border-radius: 3px;
-  background: #e2e8e4;
-  color: #4b6655;
-  letter-spacing: 0.04em;
-  margin-left: 4px;
+  font-size: 9px !important;
+  text-transform: uppercase !important;
+  font-weight: 700 !important;
+  padding: 2px 5px !important;
+  border-radius: 3px !important;
+  background: #e2e8e4 !important;
+  color: #4b6655 !important;
+  letter-spacing: 0.04em !important;
+  margin-left: 4px !important;
+  vertical-align: middle !important;
 }
 
 /* Buttons */

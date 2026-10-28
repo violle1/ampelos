@@ -153,8 +153,8 @@ function ampelos_register_editorial_structures() {
             'edit_item'          => __('Modifica Autore', 'hello-elementor-child-ampelos'),
         ),
         'public'             => true,
-        'has_archive'        => true,
-        'rewrite'            => array('slug' => 'autori'),
+        'has_archive'        => false,
+        'rewrite'            => array('slug' => 'profilo-autore'),
         'supports'           => array('title', 'editor', 'thumbnail', 'excerpt'),
         'menu_icon'          => 'dashicons-businessperson',
         'show_in_rest'       => true,
@@ -169,8 +169,8 @@ function ampelos_register_editorial_structures() {
             'add_new_item'       => __('Nuovo Percorso', 'hello-elementor-child-ampelos'),
         ),
         'public'             => true,
-        'has_archive'        => true,
-        'rewrite'            => array('slug' => 'percorsi'),
+        'has_archive'        => false,
+        'rewrite'            => array('slug' => 'scheda-percorso'),
         'supports'           => array('title', 'editor', 'thumbnail', 'excerpt'),
         'menu_icon'          => 'dashicons-location-alt',
         'show_in_rest'       => true,
@@ -185,8 +185,8 @@ function ampelos_register_editorial_structures() {
             'add_new_item'       => __('Nuovo Luogo dell\'Atlante', 'hello-elementor-child-ampelos'),
         ),
         'public'             => true,
-        'has_archive'        => true,
-        'rewrite'            => array('slug' => 'atlante'),
+        'has_archive'        => false,
+        'rewrite'            => array('slug' => 'scheda-luogo'),
         'supports'           => array('title', 'editor', 'thumbnail', 'excerpt'),
         'menu_icon'          => 'dashicons-admin-site',
         'show_in_rest'       => true,
@@ -201,12 +201,47 @@ function ampelos_register_editorial_structures() {
             'add_new_item'       => __('Nuova Edizione Annuale', 'hello-elementor-child-ampelos'),
         ),
         'public'             => true,
-        'has_archive'        => true,
-        'rewrite'            => array('slug' => 'volume'),
+        'has_archive'        => false,
+        'rewrite'            => array('slug' => 'scheda-volume'),
         'supports'           => array('title', 'editor', 'thumbnail', 'excerpt'),
         'menu_icon'          => 'dashicons-book-alt',
         'show_in_rest'       => true,
     ));
+}
+
+/**
+ * FILTRO PRIORITARIO TEMPLATE PERCORSI, ATLANTE, AUTORI, VOLUME, CHI SIAMO
+ * Garantisce che le pagine carichino sempre i corrispettivi template dedicati indipendentemente dal routing rewrite
+ */
+add_filter('template_include', 'ampelos_force_custom_page_templates', 999);
+function ampelos_force_custom_page_templates($template) {
+    $uri = isset($_SERVER['REQUEST_URI']) ? trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/') : '';
+
+    if (is_page('autori') || is_post_type_archive('ampelos_autore') || $uri === 'autori' || preg_match('#(^|/)autori/?$#', $uri)) {
+        $t = locate_template('page-autori.php');
+        if ($t) return $t;
+    }
+    if (is_page('volume') || is_post_type_archive('ampelos_volume') || $uri === 'volume' || preg_match('#(^|/)volume/?$#', $uri)) {
+        $t = locate_template('page-volume.php');
+        if ($t) return $t;
+    }
+    if (is_page('percorsi') || is_post_type_archive('ampelos_percorso') || $uri === 'percorsi' || preg_match('#(^|/)percorsi/?$#', $uri)) {
+        $t = locate_template('page-percorsi.php');
+        if ($t) return $t;
+    }
+    if (is_page('atlante') || is_post_type_archive('ampelos_luogo') || $uri === 'atlante' || preg_match('#(^|/)atlante/?$#', $uri)) {
+        $t = locate_template('page-atlante.php');
+        if ($t) return $t;
+    }
+    if (is_page('chi-siamo') || $uri === 'chi-siamo' || preg_match('#(^|/)chi-siamo/?$#', $uri)) {
+        $t = locate_template('page-chi-siamo.php');
+        if ($t) return $t;
+    }
+    if (is_page('tutti-gli-articoli') || $uri === 'tutti-gli-articoli' || preg_match('#(^|/)tutti-gli-articoli/?$#', $uri)) {
+        $t = locate_template('archive.php');
+        if ($t) return $t;
+    }
+    return $template;
 }
 
 /**
@@ -550,17 +585,20 @@ function ampelos_auto_seed_demo_content() {
         return;
     }
 
-    // Gestione trigger manuale con nonce
-    if (isset($_GET['ampelos_action']) && $_GET['ampelos_action'] === 'seed_demo' && check_admin_referer('ampelos_seed_demo_nonce')) {
+    // Gestione trigger manuale con nonce o query param per admin
+    if ((isset($_GET['ampelos_action']) && $_GET['ampelos_action'] === 'seed_demo' && check_admin_referer('ampelos_seed_demo_nonce')) ||
+        (isset($_GET['ampelos_seed']) && current_user_can('manage_options'))) {
         ampelos_populate_all_demo_content(true);
+        flush_rewrite_rules(false);
         wp_safe_redirect(add_query_arg(array('page' => 'ampelos-stato-sito', 'ampelos_seeded' => '1'), admin_url('admin.php')));
         exit;
     }
 
-    // Esegui automaticamente al primo avvio
-    if (!get_option('ampelos_demo_content_seeded_v3')) {
-        ampelos_populate_all_demo_content(false);
-        update_option('ampelos_demo_content_seeded_v3', 1);
+    // Esegui automaticamente al primo avvio della nuova versione
+    if (!get_option('ampelos_demo_content_seeded_v5')) {
+        ampelos_populate_all_demo_content(true);
+        flush_rewrite_rules(false);
+        update_option('ampelos_demo_content_seeded_v5', 1);
         update_option('ampelos_pages_initialized', 1);
     }
 }
@@ -639,8 +677,8 @@ function ampelos_populate_all_demo_content($force = false) {
     $pages = array(
         'home'                  => array('title' => 'Home', 'template' => 'front-page.php', 'content' => ''),
         'tutti-gli-articoli'    => array('title' => 'Tutti gli articoli', 'template' => 'archive.php', 'content' => ''),
-        'percorsi'              => array('title' => 'Percorsi', 'template' => 'page.php', 'content' => ''),
-        'atlante'               => array('title' => 'Atlante', 'template' => 'page.php', 'content' => ''),
+        'percorsi'              => array('title' => 'Percorsi', 'template' => 'page-percorsi.php', 'content' => ''),
+        'atlante'               => array('title' => 'Atlante', 'template' => 'page-atlante.php', 'content' => ''),
         'autori'                => array('title' => 'Autori', 'template' => 'page-autori.php', 'content' => ''),
         'volume'                => array('title' => 'Volume', 'template' => 'page-volume.php', 'content' => ''),
         'chi-siamo'             => array('title' => 'Chi siamo', 'template' => 'page-chi-siamo.php', 'content' => ''),
@@ -800,31 +838,17 @@ function ampelos_populate_all_demo_content($force = false) {
             update_post_meta($post_id, '_ampelos_hero_gradient', $art['hero_gradient']);
         }
     }
+
+    // Aggiorna le regole di riscrittura URL di WordPress
+    flush_rewrite_rules(false);
 }
 
 /**
- * 11. RESTRIZIONE TOTALE DI NAVIGAZIONE PER I NON ABBONATI
- * I visitatori non iscritti/non abbonati possono visualizzare unicamente la Home Page (e la pagina di sottoscrizione).
- * Qualsiasi tentativo di accedere ad altre sezioni/articoli reindirizza alla Home Page.
+ * 11. PAYWALL SELETTIVO (GLI ARTICOLI INTEGRALI SONO RISERVATI AGLI ABBONATI)
+ * La navigazione delle sezioni pubbliche (Home, Autori, Volume, Percorsi, Atlante, Chi siamo, Archivio)
+ * è accessibile a tutti per presentare il progetto editoriale, mentre la lettura integrale dei singoli
+ * saggi è gestita con anteprima e paywall sartoriale tramite il filtro 'the_content'.
  */
-add_action('template_redirect', 'ampelos_restrict_navigation_to_subscribers');
-function ampelos_restrict_navigation_to_subscribers() {
-    // La Home page è sempre permessa a tutti per consultare il progetto e il modello
-    if (is_front_page()) {
-        return;
-    }
-
-    // Pagine ammesse per sottoscrizione e termini legali
-    if (is_page(array('abbonati', 'privacy', 'cookie', 'condizioni-abbonamento', 'condizioni-di-utilizzo'))) {
-        return;
-    }
-
-    // Se l'utente non è abbonato, reindirizza alla home
-    if (!ampelos_is_user_subscribed()) {
-        wp_safe_redirect(home_url('/'));
-        exit;
-    }
-}
 
 /**
  * 12. SISTEMA VISIVO: MODALITÀ "SITO IN ALLESTIMENTO" SARTORIALE

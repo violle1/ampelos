@@ -8,6 +8,26 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+$request_uri = isset($_SERVER['REQUEST_URI']) ? trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/') : '';
+
+// Instradamento di sicurezza se WordPress tratta /autori/, /volume/, /percorsi/, /atlante/ come archivi CPT
+if (is_post_type_archive('ampelos_autore') || $request_uri === 'autori' || preg_match('#(^|/)autori/?$#', $request_uri)) {
+    require __DIR__ . '/page-autori.php';
+    return;
+}
+if (is_post_type_archive('ampelos_volume') || $request_uri === 'volume' || preg_match('#(^|/)volume/?$#', $request_uri)) {
+    require __DIR__ . '/page-volume.php';
+    return;
+}
+if (is_post_type_archive('ampelos_percorso') || $request_uri === 'percorsi' || preg_match('#(^|/)percorsi/?$#', $request_uri)) {
+    require __DIR__ . '/page-percorsi.php';
+    return;
+}
+if (is_post_type_archive('ampelos_luogo') || $request_uri === 'atlante' || preg_match('#(^|/)atlante/?$#', $request_uri)) {
+    require __DIR__ . '/page-atlante.php';
+    return;
+}
+
 get_header();
 
 $current_term = get_queried_object();

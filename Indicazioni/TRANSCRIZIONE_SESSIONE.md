@@ -1348,3 +1348,36 @@ The current local time is: 2026-10-28T23:00:45+01:00.
 _Salvataggio completato, sincronizzazione Git e aggiornamento del registro di sessione._
 
 ---
+
+
+## Interazione #32 — [2026-10-28 23:25:00]
+
+### 👤 Richiesta Utente:
+```text
+<USER_REQUEST>
+le voci "pErcorsi, Atlante Autori e volume non hanno nessun contenuto. Devi popolare il sito in Wordpress pefettamente allo stesso modo della versione demo che si trova su GiHub
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Diagnosi e Risoluzione del Conflitto di Routing (Causa della Schermata Vuota)
+* **Causa:** Nella registrazione iniziale dei Custom Post Types (`ampelos_autore`, `ampelos_percorso`, `ampelos_luogo`, `ampelos_volume`) in `functions.php`, era presente `'has_archive' => true` con rewrite identico allo slug delle pagine (`autori`, `percorsi`, `atlante`, `volume`). Nella gerarchia di WordPress, tali URL venivano intercettati come archivi CPT vuoti, caricando `archive.php` con il messaggio d'archivio vuoto (*"Nessun articolo trovato in questa sezione"*). Inoltre era presente una regola restrittiva `ampelos_restrict_navigation_to_subscribers` che bloccava le pagine pubbliche.
+* **Soluzione Strutturale a Triplo Livello:**
+  1. **CPT `has_archive => false`:** I CPT non generano più archivi in conflitto; i loro slug sono stati differenziati (`profilo-autore`, `scheda-percorso`, `scheda-luogo`, `scheda-volume`).
+  2. **Filtro prioritario `template_include` (priorità 999):** Intercetta `/autori/`, `/volume/`, `/percorsi/`, `/atlante/`, `/chi-siamo/`, `/tutti-gli-articoli/` e carica sempre in modo deterministico il template dedicato.
+  3. **File di fallback dedicati:**
+     * `page-percorsi.php` (Percorsi tematici 01 e 02 identici a `index.html`).
+     * `page-atlante.php` (Atlante geografico con box scuro e mappa geologica identico a `index.html`).
+     * `page-autori.php` (Schede Matteo Rives, Elena Moretti, Carlo Ferrini con bio, ruoli e badge identici a `index.html`).
+     * `page-volume.php` (Volume I • Edizione 2027 con dettagli rilegatura, tiratura 1.200 copie, ISBN e 3 schede identiche a `index.html`).
+     * `archive-ampelos_autore.php`, `archive-ampelos_volume.php`, `archive-ampelos_percorso.php`, `archive-ampelos_luogo.php` per garantire che anche in caso di richiesta CPT diretta venga sempre visualizzato il template corretto.
+
+#### 2. Allineamento Pagine e Header / Drawer Mobile
+* Rimossa la restrizione globale di navigazione; la consultazione delle pagine istituzionali, di catalogo e delle rubriche è libera come in `index.html`, mentre i singoli saggi mantengono il paywall protetto con anteprima per i non abbonati.
+* Menu principale in `header.php` e drawer laterale mobile in `footer.php` resi sempre navigabili con evidenziazione attiva corretta (`current-menu-item`).
+* Sfondo bianco `#ffffff` confermato su tutte le pagine, dashboard e archivi.
+
+#### 3. Rigenerazione Pacchetto e Seeding Automatico
+* Aggiornato `hello-elementor-child.zip` nella radice del progetto e copiato sul Desktop dell'utente (`~/Desktop/hello-elementor-child.zip`).
+* Versione di seeding elevata a `v5` per popolare all'aggiornamento tutti i 4 articoli, 4 rubriche, 3 autori e 16 pagine con flush automatico delle regole di riscrittura.

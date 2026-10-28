@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 get_header();
 ?>
 
-<main id="primary" class="site-main" style="padding: 60px 0 90px;">
+<main id="primary" class="site-main" style="padding: 60px 0 90px; background: #ffffff;">
     <div class="ampelos-container">
 
         <!-- INTESTAZIONE CHI SIAMO -->

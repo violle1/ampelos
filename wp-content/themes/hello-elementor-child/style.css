@@ -787,6 +787,7 @@ img {
 /* SUBSCRIBER AREA (AREA PERSONALE) */
 .ampelos-dashboard {
   padding: 50px 0 80px;
+  background: #ffffff;
 }
 .ampelos-dashboard-header {
   border-bottom: 1px solid var(--ampelos-border);

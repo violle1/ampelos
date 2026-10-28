@@ -57,22 +57,11 @@ add_action('wp_head', 'ampelos_force_white_background_css', 999);
 function ampelos_force_white_background_css() {
     ?>
     <style id="ampelos-theme-colors-enforce">
-        /* Header e Topbar: Colori Originali Preservati */
-        .ampelos-topbar {
-            background: #12241a !important;
-        }
-        .ampelos-header {
-            background-color: rgba(250, 247, 242, 0.94) !important;
-            backdrop-filter: blur(12px) !important;
-            -webkit-backdrop-filter: blur(12px) !important;
-        }
-
-        /* Footer: Colore Originale Verde Bosco Preservato */
-        .ampelos-footer {
-            background: #15271d !important;
-        }
-
-        /* Area dei Contenuti (Main Content Area): Sfondo Bianco Esclusivo */
+        /* Sfondo Bianco Assoluto su tutto il contenitore della pagina */
+        html,
+        body,
+        #page,
+        .site,
         .site-main,
         main#primary,
         .site-content,
@@ -87,6 +76,21 @@ function ampelos_force_white_background_css() {
         .ampelos-article-body {
             background-color: #ffffff !important;
             background: #ffffff !important;
+        }
+
+        /* Header e Topbar: Colori Originali Preservati */
+        .ampelos-topbar {
+            background: #12241a !important;
+        }
+        .ampelos-header {
+            background-color: rgba(250, 247, 242, 0.94) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+        }
+
+        /* Footer: Colore Originale Verde Bosco Preservato */
+        .ampelos-footer {
+            background: #15271d !important;
         }
     </style>
     <?php

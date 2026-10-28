@@ -5,7 +5,7 @@ Description: Tema child per Hello Elementor sviluppato per la rivista Ampelos - 
 Author: Redazione Ampelos
 Author URI: https://ampelos.it
 Template: hello-elementor
-Version: 1.0.9
+Version: 1.1.1
 Text Domain: hello-elementor-child-ampelos
 */
 
@@ -52,9 +52,13 @@ Text Domain: hello-elementor-child-ampelos
   --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Base Reset & Typography */
-body {
-  background-color: var(--ampelos-bg);
+/* Base Reset & Typography: Intero Contenitore Pagina Bianco Puro */
+html,
+body,
+#page,
+.site {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
   color: var(--ampelos-text);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -757,7 +761,9 @@ img {
   color: var(--ampelos-text-muted);
   padding: 10px 14px;
   font-style: italic;
-  background: var(--ampelos-paper);
+  background: #ffffff;
+  border: 1px solid var(--ampelos-border-light);
+  border-top: none;
 }
 
 .ampelos-article-body {
@@ -780,8 +786,12 @@ img {
 .ampelos-quote-callout {
   border-left: 3px solid var(--ampelos-terracotta);
   margin: 40px -20px;
-  padding: 16px 28px;
-  background: var(--ampelos-paper);
+  padding: 18px 28px;
+  background: #ffffff;
+  border-top: 1px solid var(--ampelos-border-light);
+  border-right: 1px solid var(--ampelos-border-light);
+  border-bottom: 1px solid var(--ampelos-border-light);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 24px;

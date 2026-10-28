@@ -1605,3 +1605,33 @@ il menu deve avere la stessa estetica di prima
 * Versione del tema elevata a **1.0.9** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
 * Rigenerato `hello-elementor-child.zip` nella radice e sulla Scrivania (`~/Desktop/hello-elementor-child.zip`).
 * Eseguito commit `1daf757` e push su `origin/main`.
+
+
+## Interazione #40 — [2026-10-29 00:08:00]
+
+### 👤 Richiesta Utente:
+```text
+<USER_REQUEST>
+il contenitore della pagina deve avere tutto il fondo bianco, header e footer restano così come sono
+[Caricamento screenshot: evidenza margini laterali crema/beige visibili su schermi ampi a destra e sinistra dei contenuti]
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Sfondo Bianco Assoluto a Tutto Schermo (Viewport Completo)
+* **Diagnosi dell'Anomalia Visiva:**
+  * Sebbene i container interni dei contenuti (`.ampelos-container`, `article`, `.site-main`) avessero sfondo bianco, su schermi desktop ampi i margini laterali della finestra mostravano il colore di sfondo di `body` (`var(--ampelos-bg) = #faf7f2`).
+* **Blindatura CSS a Livello Globale ([style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css) & [functions.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/functions.php)):**
+  * `html, body, #page, .site, .site-main, main#primary, .site-content` impostati rigorosamente su `background-color: #ffffff !important; background: #ffffff !important;`.
+  * **Header & Topbar Preservati:** `.ampelos-topbar` (`#12241a`) e `.ampelos-header` (`rgba(250, 247, 242, 0.94)`) mantengono inalterata la loro identità cromatica originale e l'effetto glassmorphism con blur.
+  * **Footer Preservato:** `.ampelos-footer` (`#15271d`) mantiene inalterato il colore verde bosco profondo originale.
+  * Impostato sfondo bianco puro (`#ffffff`) anche per le didascalie dei media (`.ampelos-article-hero-caption`) e per i blocchi citazione editoriale (`.ampelos-quote-callout`) con finitura sottile.
+
+#### 2. Creazione Template Dedicato [page-tutti-gli-articoli.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/page-tutti-gli-articoli.php)
+* Aggiunto il template di pagina `page-tutti-gli-articoli.php` che aggancia direttamente la logica completa di [archive.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/archive.php), garantendo che l'URL `/tutti-gli-articoli/` mostri sempre la griglia degli articoli e i filtri rubrica anche quando richiamato come pagina statica di WordPress.
+
+#### 3. Bump Versione Tema a 1.1.1 e Distribuzione
+* Versione del tema elevata a **1.1.1** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
+* Rigenerato l'archivio ZIP pronto all'uso `hello-elementor-child.zip` (3.5MB) nella radice e sulla Scrivania dell'utente (`/Users/mainstudio/Desktop/hello-elementor-child.zip`).
+* Eseguito commit e push su GitHub (`origin/main`).

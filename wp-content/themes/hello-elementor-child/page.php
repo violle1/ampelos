@@ -40,11 +40,11 @@ $is_future_section = in_array($slug, array('percorsi', 'atlante'));
                     </p>
 
                     <div style="display: grid; gap: 16px; text-align: left; margin: 30px 0;">
-                        <div style="background: var(--ampelos-paper); padding: 20px; border-radius: var(--radius-sm);">
+                        <div style="background: #ffffff; padding: 20px; border-radius: var(--radius-sm); border: 1px solid var(--ampelos-border-light);">
                             <h4 style="margin: 0 0 6px;">01 • Clima e quote: la risalita altimetrica dei vitigni</h4>
                             <p style="font-size: 13.5px; color: var(--ampelos-text-muted); margin: 0;">Un percorso in 6 tappe tra Valtellina, Valle d'Aosta e Alto Adige.</p>
                         </div>
-                        <div style="background: var(--ampelos-paper); padding: 20px; border-radius: var(--radius-sm);">
+                        <div style="background: #ffffff; padding: 20px; border-radius: var(--radius-sm); border: 1px solid var(--ampelos-border-light);">
                             <h4 style="margin: 0 0 6px;">02 • Il ritorno della terracotta: dall'anfora caucasica al grès contemporaneo</h4>
                             <p style="font-size: 13.5px; color: var(--ampelos-text-muted); margin: 0;">Storia dei vasi vinari e trasformazioni della microssigenazione.</p>
                         </div>

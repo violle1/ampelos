@@ -19,7 +19,7 @@ $rubrica_name  = (!empty($rubriche) && !is_wp_error($rubriche)) ? $rubriche[0]->
 <!-- Reading Progress Bar -->
 <div id="ampelos-reading-progress" style="position: fixed; top: 0; left: 0; height: 3px; background: var(--ampelos-terracotta); z-index: 9999; width: 0; transition: width 0.1s linear;"></div>
 
-<main id="primary" class="site-main ampelos-single-article">
+<main id="primary" class="site-main ampelos-single-article" style="background: #ffffff;">
     <div class="ampelos-container">
 
         <?php

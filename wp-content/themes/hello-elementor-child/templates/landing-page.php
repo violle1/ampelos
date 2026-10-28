@@ -229,7 +229,7 @@ get_header();
     <?php echo do_shortcode('[ampelos_piani]'); ?>
 
     <!-- PRESENTAZIONE VOLUME 2027 SPOTLIGHT -->
-    <section style="padding: 80px 0; background: var(--ampelos-paper); border-bottom: 1px solid var(--ampelos-border);">
+    <section style="padding: 80px 0; background: #ffffff; border-bottom: 1px solid var(--ampelos-border);">
         <div class="ampelos-container">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
                 <div>

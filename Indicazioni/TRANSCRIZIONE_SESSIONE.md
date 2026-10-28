@@ -1381,3 +1381,31 @@ le voci "pErcorsi, Atlante Autori e volume non hanno nessun contenuto. Devi popo
 #### 3. Rigenerazione Pacchetto e Seeding Automatico
 * Aggiornato `hello-elementor-child.zip` nella radice del progetto e copiato sul Desktop dell'utente (`~/Desktop/hello-elementor-child.zip`).
 * Versione di seeding elevata a `v5` per popolare all'aggiornamento tutti i 4 articoli, 4 rubriche, 3 autori e 16 pagine con flush automatico delle regole di riscrittura.
+
+
+## Interazione #33 — [2026-10-28 23:28:00]
+
+### 👤 Richiesta Utente:
+```text
+<USER_REQUEST>
+l'intero blocco dei contenuti deve avere fondo bianco
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Forzatura Globale dello Sfondo Bianco Puro (`#ffffff`) ad Altissima Specificità
+* **Regole CSS nel foglio di stile (`style.css`):**
+  * Aggiornate le variabili di base: `--ampelos-bg: #ffffff;`, `--ampelos-card-bg: #ffffff;`, `--ampelos-paper: #ffffff;`.
+  * Applicato `background-color: #ffffff !important;` e `background: #ffffff !important;` a:
+    `html`, `body`, `#page`, `.site`, `#content`, `.site-content`, `.site-main`, `main#primary`, `.ampelos-single-article`, `.ampelos-subscriber-feed`, `.ampelos-landing-page`, `.ampelos-page-content`, `.ampelos-dashboard`, `.entry-content`, `.elementor`, `.elementor-page`, `article.ampelos-article-card`, `.ampelos-article-body`.
+* **Iniezione CSS Prioritaria in `<head>` via hook `wp_head` (`functions.php`):**
+  * Aggiunta la funzione `ampelos_force_white_background_css` (priorità 999) con blocco `<style id="ampelos-white-bg-enforce">` per garantire che qualsiasi stile ereditato da Hello Elementor, da Elementor o dai browser venga sovrascritto con `#ffffff !important` sull'intera area dei contenuti da bordo a bordo.
+* **Bonifica Sezioni nei Template:**
+  * In `front-page.php`, rimossa la barra salvia `#eef3ef` e la sezione percorsi in `--ampelos-paper`, trasformate entrambe in `#ffffff`.
+  * In `templates/landing-page.php`, rimossa la sezione grigio/carta e impostato `#ffffff`.
+  * In `single.php`, `page.php`, `page-percorsi.php`, `page-atlante.php`, `page-autori.php`, `page-volume.php`, `archive.php`: confermati tutti i contenitori e schede con sfondo `#ffffff`.
+
+#### 2. Rigenerazione Pacchetto Theme e Push Git
+* Ricompilato l'archivio `hello-elementor-child.zip` nella radice del progetto e copiato sul Desktop (`~/Desktop/hello-elementor-child.zip`).
+* Eseguito commit e push su `origin/main`.

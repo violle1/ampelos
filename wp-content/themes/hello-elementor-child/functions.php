@@ -50,6 +50,41 @@ function ampelos_enqueue_theme_assets() {
 }
 
 /**
+ * 1.1 FORZATURA SFONDO BIANCO ASSOLUTO PER L'INTERO BLOCCO DEI CONTENUTI
+ * Iniezione prioritaria in <head> per garantire sfondo #ffffff su qualsiasi elemento o wrapper
+ */
+add_action('wp_head', 'ampelos_force_white_background_css', 999);
+function ampelos_force_white_background_css() {
+    ?>
+    <style id="ampelos-white-bg-enforce">
+        html,
+        body,
+        #page,
+        .site,
+        #content,
+        .site-content,
+        .site-main,
+        main#primary,
+        .site-main > section,
+        .ampelos-single-article,
+        .ampelos-subscriber-feed,
+        .ampelos-landing-page,
+        .ampelos-page-content,
+        .ampelos-dashboard,
+        .ampelos-container,
+        .entry-content,
+        .elementor,
+        .elementor-page,
+        article.ampelos-article-card,
+        .ampelos-article-body {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+        }
+    </style>
+    <?php
+}
+
+/**
  * 2. REGISTRAZIONE RUOLO "ABBONATO AMPELOS"
  */
 add_action('init', 'ampelos_register_subscriber_role');

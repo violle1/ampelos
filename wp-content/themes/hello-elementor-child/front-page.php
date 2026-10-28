@@ -21,10 +21,10 @@ get_header();
 $current_user = wp_get_current_user();
 ?>
 
-<main id="primary" class="site-main ampelos-subscriber-feed">
+<main id="primary" class="site-main ampelos-subscriber-feed" style="background: #ffffff;">
 
     <!-- BARRA BENVENUTO ABBONATO -->
-    <section style="background: #eef3ef; border-bottom: 1px solid var(--ampelos-sage-border); padding: 14px 0;">
+    <section style="background: #ffffff; border-bottom: 1px solid var(--ampelos-border); padding: 14px 0;">
         <div class="ampelos-container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 13.5px;">
             <div>
                 <strong>Bentornato, <?php echo esc_html($current_user->display_name); ?></strong> • 
@@ -295,7 +295,7 @@ $current_user = wp_get_current_user();
     </section>
 
     <!-- AREA PROSSIMI ARRIVI: PERCORSI ED ATLANTE -->
-    <section style="padding: 60px 0; background: var(--ampelos-paper); border-top: 1px solid var(--ampelos-border);">
+    <section style="padding: 60px 0; background: #ffffff; border-top: 1px solid var(--ampelos-border);">
         <div class="ampelos-container">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
                 <div style="background: #fff; padding: 36px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">

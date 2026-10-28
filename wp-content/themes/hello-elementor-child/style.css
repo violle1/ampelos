@@ -29,9 +29,9 @@ Text Domain: hello-elementor-child-ampelos
   --ampelos-slate: #445663;
   --ampelos-slate-subtle: #eef3f6;
 
-  --ampelos-bg: #ffffff;
+  --ampelos-bg: #faf7f2;
   --ampelos-card-bg: #ffffff;
-  --ampelos-paper: #ffffff;
+  --ampelos-paper: #f4eee3;
   --ampelos-text: #1d211e;
   --ampelos-text-muted: #5f6b64;
   --ampelos-border: rgba(26, 51, 37, 0.12);
@@ -53,10 +53,8 @@ Text Domain: hello-elementor-child-ampelos
 }
 
 /* Base Reset & Typography */
-html,
 body {
-  background-color: #ffffff !important;
-  background: #ffffff !important;
+  background-color: var(--ampelos-bg);
   color: var(--ampelos-text);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -67,21 +65,16 @@ body {
   padding: 0;
 }
 
-/* Pagine e Blocchi Contenuti con Sfondo Bianco Assoluto */
-#page,
-.site,
-#content,
-.site-content,
+/* Sfondo Bianco Esclusivo per l'Area dei Contenuti (Main Content Area) */
 .site-main,
+main#primary,
+.site-content,
 .ampelos-single-article,
 .ampelos-subscriber-feed,
 .ampelos-landing-page,
 .ampelos-page-content,
 .ampelos-dashboard,
-main#primary,
 .entry-content,
-.elementor,
-.elementor-page,
 article.ampelos-article-card,
 .ampelos-article-body {
   background-color: #ffffff !important;
@@ -171,14 +164,13 @@ img {
 
 /* Main Brand Header */
 .ampelos-header {
-  background-color: var(--ampelos-bg);
   border-bottom: 1px solid var(--ampelos-border);
   position: sticky;
   top: 0;
   z-index: 100;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  background-color: rgba(255, 255, 255, 0.96);
+  background-color: rgba(250, 247, 242, 0.94);
 }
 .ampelos-header-inner {
   display: grid;

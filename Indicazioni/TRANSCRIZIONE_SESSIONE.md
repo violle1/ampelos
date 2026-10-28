@@ -1446,3 +1446,34 @@ Attraverso il subagent specializzato `image-generator`, sono state generate 4 im
 #### 3. Ricompilazione Pacchetto e Sincronizzazione Git
 * Ricompilato l'archivio `hello-elementor-child.zip` (ora comprensivo della cartella `assets/images/articles/`) sia nella radice del progetto sia sul Desktop (`~/Desktop/hello-elementor-child.zip`).
 * Eseguito commit e push su `origin/main`.
+
+
+## Interazione #35 — [2026-10-28 23:36:00]
+
+### 👤 Richiesta Utente:
+```text
+<USER_REQUEST>
+I colori di fondo dell'header e del footer devono rimanere come prima, i fondo bianco va attivato solo nell'area dei contenuti
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Ripristino dei Colori Originali di Header e Footer
+* **Header & Topbar ([style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css) & [functions.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/functions.php)):**
+  * Ripristinato il colore di sfondo scuro originale della Topbar: `background: #12241a !important;`.
+  * Ripristinato il colore originale della testata principale `.ampelos-header`: `background-color: rgba(250, 247, 242, 0.94) !important;` con effetto *glassmorphism* `backdrop-filter: blur(12px) !important;`.
+  * Ripristinate le variabili `--ampelos-bg: #faf7f2;` e `--ampelos-paper: #f4eee3;`.
+* **Footer:**
+  * Confermato e blindato il colore verde bosco originale della testata di chiusura `.ampelos-footer`: `background: #15271d !important;`.
+
+#### 2. Sfondo Bianco Esclusivo per l'Area dei Contenuti
+* Rimosso lo sfondo bianco da `html`, `body`, `#page` e `.site` per non sovrascrivere l'header e il footer.
+* Applicato lo sfondo bianco puro (`background: #ffffff !important;`) **esclusivamente** ai tag e contenitori dell'area dei contenuti compresa tra header e footer:
+  * `.site-main`, `main#primary`, `.site-content`
+  * `.ampelos-single-article`, `.ampelos-subscriber-feed`, `.ampelos-landing-page`, `.ampelos-page-content`, `.ampelos-dashboard`
+  * `.entry-content`, `article.ampelos-article-card`, `.ampelos-article-body`.
+
+#### 3. Ricompilazione Pacchetto e Invio su GitHub
+* Rigenerato l'archivio `hello-elementor-child.zip` nella radice del progetto e sul Desktop (`~/Desktop/hello-elementor-child.zip`).
+* Eseguito commit e push su `origin/main`.

@@ -1668,3 +1668,37 @@ la pagina dei risultati della ricerca deve essere più bella. Non può essere co
 * Versione del tema elevata a **1.1.2** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
 * Rigenerato l'archivio ZIP pronto all'uso `hello-elementor-child.zip` (3.5MB) nella radice e sulla Scrivania dell'utente (`/Users/mainstudio/Desktop/hello-elementor-child.zip`).
 * Eseguito commit e push su GitHub (`origin/main`).
+
+
+## Interazione #42 — [2026-10-29 00:14:00]
+
+### 👤 Richiesta Utente:
+```text
+<USER_REQUEST>
+la x dell'icona di chiusura di questa schermata non è allineata. Risolvi
+[Caricamento screenshot: finestra modale di ricerca con la "x" di chiusura disallineata verso l'alto all'interno del pulsante circolare]
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Diagnosi del Disallineamento della "x"
+* Il pulsante di chiusura (`.ampelos-modal-close`) utilizzava il carattere di entità HTML testo `&times;`. Nei browser basati su WebKit (Safari su macOS/iOS), le metriche tipografiche del glifo `&times;` (baseline e cap height) non sono centrate verticalmente rispetto al box flex, causando un evidente disallineamento verso l'alto all'interno del cerchio.
+
+#### 2. Sostituzione con Icona Vettoriale SVG Centrata al Millimetro
+* **In [footer.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/footer.php):**
+  * Sostituito `&times;` nei 3 modali (*modal-login*, *modal-register*, *modal-search*) e nel drawer mobile con un elemento SVG vettoriale matematicamente simmetrico:
+    ```html
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+    ```
+* **In [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css):**
+  * Impostato `.ampelos-modal-close` a 36x36px con `display: flex; align-items: center; justify-content: center; padding: 0;` e `.ampelos-modal-close svg { pointer-events: none; }` per garantire perfetta centratura ottica su tutti i dispositivi.
+  * Uniformato anche il pulsante di chiusura del drawer laterale (`.ampelos-drawer-close`).
+
+#### 3. Bump Versione Tema a 1.1.3 e Aggiornamento
+* Versione del tema elevata a **1.1.3** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
+* Rigenerato l'archivio ZIP pronto all'uso `hello-elementor-child.zip` (3.5MB) nella radice e sulla Scrivania dell'utente (`/Users/mainstudio/Desktop/hello-elementor-child.zip`).
+* Eseguito commit e push su GitHub (`origin/main`).

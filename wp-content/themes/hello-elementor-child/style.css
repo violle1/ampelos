@@ -5,7 +5,7 @@ Description: Tema child per Hello Elementor sviluppato per la rivista Ampelos - 
 Author: Redazione Ampelos
 Author URI: https://ampelos.it
 Template: hello-elementor
-Version: 1.1.2
+Version: 1.1.3
 Text Domain: hello-elementor-child-ampelos
 */
 
@@ -971,17 +971,23 @@ dialog.ampelos-modal::backdrop {
 .ampelos-modal-close {
   background: rgba(0, 0, 0, 0.05);
   border: none;
-  font-size: 22px;
-  line-height: 1;
   cursor: pointer;
   color: var(--ampelos-primary);
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
   transition: var(--transition);
+  flex-shrink: 0;
+}
+.ampelos-modal-close svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
 }
 .ampelos-modal-close:hover {
   background: var(--ampelos-terracotta);
@@ -1175,16 +1181,26 @@ dialog.ampelos-modal::backdrop {
 .ampelos-drawer-close {
   background: transparent;
   border: none;
-  font-size: 24px;
-  line-height: 1;
   cursor: pointer;
   color: var(--ampelos-primary);
-  padding: 6px;
-  min-width: 40px;
-  min-height: 40px;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: var(--transition);
+}
+.ampelos-drawer-close svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+.ampelos-drawer-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--ampelos-terracotta);
 }
 .ampelos-drawer-nav {
   padding: 16px 20px;

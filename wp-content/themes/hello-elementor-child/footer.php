@@ -96,7 +96,12 @@ if (!defined('ABSPATH')) {
             <img src="<?php echo esc_url(AMPELOS_THEME_URI . '/assets/images/ampelos.png'); ?>" alt="Ampelos" style="height: 38px; width: auto;">
             <span style="font-family: var(--font-serif); font-size: 19px; font-weight: 700; color: var(--ampelos-primary); letter-spacing: 0.04em;">ἄμπελος</span>
         </div>
-        <button type="button" class="ampelos-drawer-close" onclick="AmpelosUI.toggleMobileDrawer(false)" aria-label="Chiudi menu">&times;</button>
+        <button type="button" class="ampelos-drawer-close" onclick="AmpelosUI.toggleMobileDrawer(false)" aria-label="Chiudi menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
     </div>
     <div class="ampelos-drawer-nav">
         <ul>
@@ -163,7 +168,12 @@ if (!defined('ABSPATH')) {
 <dialog id="modal-login" class="ampelos-modal" aria-labelledby="modal-login-title">
     <div class="ampelos-modal-header">
         <h3 id="modal-login-title">Accedi ad Ampelos</h3>
-        <button type="button" class="ampelos-modal-close" aria-label="Chiudi finestra">&times;</button>
+        <button type="button" class="ampelos-modal-close" aria-label="Chiudi finestra">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
     </div>
     <div class="ampelos-modal-body">
         <p style="font-size: 14px; color: var(--ampelos-text-muted); margin-bottom: 16px; line-height: 1.5;">
@@ -210,7 +220,12 @@ if (!defined('ABSPATH')) {
 <dialog id="modal-register" class="ampelos-modal" aria-labelledby="modal-register-title">
     <div class="ampelos-modal-header">
         <h3 id="modal-register-title">Sottoscrivi l'Abbonamento</h3>
-        <button type="button" class="ampelos-modal-close" aria-label="Chiudi finestra">&times;</button>
+        <button type="button" class="ampelos-modal-close" aria-label="Chiudi finestra">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
     </div>
     <div class="ampelos-modal-body">
         <p style="font-size: 14px; color: var(--ampelos-text-muted); margin-bottom: 20px;">
@@ -252,7 +267,12 @@ if (!defined('ABSPATH')) {
 <dialog id="modal-search" class="ampelos-modal" aria-labelledby="modal-search-title">
     <div class="ampelos-modal-header">
         <h3 id="modal-search-title">Cerca nell'archivio Ampelos</h3>
-        <button type="button" class="ampelos-modal-close" aria-label="Chiudi finestra">&times;</button>
+        <button type="button" class="ampelos-modal-close" aria-label="Chiudi finestra">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
     </div>
     <div class="ampelos-modal-body">
         <form role="search" method="get" action="<?php echo esc_url(home_url('/')); ?>">

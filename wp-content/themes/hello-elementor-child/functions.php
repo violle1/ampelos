@@ -1005,6 +1005,18 @@ function ampelos_shortcode_plans($atts) {
  * 10. SETUP AUTOMATICO E POPOLAMENTO CONTENUTI DEMO (INTEGRALE)
  * Popola tassonomie, articoli demo, profili autori e pagine di servizio
  */
+add_action('init', 'ampelos_check_and_ensure_demo_content', 25);
+function ampelos_check_and_ensure_demo_content() {
+    $count = wp_count_posts('post');
+    $published_posts = (!empty($count->publish)) ? intval($count->publish) : 0;
+    if ($published_posts < 4 || !get_option('ampelos_demo_content_seeded_v7')) {
+        ampelos_populate_all_demo_content(true);
+        ampelos_create_default_wordpress_menu();
+        update_option('ampelos_demo_content_seeded_v7', 1);
+        update_option('ampelos_pages_initialized', 1);
+    }
+}
+
 add_action('admin_init', 'ampelos_auto_seed_demo_content');
 function ampelos_auto_seed_demo_content() {
     if (!current_user_can('manage_options')) {
@@ -1022,11 +1034,11 @@ function ampelos_auto_seed_demo_content() {
     }
 
     // Esegui automaticamente al primo avvio della nuova versione
-    if (!get_option('ampelos_demo_content_seeded_v6')) {
+    if (!get_option('ampelos_demo_content_seeded_v7')) {
         ampelos_populate_all_demo_content(true);
         ampelos_create_default_wordpress_menu();
         flush_rewrite_rules(false);
-        update_option('ampelos_demo_content_seeded_v6', 1);
+        update_option('ampelos_demo_content_seeded_v7', 1);
         update_option('ampelos_pages_initialized', 1);
     }
 }
@@ -1068,6 +1080,10 @@ function ampelos_populate_all_demo_content($force = false) {
 
     $author_ids = array();
     $current_admin_id = get_current_user_id();
+    if (!$current_admin_id) {
+        $admins = get_users(array('role' => 'administrator', 'number' => 1));
+        $current_admin_id = (!empty($admins)) ? $admins[0]->ID : 1;
+    }
 
     foreach ($authors_data as $login => $a) {
         $u = get_user_by('login', $login);
@@ -1234,6 +1250,17 @@ function ampelos_populate_all_demo_content($force = false) {
 
     foreach ($articles as $art) {
         $existing = get_page_by_path($art['slug'], OBJECT, 'post');
+        if (!$existing) {
+            $found_posts = get_posts(array(
+                'name'        => $art['slug'],
+                'post_type'   => 'post',
+                'post_status' => 'any',
+                'numberposts' => 1,
+            ));
+            if (!empty($found_posts)) {
+                $existing = $found_posts[0];
+            }
+        }
         $author_id = isset($author_ids[$art['author_login']]) ? $author_ids[$art['author_login']] : $current_admin_id;
 
         $post_args = array(
@@ -1252,10 +1279,8 @@ function ampelos_populate_all_demo_content($force = false) {
             $post_id = wp_insert_post($post_args);
         } else {
             $post_id = $existing->ID;
-            if ($force || empty($existing->post_content)) {
-                $post_args['ID'] = $post_id;
-                wp_update_post($post_args);
-            }
+            $post_args['ID'] = $post_id;
+            wp_update_post($post_args);
         }
 
         if ($post_id && !is_wp_error($post_id)) {

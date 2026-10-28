@@ -1544,3 +1544,36 @@ Caricamento screenshot di riscontro su `ampelos.it`: il browser mostrava ancora 
 #### 3. Rigenerazione Pacchetto e Sincronizzazione Git
 * Rigenerato l'archivio `hello-elementor-child.zip` (3.5MB) nella radice e copiato su Desktop (`~/Desktop/hello-elementor-child.zip`).
 * Eseguito commit `e29b49a` e push sul repository remoto `origin/main`.
+
+
+## Interazione #38 — [2026-10-28 23:57:00]
+
+### 👤 Richiesta Utente:
+```text
+<USER_REQUEST>
+guarda il menu adesso è un disastro.
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Diagnosi del Problema di Rendering del Menu
+* **Causa dell'anomalia grafica in Safari:** Nel walker personalizzato `Ampelos_Nav_Walker`, i sottomenu venivano aperti con `<div class="ampelos-dropdown">` e chiusi con `</div>`, mentre gli elementi figli venivano generati come `<li>...</li>`. Nello standard HTML5 e in particolare nel motore di Safari/WebKit, elementi `<li>` posizionati all'interno di un `<div>` (e non di un `<ul>`) vengono rigettati fuori dal blocco genitore: il parser di Safari chiudeva anzitempo il `<li>` genitore ("Leggi") ed espelleva tutti i 5 sottomenu (*Tutti gli articoli*, *Questioni*, *Luoghi*, *Idee*, *Voci*) facendoli comparire come voci di primo livello orizzontali nella navbar principale, facendola collassare su più righe e disallineando i bottoni.
+* Inoltre, se nel database di WordPress erano rimasti duplicati o elementi non gerarchizzati da prove precedenti, la barra dei menu si sovraccaricava.
+
+#### 2. Correzione Strutturale HTML5 e CSS ([functions.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/functions.php) & [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css))
+* **Standardizzazione `Ampelos_Nav_Walker`:**
+  * `start_lvl` genera ora un tag semantico `<ul class="sub-menu ampelos-dropdown">` e `end_lvl` chiude `</ul>`. In questo modo Safari e tutti i browser interpretano l'albero DOM perfettamente senza alcuna espulsione.
+  * Inserite le classi di stato attivo intelligente (`current-menu-item`, `current-menu-ancestor`) e i badge editoriali per "Percorsi" e "Atlante" (*In arrivo*).
+  * Iniettate le descrizioni redazionali per i sottomenu di *Leggi* (*Tutta la produzione editoriale*, *Fatti e cambiamenti*, *Territori e comunità*, *Saggi e interpretazioni*, *Interviste e ritratti*).
+* **Reset & Pulizia Automatica Menu (v8):**
+  * La funzione `ampelos_create_default_wordpress_menu(true)` rimuove qualsiasi vecchio elemento frammentato o duplicato e ricrea in modo pulito l'albero di 7 elementi essenziali con i 5 sottomenu.
+* **Blindatura CSS:**
+  * Forzato `list-style: none !important;` e `display: flex !important;` sulla navbar.
+  * Impostata la posizione assoluta e il comportamento hover/focus del sottomenu a tendina con ombra morbida `box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12)`, sfondo bianco puro e transizione fluida.
+  * Rimosse le sottolineature animate all'interno del dropdown (`::after { display: none !important; }`) e applicato l'hover con sfondo crema `#faf7f2`.
+
+#### 3. Rigenerazione Pacchetto e Sincronizzazione Git
+* Versione del tema elevata a **1.0.8** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
+* Rigenerato `hello-elementor-child.zip` in radice e sulla Scrivania (`~/Desktop/hello-elementor-child.zip`).
+* Eseguito commit `d8e1a61` e push su `origin/main`.

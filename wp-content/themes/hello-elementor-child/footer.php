@@ -101,19 +101,40 @@ if (!defined('ABSPATH')) {
     <div class="ampelos-drawer-nav">
         <ul>
             <?php if ($is_subscribed_drawer) : ?>
-                <?php
-                if (has_nav_menu('primary')) {
-                    wp_nav_menu(array(
-                        'theme_location' => 'primary',
-                        'items_wrap'     => '%3$s',
-                        'container'      => false,
-                        'walker'         => new Ampelos_Drawer_Nav_Walker(),
-                        'fallback_cb'    => 'ampelos_default_drawer_menu',
-                    ));
-                } else {
-                    ampelos_default_drawer_menu();
-                }
-                ?>
+                <li class="<?php echo is_front_page() ? 'active' : ''; ?>">
+                    <a href="<?php echo esc_url(home_url('/')); ?>"><strong>Home</strong></a>
+                </li>
+                <li>
+                    <a href="<?php echo esc_url(home_url('/tutti-gli-articoli/')); ?>">
+                        <strong>Leggi</strong> <span>→</span>
+                    </a>
+                    <div class="ampelos-drawer-subnav">
+                        <a href="<?php echo esc_url(home_url('/tutti-gli-articoli/')); ?>">• Tutti gli articoli</a>
+                        <a href="<?php echo esc_url(home_url('/rubrica/questioni/')); ?>">• Questioni</a>
+                        <a href="<?php echo esc_url(home_url('/rubrica/luoghi/')); ?>">• Luoghi</a>
+                        <a href="<?php echo esc_url(home_url('/rubrica/idee/')); ?>">• Idee</a>
+                        <a href="<?php echo esc_url(home_url('/rubrica/voci/')); ?>">• Voci</a>
+                    </div>
+                </li>
+                <li>
+                    <a href="<?php echo esc_url(home_url('/percorsi/')); ?>">
+                        <strong>Percorsi</strong> <span class="ampelos-tag-future">In arrivo</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo esc_url(home_url('/atlante/')); ?>">
+                        <strong>Atlante</strong> <span class="ampelos-tag-future">In arrivo</span>
+                    </a>
+                </li>
+                <li class="<?php echo is_page('autori') ? 'active' : ''; ?>">
+                    <a href="<?php echo esc_url(home_url('/autori/')); ?>"><strong>Autori</strong></a>
+                </li>
+                <li class="<?php echo is_page('volume') ? 'active' : ''; ?>">
+                    <a href="<?php echo esc_url(home_url('/volume/')); ?>"><strong>Volume Edizione 2027</strong></a>
+                </li>
+                <li class="<?php echo is_page('chi-siamo') ? 'active' : ''; ?>">
+                    <a href="<?php echo esc_url(home_url('/chi-siamo/')); ?>"><strong>Chi siamo</strong></a>
+                </li>
             <?php else : ?>
                 <li><a href="<?php echo esc_url(home_url('/')); ?>">Home</a></li>
             <?php endif; ?>

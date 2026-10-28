@@ -98,19 +98,60 @@ $current_user  = wp_get_current_user();
         <!-- Primary Navigation Menu (Riservato agli abbonati / utenti loggati) -->
         <?php if ($is_subscribed) : ?>
         <nav class="ampelos-nav-bar" role="navigation" aria-label="<?php esc_attr_e('Menu Principale', 'hello-elementor-child-ampelos'); ?>">
-            <?php
-            if (has_nav_menu('primary')) {
-                wp_nav_menu(array(
-                    'theme_location' => 'primary',
-                    'menu_class'     => 'ampelos-menu-primary',
-                    'container'      => false,
-                    'walker'         => new Ampelos_Nav_Walker(),
-                    'fallback_cb'    => 'ampelos_default_primary_menu',
-                ));
-            } else {
-                ampelos_default_primary_menu();
-            }
-            ?>
+            <ul class="ampelos-menu-primary">
+                <li class="<?php echo is_front_page() ? 'current-menu-item' : ''; ?>">
+                    <a href="<?php echo esc_url(home_url('/')); ?>">Home</a>
+                </li>
+                <li class="has-dropdown <?php echo (is_home() || is_singular('post') || is_tax('rubrica') || (isset($_SERVER['REQUEST_URI']) && (strpos($_SERVER['REQUEST_URI'], 'tutti-gli-articoli') !== false || strpos($_SERVER['REQUEST_URI'], 'rubrica') !== false))) ? 'current-menu-item' : ''; ?>">
+                    <a href="<?php echo esc_url(home_url('/tutti-gli-articoli/')); ?>">
+                        Leggi
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </a>
+                    <div class="ampelos-dropdown">
+                        <a href="<?php echo esc_url(home_url('/tutti-gli-articoli/')); ?>" class="ampelos-dropdown-item">
+                            <div class="ampelos-dropdown-title">Tutti gli articoli</div>
+                            <div class="ampelos-dropdown-desc">Tutta la produzione editoriale e archivio</div>
+                        </a>
+                        <a href="<?php echo esc_url(home_url('/rubrica/questioni/')); ?>" class="ampelos-dropdown-item">
+                            <div class="ampelos-dropdown-title">Questioni</div>
+                            <div class="ampelos-dropdown-desc">Fatti e cambiamenti nel settore vitivinicolo</div>
+                        </a>
+                        <a href="<?php echo esc_url(home_url('/rubrica/luoghi/')); ?>" class="ampelos-dropdown-item">
+                            <div class="ampelos-dropdown-title">Luoghi</div>
+                            <div class="ampelos-dropdown-desc">Territori, comunità e paesaggi</div>
+                        </a>
+                        <a href="<?php echo esc_url(home_url('/rubrica/idee/')); ?>" class="ampelos-dropdown-item">
+                            <div class="ampelos-dropdown-title">Idee</div>
+                            <div class="ampelos-dropdown-desc">Saggi, interpretazioni e pensiero critico</div>
+                        </a>
+                        <a href="<?php echo esc_url(home_url('/rubrica/voci/')); ?>" class="ampelos-dropdown-item">
+                            <div class="ampelos-dropdown-title">Voci</div>
+                            <div class="ampelos-dropdown-desc">Interviste e ritratti ai protagonisti</div>
+                        </a>
+                    </div>
+                </li>
+                <li class="<?php echo (is_page('percorsi') || (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'percorsi') !== false)) ? 'current-menu-item' : ''; ?>">
+                    <a href="<?php echo esc_url(home_url('/percorsi/')); ?>">
+                        Percorsi
+                        <span class="ampelos-tag-future">In arrivo</span>
+                    </a>
+                </li>
+                <li class="<?php echo (is_page('atlante') || (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'atlante') !== false)) ? 'current-menu-item' : ''; ?>">
+                    <a href="<?php echo esc_url(home_url('/atlante/')); ?>">
+                        Atlante
+                        <span class="ampelos-tag-future">In arrivo</span>
+                    </a>
+                </li>
+                <li class="<?php echo (is_page('autori') || (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'autori') !== false)) ? 'current-menu-item' : ''; ?>">
+                    <a href="<?php echo esc_url(home_url('/autori/')); ?>">Autori</a>
+                </li>
+                <li class="<?php echo (is_page('volume') || (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'volume') !== false)) ? 'current-menu-item' : ''; ?>">
+                    <a href="<?php echo esc_url(home_url('/volume/')); ?>">Volume</a>
+                </li>
+                <li class="<?php echo (is_page('chi-siamo') || (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'chi-siamo') !== false)) ? 'current-menu-item' : ''; ?>">
+                    <a href="<?php echo esc_url(home_url('/chi-siamo/')); ?>">Chi siamo</a>
+                </li>
+            </ul>
         </nav>
         <?php endif; ?>
     </div>

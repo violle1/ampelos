@@ -1874,3 +1874,55 @@ Alla riga 590 di [functions.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos
 * **Bump Versione:** Versione del tema elevata a **1.1.7** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
 * **Nuovo Pacchetto:** Rigenerato e testato l'archivio `hello-elementor-child.zip` (3.5MB) sulla Scrivania (`/Users/mainstudio/Desktop/hello-elementor-child.zip`).
 * **Commit e Push:** Salve le modifiche su GitHub `origin/main`.
+
+
+## Interazione #47 — [2026-10-29 06:49:00]
+
+### 👤 Richiesta Utente:
+```text
+<USER_REQUEST>
+ok adesso crea la pagina contatti
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Creazione del Template Dedicato `page-contatti.php`
+È stato creato il file template [page-contatti.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/page-contatti.php) (`Template Name: Contatti`), progettato secondo i canoni visivi della rivista Ampelos (sfondo bianco puro, tipografia serif editoriale, palette verde bosco e terracotta):
+* **Intestazione con Sottotitolo Filosofico:**
+  * Tag: *Dialogo & Corrispondenza*
+  * Titolo: *Contatta la Redazione*
+  * Citazione d'apertura sulla cura del tempo lento e della corrispondenza diretta con gli abbonati.
+* **Griglia a 3 Canali Diretti (`.ampelos-grid-3`):**
+  1. **Abbonamenti & Assistenza:** card con icona profilo, email `abbonamenti@ampelos.it` per questioni su rinnovi, fatture, spedizione del volume monografico o accesso all'Area Personale.
+  2. **Redazione & Proposte Saggi:** card con icona piuma/scrittura, email `proposte@ampelos.it` per candidature di abstract (max 400 parole), inchieste sul territorio e segnalazioni bibliografiche.
+  3. **Sede Editoriale & Stampa:** card con icona geolocalizzazione, sede di *Via della Vigna Antica 14, Roma* ed email `redazione@ampelos.it`.
+* **Form di Contatto Interattivo ed Elegante (`.ampelos-contact-main-grid`):**
+  * Campi strutturati: *Nome e Cognome*, *Indirizzo Email*, *Motivo del contatto* (menu a tendina tra Assistenza Abbonamento, Volume 2027 cartaceo, Proposta Saggio, Stampa/Media, Altro), *Oggetto*, *Messaggio* (textarea).
+  * Checkbox per il consenso al trattamento dati GDPR con link all'Informativa sulla Privacy.
+  * Pulsante submit coordinato con icona di invio e gestione feedback asincrona con alert di ringraziamento e rassicurazione sui tempi di risposta.
+* **Colonna Laterale Informativa:**
+  * Box *Tempi di Risposta Diretti:* garanzia di presa in carico e risposta personale entro 24-48 ore lavorative da parte della redazione (nessun chatbot o risponditore automatico).
+  * Box *Proposte di Collaborazione:* link rapido al Manifesto e Metodo Editoriale.
+  * Box *Dubbi Frequenti:* link rapido alle FAQ sugli Abbonamenti.
+
+#### 2. Integrazioni e Responsive Design
+* **[style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css):**
+  * Aggiunto supporto stili per `.ampelos-form-textarea` con min-height a 120px e focus coordinato.
+  * Regole responsive per `.ampelos-contact-main-grid` (collasso a singola colonna sotto 991px) e `.ampelos-contact-form-row` (campi nome ed email impilati verticalmente su smartphone).
+  * Prevenzione automatica dell'auto-zoom di Safari su iOS (`font-size: 16px !important;`).
+* **[footer.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/footer.php):**
+  * Aggiornato il link "Contatti" del footer a `home_url('/contatti/')`.
+  * Aggiunta la voce "Contatti" nel drawer di navigazione mobile off-canvas.
+* **[page-chi-siamo.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/page-chi-siamo.php):**
+  * Aggiunto pulsante di reindirizzamento al modulo completo contatti.
+* **[functions.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/functions.php):**
+  * Inserito lo slug `contatti` con template `page-contatti.php` nel seeder automatico delle pagine di WordPress.
+* **[index.html](file:///Users/mainstudio/Desktop/LAVORO/ampelos/index.html):**
+  * Integrata la vista completa `#view-contatti` nel simulatore SPA autonomo per garantire totale parità tra prototipo e tema WordPress.
+
+#### 3. Validazione, Bump Versione 1.1.8 e Rilascio
+* Validati tutti i file PHP con il motore PHP di MAMP: **0 errori di sintassi**.
+* Elevata la versione del tema a **1.1.8** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
+* Rigenerato il pacchetto ZIP aggiornato `hello-elementor-child.zip` (3.5MB) sulla Scrivania (`/Users/mainstudio/Desktop/hello-elementor-child.zip`).
+* Eseguito commit e push su GitHub (`origin/main`).

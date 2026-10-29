@@ -5,7 +5,7 @@ Description: Tema child per Hello Elementor sviluppato per la rivista Ampelos - 
 Author: Redazione Ampelos
 Author URI: https://ampelos.it
 Template: hello-elementor
-Version: 1.1.7
+Version: 1.1.8
 Text Domain: hello-elementor-child-ampelos
 */
 
@@ -1077,7 +1077,8 @@ dialog.ampelos-modal::backdrop {
   color: var(--ampelos-primary);
 }
 .ampelos-form-input,
-.ampelos-form-select {
+.ampelos-form-select,
+.ampelos-form-textarea {
   width: 100%;
   padding: 11px 14px;
   font-size: 14.5px;
@@ -1088,8 +1089,13 @@ dialog.ampelos-modal::backdrop {
   box-sizing: border-box;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+.ampelos-form-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
 .ampelos-form-input:focus,
-.ampelos-form-select:focus {
+.ampelos-form-select:focus,
+.ampelos-form-textarea:focus {
   outline: none;
   border-color: var(--ampelos-primary);
   box-shadow: 0 0 0 3px rgba(26,51,37,0.12);
@@ -1287,7 +1293,8 @@ dialog.ampelos-modal::backdrop {
   }
   .ampelos-grid-3,
   .ampelos-plans-grid,
-  .ampelos-footer-grid {
+  .ampelos-footer-grid,
+  .ampelos-contact-main-grid {
     grid-template-columns: 1fr;
     gap: 24px;
   }
@@ -1578,10 +1585,15 @@ dialog.ampelos-modal::backdrop {
     padding: 24px 18px !important;
     margin-bottom: 36px !important;
   }
+  .ampelos-contact-form-row {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
 
   /* iOS Auto-Zoom Prevention (Ensure >= 16px font-size) */
   .ampelos-form-input,
-  .ampelos-form-select {
+  .ampelos-form-select,
+  .ampelos-form-textarea {
     font-size: 16px !important;
   }
 

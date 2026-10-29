@@ -46,7 +46,7 @@ if (!defined('ABSPATH')) {
                     <li><a href="<?php echo esc_url(home_url('/autori/')); ?>">Elenco autori</a></li>
                     <li><a href="<?php echo esc_url(home_url('/volume/')); ?>">Volume Edizione 2027</a></li>
                     <li><a href="<?php echo esc_url(home_url('/chi-siamo/#collabora')); ?>">Collabora con noi</a></li>
-                    <li><a href="<?php echo esc_url(home_url('/chi-siamo/#contatti')); ?>">Contatti</a></li>
+                    <li><a href="<?php echo esc_url(home_url('/contatti/')); ?>">Contatti</a></li>
                 </ul>
             </div>
 
@@ -139,6 +139,9 @@ if (!defined('ABSPATH')) {
                 </li>
                 <li class="<?php echo is_page('chi-siamo') ? 'active' : ''; ?>">
                     <a href="<?php echo esc_url(home_url('/chi-siamo/')); ?>"><strong>Chi siamo</strong></a>
+                </li>
+                <li class="<?php echo is_page('contatti') ? 'active' : ''; ?>">
+                    <a href="<?php echo esc_url(home_url('/contatti/')); ?>"><strong>Contatti</strong></a>
                 </li>
             <?php else : ?>
                 <li><a href="<?php echo esc_url(home_url('/')); ?>">Home</a></li>

@@ -110,6 +110,11 @@ get_header();
                     <div><strong>Email abbonati:</strong> <a href="mailto:abbonamenti@ampelos.it">abbonamenti@ampelos.it</a></div>
                     <div><strong>Stampa e diritti:</strong> <a href="mailto:redazione@ampelos.it">redazione@ampelos.it</a></div>
                 </div>
+                <div style="margin-top: 18px;">
+                    <a href="<?php echo esc_url(home_url('/contatti/')); ?>" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm">
+                        Modulo di contatto &amp; Recapiti completi →
+                    </a>
+                </div>
             </section>
         </div>
 

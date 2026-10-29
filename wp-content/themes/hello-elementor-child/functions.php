@@ -1253,6 +1253,7 @@ function ampelos_populate_all_demo_content($force = false) {
         'autori'                => array('title' => 'Autori', 'template' => 'page-autori.php', 'content' => ''),
         'volume'                => array('title' => 'Volume', 'template' => 'page-volume.php', 'content' => ''),
         'chi-siamo'             => array('title' => 'Chi siamo', 'template' => 'page-chi-siamo.php', 'content' => ''),
+        'contatti'              => array('title' => 'Contatti', 'template' => 'page-contatti.php', 'content' => ''),
         'abbonati'              => array('title' => 'Abbonati', 'template' => 'page-abbonati.php', 'content' => '[ampelos_piani]'),
         'area-personale'        => array('title' => 'Area Personale', 'template' => 'page-area-personale.php', 'content' => ''),
         'newsletter'            => array(

@@ -1791,3 +1791,58 @@ sostituisci Matteo Rives con Andrea Fattizzo
 * Versione del tema elevata a **1.1.5** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
 * Rigenerato l'archivio ZIP pronto all'uso `hello-elementor-child.zip` (3.5MB) nella radice e sulla Scrivania dell'utente (`/Users/mainstudio/Desktop/hello-elementor-child.zip`).
 * Eseguito commit e push su GitHub (`origin/main`).
+
+
+## Interazione #45 — [2026-10-29 02:48:00]
+
+### 👤 Richiesta Utente:
+```text
+<USER_REQUEST>
+ricontrolla approfonditamente tutte le configurazioni mobile ed ottimizzale ancora meglio perchè ci sono mlte anomalie visive lato responsive
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Audit Completo e Diagnosi delle Anomalie Responsive
+È stata eseguita una scansione sistematica dell'intero foglio di stile [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css) e dei file template del tema child per identificare ogni causa di deformazione visiva, overflow orizzontale o tap target problematici sui dispositivi mobili:
+1. **Pulsante di Ricerca Scomparso da Mobile:** Nello spostamento del tasto cerca a sinistra del logo, la media query mobile conteneva la regola `.ampelos-header-left { display: none !important; }`. Di conseguenza, sui display `< 768px` il pulsante di ricerca spariva del tutto.
+2. **Titoli delle Card Ingigantiti su Smartphone:** In [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css) la classe `.ampelos-article-title` era forzata a `font-size: 30px !important;` per `@media (max-width: 768px)`, mentre su desktop era di 22px. Questo alterava gravemente l'altezza e l'equilibrio di tutte le card degli articoli (home page, archivi, ricerca).
+3. **Overflow Orizzontale da Citazioni e Callout:** Il blocco `.ampelos-quote-callout` presentava un margine laterale negativo `margin: 40px -20px;`. Con il padding del container a `16px`, il box fuoriusciva di 4px dallo schermo, generando scrolling orizzontale anomalo su iOS e Android.
+4. **Byline dell'Articolo Singolo Compresso:** Il metadato `.ampelos-article-byline` (autore, data, tempo di lettura e pulsante "Salva articolo") era su una sola riga rigida senza `flex-wrap: wrap`, causando collisioni e sovrapposizioni su display da 375px/390px.
+5. **Intestazione Dashboard Area Personale Schiacciata:** `.ampelos-dashboard-header` manteneva il layout a riga orizzontale con `justify-content: space-between`, costringendo il nome utente e il pulsante "Disconnetti account" in colonne strettissime.
+6. **Filtri Rubriche in Righe Spezzate Disordinate:** Nei template d'archivio (`archive.php`), i lunghi nomi delle rubriche andavano a capo in blocchi verticali disomogenei.
+7. **Form Newsletter e Ricerca Deformati su Schermi Piccoli (<480px):** I campi con tasto inline (`flex`) subivano schiacciamenti su smartphone compatti.
+
+#### 2. Risoluzioni e Ottimizzazioni Applicate
+* **Zero Overflow Globale:** Aggiunto `overflow-x: hidden; max-width: 100vw;` su `html, body, #page, .site` per impedire qualsiasi oscillazione laterale su touch screen.
+* **Header Mobile a 3 Toolbar Iconiche:**
+  * Logo posizionato elegantemente a sinistra (`order: 1`, altezza ottimizzata 38px).
+  * Toolbar di azioni a destra con pulsanti touch uniformi da **38×38px**:
+    * Tasto **Cerca** (`order: 2`, icona visibile, etichetta nascosta).
+    * Tasto **Area Personale** (`order: 3`, icona utente visibile).
+    * Tasto **Menu Hamburger** (☰).
+  * Sui visitatori ospiti, l'ingombrante badge di testo viene nascosto su mobile, lasciando spazio ai pulsanti puliti *Accedi* e *Abbonati*.
+* **Normalizzazione Tipografica Card e Articoli:**
+  * `.ampelos-article-title`: ridotto a un armonioso `19px !important; line-height: 1.3 !important;`.
+  * `.ampelos-article-headline`: fluid typography reattiva con `clamp(24px, 6.5vw, 32px) !important; line-height: 1.22 !important;`.
+  * `.ampelos-article-standfirst`: ridimensionato a `17px !important; line-height: 1.5 !important;`.
+  * Capilettera (`::first-letter`): ridotto da 4.8rem a `3.6rem !important` con margini corretti per non spezzare il testo.
+  * `.ampelos-quote-callout`: margini laterali neutralizzati a `24px 0 !important; padding: 14px 18px !important; font-size: 18px !important;`.
+  * `.ampelos-article-byline`: attivato `flex-wrap: wrap !important; gap: 8px 12px !important; justify-content: flex-start !important;`.
+* **Filtro Rubriche con Scroller Orizzontale a Scorrimento Fluido:**
+  * Assegnata la classe `.ampelos-rubriche-filter-bar` in [archive.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/archive.php).
+  * Su mobile diventa un carosello orizzontale touch con `-webkit-overflow-scrolling: touch; scrollbar-width: none;` ed estensione a filo schermo, garantendo un'esperienza identica alle app native.
+* **Layout Reattivo Area Personale:**
+  * `.ampelos-dashboard-header` collassa in colonna ordinata con il pulsante "Disconnetti account" ad apertura piena.
+  * I pannelli interni (`.ampelos-dash-panel > div`) riducono il padding da 32px a `20px 16px` per massimizzare lo spazio utile di lettura su smartphone.
+* **Hero Volume e Pagine di Servizio:**
+  * Assegnata la classe `.ampelos-volume-hero` in [page-volume.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/page-volume.php) e `.ampelos-standard-page-card` in [page.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/page.php).
+  * Il grid a due colonne del Volume collassa fluidamente a singola colonna centrata con padding ottimizzato a `28px 20px`.
+* **Breakdown Smartphone Piccoli (<480px):**
+  * I form di ricerca inline e newsletter del footer impilano verticalmente input e pulsante submit al 100% di larghezza.
+
+#### 3. Bump Versione Tema a 1.1.6 e Rilascio
+* Versione del tema incrementata a **1.1.6** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
+* Rigenerato il pacchetto ZIP aggiornato `hello-elementor-child.zip` (3.5MB) nella radice e sulla Scrivania dell'utente (`/Users/mainstudio/Desktop/hello-elementor-child.zip`).
+* Eseguito commit e push su GitHub (`origin/main`).

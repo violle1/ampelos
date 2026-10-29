@@ -25,7 +25,7 @@ get_header();
         </div>
 
         <!-- HERO VOLUME EDIZIONE 2027 -->
-        <div style="background: #15271d; color: #fff; border-radius: var(--radius-lg); padding: 56px 48px; margin-bottom: 60px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center; box-shadow: var(--shadow-lg);">
+        <div class="ampelos-volume-hero" style="background: #15271d; color: #fff; border-radius: var(--radius-lg); padding: 56px 48px; margin-bottom: 60px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center; box-shadow: var(--shadow-lg);">
             <div>
                 <span class="ampelos-badge-edition" style="background: var(--ampelos-terracotta); margin-bottom: 16px; display: inline-block;">
                     Volume I • Edizione 2027

@@ -72,7 +72,7 @@ $articles_query = new WP_Query($query_args);
             </div>
 
             <!-- Filtri Rubriche -->
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
+            <div class="ampelos-rubriche-filter-bar" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
                 <a href="<?php echo esc_url(home_url('/tutti-gli-articoli/')); ?>" class="ampelos-btn <?php echo !$is_rubrica ? 'ampelos-btn-primary' : 'ampelos-btn-outline'; ?> ampelos-btn-sm">
                     Tutti gli articoli
                 </a>

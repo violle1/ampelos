@@ -5,7 +5,7 @@ Description: Tema child per Hello Elementor sviluppato per la rivista Ampelos - 
 Author: Redazione Ampelos
 Author URI: https://ampelos.it
 Template: hello-elementor
-Version: 1.1.5
+Version: 1.1.6
 Text Domain: hello-elementor-child-ampelos
 */
 
@@ -67,6 +67,8 @@ body,
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 /* Sfondo Bianco Esclusivo per l'Area dei Contenuti (Main Content Area) */
@@ -1318,7 +1320,7 @@ dialog.ampelos-modal::backdrop {
     position: static !important;
   }
 
-  /* Optimized Mobile Header (Clean 2-element layout: Logo left, Actions right) */
+  /* Optimized Mobile Header (Clean layout: Logo left, Search + User + Hamburger right) */
   .ampelos-header {
     padding: 0 !important;
   }
@@ -1326,27 +1328,37 @@ dialog.ampelos-modal::backdrop {
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    padding: 6px 0 !important;
-  }
-  .ampelos-header-left {
-    display: none !important;
+    padding: 8px 0 !important;
   }
   .ampelos-brand-logo {
+    order: 1 !important;
     margin: 0 !important;
     text-align: left !important;
-    flex-shrink: 0;
+    flex-shrink: 0 !important;
   }
   .ampelos-brand-logo img,
   .ampelos-brand-logo svg {
-    height: 42px !important;
+    height: 38px !important;
     max-width: 110px !important;
     width: auto !important;
   }
+  .ampelos-header-left {
+    order: 2 !important;
+    display: flex !important;
+    align-items: center !important;
+    margin-left: auto !important;
+    margin-right: 6px !important;
+  }
+  /* For non-subscribers, hide text label to avoid crowding mobile header */
+  .ampelos-header-left > span {
+    display: none !important;
+  }
   .ampelos-header-right {
+    order: 3 !important;
     display: flex !important;
     align-items: center !important;
     gap: 6px !important;
-    flex-shrink: 0;
+    flex-shrink: 0 !important;
   }
   .ampelos-header-right .ampelos-btn {
     padding: 6px 10px !important;
@@ -1355,7 +1367,7 @@ dialog.ampelos-modal::backdrop {
     border-radius: var(--radius-sm) !important;
     white-space: nowrap !important;
   }
-  /* On mobile for subscribers: icon buttons */
+  /* On mobile for subscribers: uniform 38x38 touch icon buttons */
   .ampelos-header-user-btn .ampelos-btn-text,
   .ampelos-header-search-btn span {
     display: none !important;
@@ -1363,20 +1375,25 @@ dialog.ampelos-modal::backdrop {
   .ampelos-header-user-btn,
   .ampelos-header-search-btn,
   .ampelos-btn-icon {
-    padding: 6px 8px !important;
-    min-width: 36px !important;
-    height: 36px !important;
+    padding: 0 !important;
+    min-width: 38px !important;
+    width: 38px !important;
+    height: 38px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    border-radius: var(--radius-sm) !important;
   }
   .ampelos-mobile-toggle {
     display: inline-flex !important;
-    min-width: 36px !important;
-    height: 36px !important;
-    padding: 6px 8px !important;
+    min-width: 38px !important;
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
     font-size: 18px !important;
     border-radius: var(--radius-sm) !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   /* Mobile Dialog / Login Window */
@@ -1397,8 +1414,11 @@ dialog.ampelos-modal::backdrop {
   }
 
   .ampelos-container {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .site-main {
+    padding: 30px 0 60px !important;
   }
   .ampelos-hero-landing {
     padding: 36px 0 46px;
@@ -1424,12 +1444,75 @@ dialog.ampelos-modal::backdrop {
     padding: 14px 20px;
   }
   .ampelos-section-title {
-    font-size: 26px !important;
+    font-size: 24px !important;
   }
   .ampelos-article-title {
-    font-size: 30px !important;
-    line-height: 1.25 !important;
+    font-size: 19px !important;
+    line-height: 1.3 !important;
   }
+  .ampelos-article-card {
+    margin-bottom: 16px !important;
+  }
+
+  /* Single Article Responsiveness */
+  .ampelos-article-headline {
+    font-size: clamp(24px, 6.5vw, 32px) !important;
+    line-height: 1.22 !important;
+    margin-bottom: 14px !important;
+  }
+  .ampelos-article-standfirst {
+    font-size: 17px !important;
+    line-height: 1.5 !important;
+    margin-bottom: 20px !important;
+  }
+  .ampelos-article-byline {
+    flex-wrap: wrap !important;
+    gap: 8px 12px !important;
+    justify-content: flex-start !important;
+    padding: 10px 0 !important;
+    font-size: 12px !important;
+  }
+  .ampelos-article-hero-media {
+    margin-bottom: 28px !important;
+    border-radius: var(--radius-sm) !important;
+  }
+  .ampelos-article-body {
+    font-size: 17px !important;
+    line-height: 1.7 !important;
+  }
+  .ampelos-article-body p:first-of-type::first-letter {
+    font-size: 3.6rem !important;
+    line-height: 0.85 !important;
+    margin-right: 8px !important;
+    margin-top: 2px !important;
+  }
+  .ampelos-quote-callout {
+    margin: 24px 0 !important;
+    padding: 14px 18px !important;
+    font-size: 18px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Rubriche horizontal touch scroll bar */
+  .ampelos-rubriche-filter-bar {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 8px !important;
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .ampelos-rubriche-filter-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+  .ampelos-rubriche-filter-bar .ampelos-btn {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
   .ampelos-step-card {
     padding: 22px 18px;
   }
@@ -1441,6 +1524,25 @@ dialog.ampelos-modal::backdrop {
   }
   .ampelos-plan-card {
     padding: 28px 20px;
+  }
+
+  /* Personal Area / Dashboard */
+  .ampelos-dashboard {
+    padding: 30px 0 60px !important;
+  }
+  .ampelos-dashboard-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+    padding-bottom: 18px !important;
+    margin-bottom: 24px !important;
+  }
+  .ampelos-dashboard-header .ampelos-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .ampelos-dash-panel > div {
+    padding: 20px 16px !important;
   }
 
   /* Horizontal swipeable tabs in personal area */
@@ -1462,6 +1564,19 @@ dialog.ampelos-modal::backdrop {
     flex-shrink: 0;
     padding: 8px 14px;
     font-size: 14px;
+  }
+
+  /* Volume & Other Service Pages */
+  .ampelos-volume-hero {
+    grid-template-columns: 1fr !important;
+    padding: 28px 20px !important;
+    gap: 28px !important;
+    margin-bottom: 36px !important;
+  }
+  .ampelos-standard-page-card,
+  section#manifesto {
+    padding: 24px 18px !important;
+    margin-bottom: 36px !important;
   }
 
   /* iOS Auto-Zoom Prevention (Ensure >= 16px font-size) */
@@ -1506,11 +1621,26 @@ dialog.ampelos-modal::backdrop {
     font-size: 12px;
   }
   dialog.ampelos-modal {
-    width: 94%;
+    width: calc(100% - 20px) !important;
     margin: auto;
   }
   .ampelos-modal-body {
-    padding: 22px 18px;
+    padding: 20px 16px !important;
+  }
+  .ampelos-search-form-inline {
+    flex-direction: column !important;
+  }
+  .ampelos-search-form-inline button {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 12px 20px !important;
+  }
+  .ampelos-form-newsletter div {
+    flex-direction: column !important;
+  }
+  .ampelos-form-newsletter button {
+    width: 100% !important;
+    justify-content: center !important;
   }
 }
 

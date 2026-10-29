@@ -81,7 +81,7 @@ $is_future_section = in_array($slug, array('percorsi', 'atlante'));
 
         <?php else : ?>
             <!-- PAGINE DI SERVIZIO STANDARD (Privacy, Cookie, Accessibilità, Testata, Condizioni) -->
-            <div style="max-width: 820px; margin: 0 auto; background: #fff; padding: 48px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+            <div class="ampelos-standard-page-card" style="max-width: 820px; margin: 0 auto; background: #fff; padding: 48px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
                 <header style="margin-bottom: 30px; border-bottom: 1px solid var(--ampelos-border-light); padding-bottom: 20px;">
                     <span class="ampelos-section-tag">Pagine di Servizio</span>
                     <h1 style="font-size: 34px; margin-bottom: 8px;"><?php the_title(); ?></h1>

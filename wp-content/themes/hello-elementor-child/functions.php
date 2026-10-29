@@ -587,7 +587,6 @@ function ampelos_create_default_wordpress_menu($force = false) {
     $locations['mobile']  = $menu_id;
     set_theme_mod('nav_menu_locations', $locations);
 }
-}
 
 /**
  * 2. REGISTRAZIONE RUOLO "ABBONATO AMPELOS"

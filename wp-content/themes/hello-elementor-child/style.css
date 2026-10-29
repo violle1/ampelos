@@ -5,7 +5,7 @@ Description: Tema child per Hello Elementor sviluppato per la rivista Ampelos - 
 Author: Redazione Ampelos
 Author URI: https://ampelos.it
 Template: hello-elementor
-Version: 1.1.8
+Version: 1.1.9
 Text Domain: hello-elementor-child-ampelos
 */
 
@@ -870,6 +870,29 @@ img {
 }
 .ampelos-dash-panel.active {
   display: block;
+}
+
+/* Dashboard Two-Column Layout (Spazio Bilanciato con Sidebar Informativa) */
+.ampelos-dashboard-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 36px;
+  align-items: start;
+}
+.ampelos-dashboard-main {
+  min-width: 0;
+  width: 100%;
+}
+.ampelos-dashboard-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+@media (max-width: 991px) {
+  .ampelos-dashboard-layout {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
 }
 
 /* RUBRICHE (4 SGUARDI SUL PIANETA VINO) RESPONSIVE GRID */

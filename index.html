@@ -607,109 +607,204 @@
           <button type="button" class="ampelos-dash-tab" data-tab="profilo" onclick="AmpelosApp.switchTab('profilo')">Profilo</button>
         </nav>
 
-        <!-- Tab 1: Libreria -->
-        <div id="tab-panel-libreria" class="ampelos-dash-panel active">
-          <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
-            <h3>La tua Libreria Digitale</h3>
-            <p style="color: var(--ampelos-text-muted); font-size: 14px; margin-bottom: 24px;">I quaderni monografici e le raccolte tematiche disponibili nel tuo abbonamento.</p>
-            <div class="ampelos-grid-3">
-              <div style="border: 1px solid var(--ampelos-border-light); padding: 20px; border-radius: var(--radius-sm); background: var(--ampelos-bg);">
-                <span class="ampelos-tag-future" style="margin-left: 0;">Quaderno I</span>
-                <h4 style="margin: 8px 0 4px;">Terroir d'Alta Quota</h4>
-                <p style="font-size: 13px; color: var(--ampelos-text-muted);">Raccolta di 8 saggi sulle viticolture alpine.</p>
-                <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" style="margin-top: 10px;" onclick="AmpelosApp.openArticle(1)">Apri Quaderno</button>
+        <!-- Layout a 2 Colonne: Contenuto Principale + Sidebar Informativa Membri -->
+        <div class="ampelos-dashboard-layout">
+          
+          <div class="ampelos-dashboard-main">
+            <!-- Tab 1: Libreria -->
+            <div id="tab-panel-libreria" class="ampelos-dash-panel active">
+              <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+                <h3 style="margin-bottom: 8px;">La tua Libreria Digitale</h3>
+                <p style="color: var(--ampelos-text-muted); font-size: 14.5px; margin-bottom: 24px;">I quaderni monografici e le raccolte tematiche disponibili nel tuo abbonamento.</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px;">
+                  <div style="border: 1px solid var(--ampelos-border-light); padding: 22px 20px; border-radius: var(--radius-sm); background: var(--ampelos-bg); display: flex; flex-direction: column;">
+                    <span class="ampelos-tag-future" style="margin-left: 0; align-self: flex-start;">Quaderno I</span>
+                    <h4 style="margin: 12px 0 6px; font-size: 18px;">Terroir d'Alta Quota</h4>
+                    <p style="font-size: 13.5px; color: var(--ampelos-text-muted); line-height: 1.5; margin-bottom: 16px; flex: 1;">Raccolta di 8 saggi sulle viticolture alpine e resistenze climatiche.</p>
+                    <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" style="align-self: flex-start;" onclick="AmpelosApp.openArticle(1)">Apri Quaderno →</button>
+                  </div>
+                  <div style="border: 1px solid var(--ampelos-border-light); padding: 22px 20px; border-radius: var(--radius-sm); background: var(--ampelos-bg); display: flex; flex-direction: column;">
+                    <span class="ampelos-tag-future" style="margin-left: 0; align-self: flex-start;">Quaderno II</span>
+                    <h4 style="margin: 12px 0 6px; font-size: 18px;">L'Uva nel Tempo</h4>
+                    <p style="font-size: 13.5px; color: var(--ampelos-text-muted); line-height: 1.5; margin-bottom: 16px; flex: 1;">Antologia sulle fermentazioni ancestrali e vasi vinari in terracotta.</p>
+                    <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" style="align-self: flex-start;" onclick="AmpelosApp.openArticle(2)">Apri Quaderno →</button>
+                  </div>
+                </div>
               </div>
-              <div style="border: 1px solid var(--ampelos-border-light); padding: 20px; border-radius: var(--radius-sm); background: var(--ampelos-bg);">
-                <span class="ampelos-tag-future" style="margin-left: 0;">Quaderno II</span>
-                <h4 style="margin: 8px 0 4px;">L'Uva nel Tempo</h4>
-                <p style="font-size: 13px; color: var(--ampelos-text-muted);">Antologia sulle fermentazioni ancestrali e vasi vinari.</p>
-                <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" style="margin-top: 10px;" onclick="AmpelosApp.openArticle(2)">Apri Quaderno</button>
+            </div>
+
+            <!-- Tab 2: Salvati -->
+            <div id="tab-panel-salvati" class="ampelos-dash-panel" style="display: none;">
+              <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+                <h3 style="margin-bottom: 8px;">I tuoi Articoli Salvati</h3>
+                <p style="color: var(--ampelos-text-muted); font-size: 14.5px; margin-bottom: 24px;">Gli approfondimenti che hai contrassegnato per una lettura successiva.</p>
+                <div id="saved-articles-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px;">
+                  <!-- Popolato dinamicamente -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 3: Gestione Newsletter -->
+            <div id="tab-panel-newsletter" class="ampelos-dash-panel" style="display: none;">
+              <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+                <h3 style="margin-bottom: 8px;">Gestione Newsletter</h3>
+                <p style="color: var(--ampelos-text-muted); font-size: 14.5px; margin-bottom: 24px;">Personalizza la frequenza e i contenuti delle comunicazioni email dalla redazione.</p>
+                <div style="display: grid; gap: 16px; margin-bottom: 24px;">
+                  <label style="display: flex; gap: 14px; align-items: flex-start; cursor: pointer; padding: 14px; background: var(--ampelos-bg); border-radius: var(--radius-sm); border: 1px solid var(--ampelos-border-light);">
+                    <input type="checkbox" checked style="margin-top: 4px; accent-color: var(--ampelos-primary);">
+                    <div>
+                      <strong style="font-size: 15px; color: var(--ampelos-primary);">La Lettera del Giovedì</strong>
+                      <div style="font-size: 13px; color: var(--ampelos-text-muted); margin-top: 3px;">L'editoriale del Direttore e l'anticipazione dei saggi.</div>
+                    </div>
+                  </label>
+                  <label style="display: flex; gap: 14px; align-items: flex-start; cursor: pointer; padding: 14px; background: var(--ampelos-bg); border-radius: var(--radius-sm); border: 1px solid var(--ampelos-border-light);">
+                    <input type="checkbox" checked style="margin-top: 4px; accent-color: var(--ampelos-primary);">
+                    <div>
+                      <strong style="font-size: 15px; color: var(--ampelos-primary);">Note dal Vigneto &amp; Geografie</strong>
+                      <div style="font-size: 13px; color: var(--ampelos-text-muted); margin-top: 3px;">Segnalazioni su nuove mappe dell'Atlante e reportage territoriali.</div>
+                    </div>
+                  </label>
+                  <label style="display: flex; gap: 14px; align-items: flex-start; cursor: pointer; padding: 14px; background: var(--ampelos-bg); border-radius: var(--radius-sm); border: 1px solid var(--ampelos-border-light);">
+                    <input type="checkbox" checked style="margin-top: 4px; accent-color: var(--ampelos-primary);">
+                    <div>
+                      <strong style="font-size: 15px; color: var(--ampelos-primary);">Diario di Stampa Volume 2027</strong>
+                      <div style="font-size: 13px; color: var(--ampelos-text-muted); margin-top: 3px;">Stato di avanzamento della pubblicazione cartacea e spedizioni.</div>
+                    </div>
+                  </label>
+                </div>
+                <button type="button" class="ampelos-btn ampelos-btn-primary" onclick="AmpelosApp.toast('Preferenze newsletter salvate!')">Salva preferenze</button>
+              </div>
+            </div>
+
+            <!-- Tab 4: Abbonamento -->
+            <div id="tab-panel-abbonamento" class="ampelos-dash-panel" style="display: none;">
+              <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+                <h3 style="margin-bottom: 8px;">Dettagli dell'Abbonamento</h3>
+                <p style="color: var(--ampelos-text-muted); font-size: 14.5px; margin-bottom: 24px;">
+                  Gestisci lo stato della tua sottoscrizione, il metodo di pagamento o scarica le ricevute fiscali.
+                </p>
+
+                <div style="background: var(--ampelos-bg); padding: 24px; border-radius: var(--radius-sm); margin-bottom: 24px; border: 1px solid var(--ampelos-border-light);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                      <span style="font-size: 11.5px; text-transform: uppercase; font-weight: 700; color: var(--ampelos-sage); letter-spacing: 0.08em;">Piano Sottoscritto</span>
+                      <h4 style="margin: 4px 0 0; font-size: 22px; color: var(--ampelos-primary);">Digitale Annuale</h4>
+                    </div>
+                    <span style="background: #e2f0e6; color: #1e6939; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: var(--radius-pill); display: inline-flex; align-items: center; gap: 6px;">
+                      <span style="width: 7px; height: 7px; border-radius: 50%; background: #22c55e;"></span> Attivo &amp; Rinnovabile
+                    </span>
+                  </div>
+                  <div style="font-size: 14px; color: var(--ampelos-text-muted); line-height: 1.6;">
+                    Rinnovo programmato per il: <strong style="color: var(--ampelos-text);">22 Ottobre 2027</strong> (€ 89,00/anno) • Carta di credito •••• 4022
+                  </div>
+                </div>
+
+                <div style="margin-bottom: 28px;">
+                  <h4 style="font-size: 16px; margin-bottom: 14px; color: var(--ampelos-primary);">Vantaggi Inclusi nella tua formula:</h4>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13.5px; color: #323d36;">
+                    <div style="display: flex; align-items: center; gap: 8px;"><span style="color: #2e7d32; font-weight: bold;">✓</span> Accesso illimitato all'archivio storico dei saggi</div>
+                    <div style="display: flex; align-items: center; gap: 8px;"><span style="color: #2e7d32; font-weight: bold;">✓</span> 4 Rubriche (Questioni, Luoghi, Idee, Voci)</div>
+                    <div style="display: flex; align-items: center; gap: 8px;"><span style="color: #2e7d32; font-weight: bold;">✓</span> Lettera settimanale del Direttore</div>
+                    <div style="display: flex; align-items: center; gap: 8px;"><span style="color: #2e7d32; font-weight: bold;">✓</span> Sconto 20% sul Volume Monografico cartaceo</div>
+                    <div style="display: flex; align-items: center; gap: 8px;"><span style="color: #2e7d32; font-weight: bold;">✓</span> Area personale con segnalibri e salvati</div>
+                    <div style="display: flex; align-items: center; gap: 8px;"><span style="color: #2e7d32; font-weight: bold;">✓</span> Navigazione libera da inserzioni pubblicitarie</div>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--ampelos-border-light); padding-top: 20px;">
+                  <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosApp.toast('Ricevuta fiscale scaricata in PDF')">Scarica ultima ricevuta</button>
+                  <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" style="color: #9d3a3a; border-color: #d8aaaa;" onclick="AmpelosApp.toast('Rinnovo automatico disattivato.')">Disattiva rinnovo</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 5: Profilo -->
+            <div id="tab-panel-profilo" class="ampelos-dash-panel" style="display: none;">
+              <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
+                <h3 style="margin-bottom: 8px;">Dati del Profilo</h3>
+                <p style="color: var(--ampelos-text-muted); font-size: 14.5px; margin-bottom: 24px;">Aggiorna le tue informazioni anagrafiche e la password di accesso.</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                  <div class="ampelos-form-group">
+                    <label>Nome e Cognome</label>
+                    <input type="text" class="ampelos-form-input" value="Mauro">
+                  </div>
+                  <div class="ampelos-form-group">
+                    <label>Email</label>
+                    <input type="email" class="ampelos-form-input" value="mauro.utenteprova@ampelos.it">
+                  </div>
+                </div>
+                <div class="ampelos-form-group">
+                  <label>Nuova Password (lascia vuoto per mantenere quella attuale)</label>
+                  <input type="password" class="ampelos-form-input" placeholder="••••••••••••">
+                </div>
+                <div style="margin-top: 20px;">
+                  <button type="button" class="ampelos-btn ampelos-btn-primary" onclick="AmpelosApp.toast('Profilo aggiornato!')">Salva modifiche profilo</button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Tab 2: Salvati -->
-        <div id="tab-panel-salvati" class="ampelos-dash-panel" style="display: none;">
-          <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border);">
-            <h3>I tuoi Articoli Salvati</h3>
-            <p style="color: var(--ampelos-text-muted); font-size: 14px; margin-bottom: 24px;">Gli articoli contrassegnati per una lettura approfondita.</p>
-            <div id="saved-articles-container" class="ampelos-grid-3">
-              <!-- Popolato dinamicamente -->
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 3: Gestione Newsletter -->
-        <div id="tab-panel-newsletter" class="ampelos-dash-panel" style="display: none;">
-          <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border); max-width: 640px;">
-            <h3>Gestione Newsletter</h3>
-            <p style="color: var(--ampelos-text-muted); font-size: 14px; margin-bottom: 24px;">Personalizza la frequenza e i contenuti delle comunicazioni email.</p>
-            <div style="display: grid; gap: 16px; margin-bottom: 24px;">
-              <label style="display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
-                <input type="checkbox" checked style="margin-top: 4px;">
-                <div>
-                  <strong>La Lettera del Giovedì</strong>
-                  <div style="font-size: 13px; color: var(--ampelos-text-muted);">L'editoriale del Direttore e l'anticipazione dei saggi.</div>
-                </div>
-              </label>
-              <label style="display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
-                <input type="checkbox" checked style="margin-top: 4px;">
-                <div>
-                  <strong>Note dal Vigneto &amp; Geografie</strong>
-                  <div style="font-size: 13px; color: var(--ampelos-text-muted);">Segnalazioni su nuove mappe dell'Atlante e reportage territoriali.</div>
-                </div>
-              </label>
-              <label style="display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
-                <input type="checkbox" checked style="margin-top: 4px;">
-                <div>
-                  <strong>Diario di Stampa Volume 2027</strong>
-                  <div style="font-size: 13px; color: var(--ampelos-text-muted);">Stato di avanzamento della pubblicazione cartacea.</div>
-                </div>
-              </label>
-            </div>
-            <button type="button" class="ampelos-btn ampelos-btn-primary" onclick="AmpelosApp.toast('Preferenze newsletter salvate!')">Salva impostazioni</button>
-          </div>
-        </div>
-
-        <!-- Tab 4: Abbonamento -->
-        <div id="tab-panel-abbonamento" class="ampelos-dash-panel" style="display: none;">
-          <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border); max-width: 720px;">
-            <h3>Stato dell'Abbonamento</h3>
-            <div style="background: var(--ampelos-bg); padding: 24px; border-radius: var(--radius-sm); margin: 20px 0; border: 1px solid var(--ampelos-border-light);">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <h4 style="margin: 0; font-size: 20px;">Piano Digitale Annuale</h4>
-                <span style="background: #e2f0e6; color: #1e6939; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: var(--radius-pill);">Attivo</span>
+          <!-- Sidebar Informativa Membri (Colma lo spazio vuoto a destra) -->
+          <aside class="ampelos-dashboard-sidebar">
+            
+            <!-- Tessera Membro -->
+            <div style="background: linear-gradient(145deg, #15271d, #1c3829); color: #fff; border-radius: var(--radius-md); padding: 26px 22px; box-shadow: var(--shadow-md); border: 1px solid rgba(255,255,255,0.08); position: relative; overflow: hidden;">
+              <div style="position: absolute; right: -15px; bottom: -20px; opacity: 0.08; pointer-events: none;">
+                <img src="wp-content/themes/hello-elementor-child/assets/images/ampelos.png" alt="" style="width: 170px; filter: brightness(0) invert(1);">
               </div>
-              <p style="font-size: 13.5px; color: var(--ampelos-text-muted); margin: 0;">
-                Rinnovo programmato per il: <strong>22 Ottobre 2027</strong> (€ 89,00/anno) • Carta di credito •••• 4022
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <span style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #a1beae; font-weight: 700;">Tessera Membro Ampelos</span>
+                <span style="background: rgba(39, 174, 96, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-pill); display: flex; align-items: center; gap: 5px;">
+                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #4ade80;"></span> Attivo
+                </span>
+              </div>
+              <div style="font-family: var(--font-serif); font-size: 25px; font-weight: 700; margin-bottom: 4px; color: #faf7f2; letter-spacing: 0.02em;">
+                Mauro
+              </div>
+              <div style="font-size: 12.5px; color: #b8cfc2; margin-bottom: 18px;">
+                Piano <strong>Digitale Annuale</strong> • ID #AMP-00104
+              </div>
+              <div style="border-top: 1px solid rgba(255,255,255,0.12); padding-top: 14px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #9ab4a4;">
+                <span>Scadenza: 29/10/2027</span>
+                <span style="font-style: italic; font-family: var(--font-serif);">Rivista Trimestrale</span>
+              </div>
+            </div>
+
+            <!-- Volume Monografico -->
+            <div style="background: #ffffff; border: 1px solid var(--ampelos-border); border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow-sm);">
+              <span class="ampelos-section-tag" style="color: var(--ampelos-terracotta);">Edizione da Collezione</span>
+              <h4 style="font-size: 18px; margin: 6px 0 10px; color: var(--ampelos-primary);">Volume I • Edizione 2027</h4>
+              <p style="font-size: 13.5px; color: var(--ampelos-text-muted); line-height: 1.6; margin-bottom: 16px;">
+                312 pagine rilegate in tela Fedrigoni con impressioni in lamina. Come abbonato attivo hai diritto allo <strong>sconto esclusivo del 20%</strong> sul prezzo di copertina.
               </p>
+              <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" style="width: 100%; justify-content: center;" onclick="AmpelosApp.showView('volume')">
+                Dettagli e Prenotazione Volume →
+              </button>
             </div>
-            <div style="display: flex; gap: 12px;">
-              <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" onclick="AmpelosApp.toast('Ricevuta fiscale scaricata in PDF')">Scarica ultima ricevuta</button>
-              <button type="button" class="ampelos-btn ampelos-btn-outline ampelos-btn-sm" style="color: #9d3a3a; border-color: #d8aaaa;" onclick="AmpelosApp.toast('Rinnovo automatico interrotto.')">Disattiva rinnovo</button>
-            </div>
-          </div>
-        </div>
 
-        <!-- Tab 5: Profilo -->
-        <div id="tab-panel-profilo" class="ampelos-dash-panel" style="display: none;">
-          <div style="background: #fff; padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border); max-width: 600px;">
-            <h3>Dati del Profilo</h3>
-            <div class="ampelos-form-group">
-              <label>Nome e Cognome</label>
-              <input type="text" class="ampelos-form-input" value="Andrea">
+            <!-- Supporto Riservato -->
+            <div style="background: var(--ampelos-bg); border: 1px solid var(--ampelos-border); border-radius: var(--radius-md); padding: 22px 20px;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                <span style="font-size: 18px;">💬</span>
+                <h4 style="font-size: 16px; margin: 0; color: var(--ampelos-primary);">Supporto Riservato</h4>
+              </div>
+              <p style="font-size: 13px; color: var(--ampelos-text-muted); line-height: 1.6; margin-bottom: 14px;">
+                Per qualsiasi necessità sulla sottoscrizione, cambi di indirizzo o richieste editoriali:
+              </p>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <a href="mailto:abbonamenti@ampelos.it" style="font-size: 13px; font-weight: 600; color: var(--ampelos-primary); text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                  <span>abbonamenti@ampelos.it</span>
+                  <span>→</span>
+                </a>
+                <a href="javascript:void(0)" onclick="AmpelosApp.showView('contatti')" style="font-size: 13px; font-weight: 600; color: var(--ampelos-terracotta); text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                  <span>Modulo di contatto redazione</span>
+                  <span>→</span>
+                </a>
+              </div>
             </div>
-            <div class="ampelos-form-group">
-              <label>Email</label>
-              <input type="email" class="ampelos-form-input" value="andrea.utenteprova@email.it">
-            </div>
-            <div class="ampelos-form-group">
-              <label>Nuova Password</label>
-              <input type="password" class="ampelos-form-input" placeholder="••••••••••••">
-            </div>
-            <button type="button" class="ampelos-btn ampelos-btn-primary" onclick="AmpelosApp.toast('Profilo aggiornato!')">Salva modifiche</button>
-          </div>
+
+          </aside>
+
         </div>
       </div>
     </main>

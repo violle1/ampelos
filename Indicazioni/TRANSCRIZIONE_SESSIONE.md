@@ -1926,3 +1926,44 @@ ok adesso crea la pagina contatti
 * Elevata la versione del tema a **1.1.8** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
 * Rigenerato il pacchetto ZIP aggiornato `hello-elementor-child.zip` (3.5MB) sulla Scrivania (`/Users/mainstudio/Desktop/hello-elementor-child.zip`).
 * Eseguito commit e push su GitHub (`origin/main`).
+
+
+## Interazione #48 — [2026-10-29 06:55:00]
+
+### 👤 Richiesta Utente:
+```text
+<USER_REQUEST>
+migliora la pagina Area personale colmando lo spazio vuoto che si genera a destra del contenuto
+[Caricamento screenshot: evidenza del box scheda "Abbonamento" limitato a 720px, con un vuoto bianco evidente sul lato destro del monitor]
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Diagnosi del Layout
+Nello screenshot fornito dall'utente, il contenitore globale `.ampelos-container` (1200px) conteneva un unico box con proprietà restrittiva `max-width: 720px;` per le schede dell'Area Personale (Abbonamento, Profilo, Newsletter). Di conseguenza, su schermi desktop (1440px / 1920px), oltre il 40% dello spazio orizzontale a destra rimaneva completamente vuoto e sbilanciato.
+
+#### 2. Implementazione Architettura a Due Colonne (`.ampelos-dashboard-layout`)
+È stata riprogettata la vista in [page-area-personale.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/page-area-personale.php) e [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css), adottando una griglia a 2 colonne (`1fr 340px`) equilibrata:
+* **Colonna Principale (Sinistra):**
+  * I pannelli (Libreria, Salvati, Newsletter, Abbonamento, Profilo) ora occupano il 100% della colonna primaria (~760-800px).
+  * **Scheda Abbonamento:** Rimossa la larghezza forzata fissa. Aggiunta una matrice dettagliata dei vantaggi editoriali inclusi nella sottoscrizione (accesso illimitato, 4 rubriche, lettera del direttore, sconto 20% sul volume cartaceo, assenza totale di pubblicità), unitamente al pulsante per scaricare la ricevuta fiscale PDF e alle opzioni di rinnovo.
+  * **Scheda Profilo:** Riorganizzata su due colonne per Nome e Indirizzo Email con gestione password.
+  * **Scheda Libreria & Salvati:** Griglia dinamica fluida `repeat(auto-fit, minmax(260px, 1fr))` che valorizza i quaderni monografici digitali e gli articoli salvati.
+* **Sidebar Informativa Membri Persistente (Destra - Colma lo spazio vuoto):**
+  1. **Tessera Membro Digitale Ampelos (Member Pass):**
+     * Card di lusso in verde bosco scuro (`#15271d` con gradiente e watermark della vite di Ampelos).
+     * Indicatore live verde brillante (`● Attivo`), nome utente (**Mauro**), tipo di piano, codice identificativo abbonato (`#AMP-00104`) e data di scadenza/rinnovo.
+  2. **Box Volume Monografico 2027:**
+     * Presentazione dell'opera fisica cartacea di 312 pagine in tela Fedrigoni e promemoria dello sconto riservato del 20% con link diretto di prenotazione.
+  3. **Box Supporto Riservato:**
+     * Canale prioritario per l'abbonato con contatto diretto `abbonamenti@ampelos.it` e link alla nuova pagina Contatti (`/contatti/`).
+* **Comportamento Responsive:**
+  * Sotto i 991px (tablet e smartphone), la sidebar si posiziona ordinatamente sotto i pannelli principali senza creare restringimenti orizzontali.
+
+#### 3. Sincronizzazione Prototipo, Validazione e Rilascio
+* **[index.html](file:///Users/mainstudio/Desktop/LAVORO/ampelos/index.html):** Aggiornata la vista `#view-area-personale` con la medesima architettura a due colonne e sidebar informativa.
+* **Validazione:** Tutti i file PHP controllati con compilatore: **0 errori**.
+* **Bump Versione:** Versione del tema elevata a **1.1.9** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
+* **Nuovo Archivio:** Rigenerato `hello-elementor-child.zip` (3.5MB) sulla Scrivania (`/Users/mainstudio/Desktop/hello-elementor-child.zip`).
+* **Git:** Eseguito commit e push su GitHub (`origin/main`).

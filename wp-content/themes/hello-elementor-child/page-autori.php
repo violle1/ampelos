@@ -24,12 +24,12 @@ get_header();
         </div>
 
         <div class="ampelos-grid-3">
-            <!-- Autore 1: Matteo Rives -->
+            <!-- Autore 1: Andrea Fattizzo -->
             <div style="background: #fff; border: 1px solid var(--ampelos-border); border-radius: var(--radius-md); padding: 32px; text-align: center; box-shadow: var(--shadow-sm); transition: var(--transition);">
                 <div style="width: 80px; height: 80px; border-radius: 50%; background: #243e30; color: #fff; font-family: var(--font-serif); font-size: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                    MR
+                    AF
                 </div>
-                <h3 style="font-size: 21px; margin-bottom: 4px;">Matteo Rives</h3>
+                <h3 style="font-size: 21px; margin-bottom: 4px;">Andrea Fattizzo</h3>
                 <div style="font-size: 12.5px; font-weight: 700; color: var(--ampelos-terracotta); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">
                     Direttore • Viticoltura Alpina
                 </div>

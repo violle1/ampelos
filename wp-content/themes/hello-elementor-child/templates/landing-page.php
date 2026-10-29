@@ -157,7 +157,7 @@ get_header();
                             Dalle valli della Dora Baltea alle pendici orobiche, l'innalzamento delle temperature medie obbliga viticoltori e storiche maison a ripensare l'altitudine...
                         </p>
                         <div class="ampelos-article-footer">
-                            <span class="ampelos-author-name">Di Matteo Rives</span>
+                            <span class="ampelos-author-name">Di Andrea Fattizzo</span>
                             <span style="color: var(--ampelos-terracotta); font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 4px;">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                                 Solo abbonati

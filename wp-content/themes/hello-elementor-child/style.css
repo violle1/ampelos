@@ -5,7 +5,7 @@ Description: Tema child per Hello Elementor sviluppato per la rivista Ampelos - 
 Author: Redazione Ampelos
 Author URI: https://ampelos.it
 Template: hello-elementor
-Version: 1.1.4
+Version: 1.1.5
 Text Domain: hello-elementor-child-ampelos
 */
 
@@ -836,21 +836,32 @@ img {
   margin-bottom: 32px;
 }
 .ampelos-dash-tab {
-  padding: 12px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ampelos-text-muted);
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
-  cursor: pointer;
-  transition: var(--transition);
+  padding: 12px 20px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--ampelos-text-muted) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0 !important;
+  margin-bottom: -2px !important;
+  cursor: pointer !important;
+  transition: var(--transition) !important;
 }
-.ampelos-dash-tab.active,
-.ampelos-dash-tab:hover {
-  color: var(--ampelos-primary);
-  border-bottom-color: var(--ampelos-primary);
+.ampelos-dash-tab:hover,
+.ampelos-dash-tab:focus {
+  color: var(--ampelos-primary) !important;
+  background: rgba(26, 51, 37, 0.05) !important;
+  background-color: rgba(26, 51, 37, 0.05) !important;
+  border-bottom-color: var(--ampelos-primary) !important;
+  outline: none !important;
+}
+.ampelos-dash-tab.active {
+  color: var(--ampelos-primary) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border-bottom-color: var(--ampelos-primary) !important;
 }
 .ampelos-dash-panel {
   display: none;

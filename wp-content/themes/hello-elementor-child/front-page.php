@@ -128,7 +128,7 @@ $current_user = wp_get_current_user();
                         Reportage lungo le pareti strapiombanti della valle del Rodano, dove i terrazzamenti sfidano la gravità e i vitigni autoctoni conservano una purezza minerale inviolata.
                     </p>
                     <div style="display: flex; align-items: center; gap: 18px; font-size: 13px; color: var(--ampelos-text-muted);">
-                        <span><strong>Di Matteo Rives</strong></span>
+                        <span><strong>Di Andrea Fattizzo</strong></span>
                         <span>•</span>
                         <span>16 Minuti di lettura</span>
                         <span>•</span>
@@ -309,7 +309,7 @@ $current_user = wp_get_current_user();
                             Lungo dialogo a ruota libera sulle colline di confine del Collio: la ricerca della verità del grappolo oltre qualsiasi etichetta e ideologia...
                         </p>
                         <div class="ampelos-article-footer">
-                            <span class="ampelos-author-name">Di Matteo Rives</span>
+                            <span class="ampelos-author-name">Di Andrea Fattizzo</span>
                             <a href="<?php echo esc_url(home_url('/tutti-gli-articoli/')); ?>" style="font-weight: 600;">Leggi →</a>
                         </div>
                     </div>

@@ -56,9 +56,9 @@ get_header();
             <div class="ampelos-grid-3">
                 <div style="background: #fff; padding: 30px; border-radius: var(--radius-md); border: 1px solid var(--ampelos-border); text-align: center;">
                     <div style="width: 80px; height: 80px; border-radius: var(--radius-pill); background: #243e30; color: #fff; font-family: var(--font-serif); font-size: 32px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                        MR
+                        AF
                     </div>
-                    <h3 style="font-size: 20px; margin-bottom: 4px;">Matteo Rives</h3>
+                    <h3 style="font-size: 20px; margin-bottom: 4px;">Andrea Fattizzo</h3>
                     <p style="font-size: 13px; font-weight: 700; color: var(--ampelos-terracotta); text-transform: uppercase; margin-bottom: 12px;">Direttore Responsabile</p>
                     <p style="font-size: 14px; color: var(--ampelos-text-muted);">Saggista e giornalista agrario. Cura la direzione editoriale e i rapporti con le comunità rurali.</p>
                 </div>

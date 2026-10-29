@@ -92,6 +92,89 @@ function ampelos_force_white_background_css() {
         .ampelos-footer {
             background: #15271d !important;
         }
+
+        /* Effetti Mouse Hover & Focus Coordinati alla Grafica Ampelos (Zero Fucsia / Rosa) */
+        .ampelos-dash-tab {
+            background: transparent !important;
+            background-color: transparent !important;
+            color: var(--ampelos-text-muted) !important;
+            border: none !important;
+            border-bottom: 2px solid transparent !important;
+            border-radius: 4px 4px 0 0 !important;
+            transition: all 0.2s ease !important;
+        }
+        .ampelos-dash-tab:hover,
+        .ampelos-dash-tab:focus {
+            background: rgba(26, 51, 37, 0.05) !important;
+            background-color: rgba(26, 51, 37, 0.05) !important;
+            color: var(--ampelos-primary) !important;
+            border-bottom: 2px solid var(--ampelos-primary) !important;
+            outline: none !important;
+        }
+        .ampelos-dash-tab.active {
+            background: transparent !important;
+            background-color: transparent !important;
+            color: var(--ampelos-primary) !important;
+            border-bottom: 2px solid var(--ampelos-primary) !important;
+        }
+
+        .ampelos-btn-primary:hover,
+        .ampelos-btn-primary:focus {
+            background-color: #2d4f3b !important;
+            background: #2d4f3b !important;
+            border-color: #2d4f3b !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(26, 51, 37, 0.22) !important;
+        }
+        .ampelos-btn-outline:hover,
+        .ampelos-btn-outline:focus {
+            background-color: #1a3325 !important;
+            background: #1a3325 !important;
+            border-color: #1a3325 !important;
+            color: #ffffff !important;
+        }
+        .ampelos-btn-terracotta:hover,
+        .ampelos-btn-terracotta:focus {
+            background-color: #b0543a !important;
+            background: #b0543a !important;
+            border-color: #b0543a !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(196, 98, 71, 0.25) !important;
+        }
+        .ampelos-header-search-btn:hover,
+        .ampelos-header-search-btn:focus {
+            background-color: #1a3325 !important;
+            background: #1a3325 !important;
+            border-color: #1a3325 !important;
+            color: #ffffff !important;
+        }
+        .ampelos-header-user-btn:hover,
+        .ampelos-header-user-btn:focus {
+            background-color: #2d4f3b !important;
+            background: #2d4f3b !important;
+            border-color: #2d4f3b !important;
+            color: #ffffff !important;
+        }
+        .ampelos-modal-close:hover,
+        .ampelos-modal-close:focus {
+            background-color: #c46247 !important;
+            background: #c46247 !important;
+            color: #ffffff !important;
+        }
+        .ampelos-dropdown-item:hover,
+        .ampelos-dropdown-item:focus {
+            background: #f4eee3 !important;
+            background-color: #f4eee3 !important;
+        }
+        .ampelos-article-card:hover {
+            box-shadow: 0 10px 24px rgba(16, 33, 24, 0.08) !important;
+        }
+        .ampelos-article-card:hover .ampelos-article-title a {
+            color: var(--ampelos-terracotta) !important;
+        }
+        a:hover, a:focus {
+            color: var(--ampelos-terracotta);
+        }
     </style>
     <?php
 }
@@ -1040,10 +1123,10 @@ add_action('init', 'ampelos_check_and_ensure_demo_content', 25);
 function ampelos_check_and_ensure_demo_content() {
     $count = wp_count_posts('post');
     $published_posts = (!empty($count->publish)) ? intval($count->publish) : 0;
-    if ($published_posts < 4 || !get_option('ampelos_demo_content_seeded_v8')) {
+    if ($published_posts < 4 || !get_option('ampelos_demo_content_seeded_v9')) {
         ampelos_populate_all_demo_content(true);
         ampelos_create_default_wordpress_menu(true);
-        update_option('ampelos_demo_content_seeded_v8', 1);
+        update_option('ampelos_demo_content_seeded_v9', 1);
         update_option('ampelos_pages_initialized', 1);
     }
 }
@@ -1065,11 +1148,11 @@ function ampelos_auto_seed_demo_content() {
     }
 
     // Esegui automaticamente al primo avvio della nuova versione
-    if (!get_option('ampelos_demo_content_seeded_v8')) {
+    if (!get_option('ampelos_demo_content_seeded_v9')) {
         ampelos_populate_all_demo_content(true);
         ampelos_create_default_wordpress_menu(true);
         flush_rewrite_rules(false);
-        update_option('ampelos_demo_content_seeded_v8', 1);
+        update_option('ampelos_demo_content_seeded_v9', 1);
         update_option('ampelos_pages_initialized', 1);
     }
 }
@@ -1078,14 +1161,28 @@ function ampelos_populate_all_demo_content($force = false) {
     // 1. Tassonomia Rubrica
     ampelos_populate_default_terms();
 
-    // 2. Autori Dimostrativi
+    // 2. Autori Dimostrativi: aggiorna Matteo Rives ad Andrea Fattizzo se già presente
+    $old_user = get_user_by('login', 'matteo_rives');
+    if (!$old_user) {
+        $old_user = get_user_by('login', 'matteo.rives');
+    }
+    if ($old_user) {
+        wp_update_user(array(
+            'ID'           => $old_user->ID,
+            'display_name' => 'Andrea Fattizzo',
+            'first_name'   => 'Andrea',
+            'last_name'    => 'Fattizzo',
+            'user_email'   => 'andrea.fattizzo@ampelos.it',
+        ));
+    }
+
     $authors_data = array(
-        'matteo_rives' => array(
-            'user_login'   => 'matteo_rives',
-            'user_email'   => 'matteo.rives@ampelos.it',
-            'display_name' => 'Matteo Rives',
-            'first_name'   => 'Matteo',
-            'last_name'    => 'Rives',
+        'andrea_fattizzo' => array(
+            'user_login'   => 'andrea_fattizzo',
+            'user_email'   => 'andrea.fattizzo@ampelos.it',
+            'display_name' => 'Andrea Fattizzo',
+            'first_name'   => 'Andrea',
+            'last_name'    => 'Fattizzo',
             'description'  => 'Docente e ricercatore agrario. Indaga le risposte delle vigne d\'alta quota all\'instabilità climatica.',
             'role'         => 'author',
         ),
@@ -1167,7 +1264,7 @@ function ampelos_populate_all_demo_content($force = false) {
         'informazioni-testata'  => array(
             'title'    => 'Informazioni sulla testata',
             'template' => 'page.php',
-            'content'  => '<p><strong>Ampelos</strong> – Rivista di Cultura del Vino e Territori.<br>Pubblicazione periodica trimestrale registrata presso il Registro della Stampa del Tribunale di Roma al n. 42/2026. Iscrizione ROC n. 39182.<br>Editore: Ampelos Edizioni S.r.l., Via della Vigna Antica 14, 00186 Roma. P.IVA e C.F. 09849120584.<br>Direttore Responsabile: Matteo Rives.</p>',
+            'content'  => '<p><strong>Ampelos</strong> – Rivista di Cultura del Vino e Territori.<br>Pubblicazione periodica trimestrale registrata presso il Registro della Stampa del Tribunale di Roma al n. 42/2026. Iscrizione ROC n. 39182.<br>Editore: Ampelos Edizioni S.r.l., Via della Vigna Antica 14, 00186 Roma. P.IVA e C.F. 09849120584.<br>Direttore Responsabile: Andrea Fattizzo.</p>',
         ),
         'privacy'               => array(
             'title'    => 'Informativa sulla Privacy (GDPR)',
@@ -1230,8 +1327,8 @@ function ampelos_populate_all_demo_content($force = false) {
             'title'         => 'Le vigne di pietra calcarea nel Vallese: una memoria geologica millenaria',
             'excerpt'       => 'Reportage lungo le pareti della valle del Rodano, dove i terrazzamenti sfidano la gravità e i vitigni autoctoni conservano una purezza minerale inviolata.',
             'rubrica'       => 'luoghi',
-            'author_login'  => 'matteo_rives',
-            'author_name'   => 'Matteo Rives',
+            'author_login'  => 'andrea_fattizzo',
+            'author_name'   => 'Andrea Fattizzo',
             'date'          => '2026-10-22 10:00:00',
             'read_time'     => '16 Min',
             'hero_caption'  => 'I muri a secco del Vallese',
@@ -1269,8 +1366,8 @@ function ampelos_populate_all_demo_content($force = false) {
             'title'         => '«La terra non ha fretta»: quarant\'anni di riflessioni tra macerazioni, argille e libertà',
             'excerpt'       => 'Lungo dialogo a ruota libera sulle colline di confine del Collio: la ricerca della verità del grappolo oltre qualsiasi etichetta e ideologia commerciale.',
             'rubrica'       => 'voci',
-            'author_login'  => 'matteo_rives',
-            'author_name'   => 'Matteo Rives',
+            'author_login'  => 'andrea_fattizzo',
+            'author_name'   => 'Andrea Fattizzo',
             'date'          => '2026-10-09 10:00:00',
             'read_time'     => '20 Min',
             'hero_caption'  => 'Conversazione con Josko',
@@ -1395,7 +1492,7 @@ function ampelos_render_coming_soon_admin_page() {
 
     // Feedback avvenuta sincronizzazione contenuti demo
     if (isset($_GET['ampelos_seeded'])) {
-        echo '<div class="notice notice-success is-dismissible" style="border-left-color: #1a3325;"><p><strong>' . esc_html__('✓ Contenuti Demo sincronizzati con successo: 4 articoli completi con quote callout, 4 rubriche, 3 profili autori (Matteo Rives, Elena Moretti, Carlo Ferrini) e tutte le pagine istituzionali e legali sono ora popolate!', 'hello-elementor-child-ampelos') . '</strong></p></div>';
+        echo '<div class="notice notice-success is-dismissible" style="border-left-color: #1a3325;"><p><strong>' . esc_html__('✓ Contenuti Demo sincronizzati con successo: 4 articoli completi con quote callout, 4 rubriche, 3 profili autori (Andrea Fattizzo, Elena Moretti, Carlo Ferrini) e tutte le pagine istituzionali e legali sono ora popolate!', 'hello-elementor-child-ampelos') . '</strong></p></div>';
     }
 
     // Salvataggio impostazioni
@@ -1498,7 +1595,7 @@ function ampelos_render_coming_soon_admin_page() {
                     <ul style="font-size: 13px; color: #3c434a; line-height: 1.8; margin-left: 18px; list-style-type: disc;">
                         <li><strong>4 Rubriche:</strong> <em>Questioni</em>, <em>Luoghi</em>, <em>Idee</em>, <em>Voci</em>.</li>
                         <li><strong>4 Articoli completi:</strong> testi integrali, estratti, tempi di lettura, quote callout e gradienti editoriali.</li>
-                        <li><strong>3 Profili Autori:</strong> <em>Matteo Rives</em>, <em>Elena Moretti</em>, <em>Carlo Ferrini</em> con bio e saggistica.</li>
+                        <li><strong>3 Profili Autori:</strong> <em>Andrea Fattizzo</em>, <em>Elena Moretti</em>, <em>Carlo Ferrini</em> con bio e saggistica.</li>
                         <li><strong>16 Pagine:</strong> Home, Archivio, Chi siamo (Manifesto/Redazione), Volume 2027, Percorsi, Atlante, Piani, Privacy, Cookie, Condizioni, Info Testata, ecc.</li>
                     </ul>
                 </div>

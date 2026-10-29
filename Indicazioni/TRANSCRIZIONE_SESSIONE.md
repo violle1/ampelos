@@ -1747,3 +1747,47 @@ nell'header ci sono due campi ricerca, lascia quello sul lato sinistro e rendilo
 * Versione del tema elevata a **1.1.4** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
 * Rigenerato l'archivio ZIP pronto all'uso `hello-elementor-child.zip` (3.5MB) nella radice e sulla Scrivania dell'utente (`/Users/mainstudio/Desktop/hello-elementor-child.zip`).
 * Eseguito commit e push su GitHub (`origin/main`).
+
+
+## Interazione #44 — [2026-10-29 02:35:00]
+
+### 👤 Richieste Utente:
+```text
+<USER_REQUEST>
+cambia i colori dell'effetto on mouse hover facendo in modo che siano coordinati alla grafica del sito
+[Caricamento screenshot: evidenza scheda "Abbonamento" nell'Area Personale che all'hover assumeva un colore fucsia/magenta acceso (#d82c6b)]
+</USER_REQUEST>
+<USER_REQUEST>
+sostituisci Matteo Rives con Andrea Fattizzo
+</USER_REQUEST>
+```
+
+### 🤖 Risposta Assistente & Interventi Eseguiti:
+
+#### 1. Neutralizzazione Colori Fucsia/Magenta ed Effetti Hover Armoniosi
+* **Diagnosi dell'Anomalia Cromatica:**
+  * I pulsanti e i tab di navigazione dell'Area Personale (`.ampelos-dash-tab`) non avevano una sovrascrittura forzata con `!important` sullo stato `:hover` per la proprietà `background-color`. In assenza di essa, le regole globali di Elementor e WordPress iniettavano il colore d'accento di default (`#d82c6b` / fucsia acceso con testo bianco).
+* **Soluzione Applicata ([style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css) & [functions.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/functions.php)):**
+  * **Tab Area Personale (`.ampelos-dash-tab`):** All'hover e al focus, lo sfondo assume una delicata sfumatura salvia/verde bosco semitrasparente (`rgba(26, 51, 37, 0.05)`), con testo verde primario `#1a3325` e sottolineatura elegante a 2px verde primario. Nessun fucsia, nessun contrasto sgradevole.
+  * **Tasti Primari (`.ampelos-btn-primary`, `.ampelos-header-user-btn`):** Hover su verde bosco luminoso (`#2d4f3b`) con ombra morbida `box-shadow: 0 4px 12px rgba(26, 51, 37, 0.22)`.
+  * **Tasti Outline (`.ampelos-btn-outline`, `.ampelos-header-search-btn`):** Transizione fluida verso lo sfondo pieno verde primario (`#1a3325`) e testo bianco.
+  * **Tasti Terracotta (`.ampelos-btn-terracotta`):** Hover su terracotta profondo (`#b0543a`).
+  * **Menu a Tendina (`.ampelos-dropdown-item`):** Hover su pergamena calda (`#f4eee3`).
+  * **Link Generali:** Hover su terracotta (`#c46247`).
+
+#### 2. Sostituzione Integrale "Matteo Rives" → "Andrea Fattizzo"
+* Sostituito in tutti i file del tema child, nei template e nei dati del database:
+  * **[functions.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/functions.php):**
+    * Aggiornata la struttura `$authors_data` con login `andrea_fattizzo`, display name `Andrea Fattizzo`, first name `Andrea`, last name `Fattizzo`.
+    * Aggiunta routine di migrazione automatica che aggiorna l'eventuale utente `matteo_rives` / `matteo.rives` esistente in WordPress ad `Andrea Fattizzo`.
+    * Aggiornato il colophon/testata: *Direttore Responsabile: Andrea Fattizzo*.
+    * Aggiornati i 2 articoli demo firmati (*«Le vigne di pietra calcarea nel Vallese»* e *«La terra non ha fretta»*) con autore `Andrea Fattizzo`.
+    * Elevato il flag di sincronizzazione a `v9` per aggiornare istantaneamente il database alla prima visita.
+  * **[page-autori.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/page-autori.php):** Sostituito il profilo di Matteo Rives con Andrea Fattizzo e avatar aggiornato con le iniziali **"AF"**.
+  * **[page-chi-siamo.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/page-chi-siamo.php):** Sostituito il riquadro del Direttore con Andrea Fattizzo e iniziali **"AF"**.
+  * **[front-page.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/front-page.php), [archive.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/archive.php), [search.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/search.php), [landing-page.php](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/templates/landing-page.php) e [index.html](file:///Users/mainstudio/Desktop/LAVORO/ampelos/index.html):** Tutti i byline ora indicano *Di Andrea Fattizzo*.
+
+#### 3. Bump Versione Tema a 1.1.5 e Distribuzione
+* Versione del tema elevata a **1.1.5** in [style.css](file:///Users/mainstudio/Desktop/LAVORO/ampelos/wp-content/themes/hello-elementor-child/style.css).
+* Rigenerato l'archivio ZIP pronto all'uso `hello-elementor-child.zip` (3.5MB) nella radice e sulla Scrivania dell'utente (`/Users/mainstudio/Desktop/hello-elementor-child.zip`).
+* Eseguito commit e push su GitHub (`origin/main`).
